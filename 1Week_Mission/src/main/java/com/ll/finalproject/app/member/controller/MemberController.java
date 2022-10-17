@@ -1,5 +1,7 @@
 package com.ll.finalproject.app.member.controller;
 
+import com.ll.finalproject.app.member.exception.JoinEmailDuplicatedException;
+import com.ll.finalproject.app.member.exception.JoinUsernameDuplicatedException;
 import com.ll.finalproject.app.member.form.MemberJoinForm;
 import com.ll.finalproject.app.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -48,11 +50,20 @@ public class MemberController {
         }
 
         if (!memberJoinForm.getPassword().equals(memberJoinForm.getPasswordConfirm())) {
-            bindingResult.rejectValue("passwordConfirm","패스워드와 패스워드 확인이 불일치합니다.");
+            bindingResult.rejectValue("passwordConfirm",null,"패스워드와 패스워드 확인이 불일치합니다.");
+            return "member/join";
         }
 
-        memberService.join(memberJoinForm.getUsername(), memberJoinForm.getPassword(),
-                memberJoinForm.getEmail(), memberJoinForm.getNickname());
+        try {
+            memberService.join(memberJoinForm.getUsername(), memberJoinForm.getPassword(),
+                    memberJoinForm.getEmail(), memberJoinForm.getNickname());
+        } catch (JoinUsernameDuplicatedException e) {
+            bindingResult.rejectValue("username", null, e.getMessage());
+            return "member/join";
+        } catch (JoinEmailDuplicatedException e) {
+            bindingResult.rejectValue("email", null, e.getMessage());
+            return "member/join";
+        }
 
         return "redirect:/";
     }
