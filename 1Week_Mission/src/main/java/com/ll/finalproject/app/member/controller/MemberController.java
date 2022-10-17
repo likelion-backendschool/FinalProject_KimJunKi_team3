@@ -3,6 +3,7 @@ package com.ll.finalproject.app.member.controller;
 import com.ll.finalproject.app.member.exception.JoinEmailDuplicatedException;
 import com.ll.finalproject.app.member.exception.JoinUsernameDuplicatedException;
 import com.ll.finalproject.app.member.form.MemberJoinForm;
+import com.ll.finalproject.app.member.service.MailService;
 import com.ll.finalproject.app.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MailService mailService;
 
     @GetMapping("/login")
     public String showLogin() {
@@ -64,6 +66,8 @@ public class MemberController {
             bindingResult.rejectValue("email", null, e.getMessage());
             return "member/join";
         }
+
+        mailService.sendMail(memberJoinForm.getEmail());
 
         return "redirect:/";
     }
