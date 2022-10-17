@@ -3,6 +3,7 @@ package com.ll.finalproject.app.member.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class MailService {
 
     private final JavaMailSender javaMailSender;
 
+    @Async
     public void sendMail(String email) {
 
 //        // 수신 대상을 담을 ArrayList 생성

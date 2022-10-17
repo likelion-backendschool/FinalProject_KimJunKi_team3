@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest
-@Transactional
-@ActiveProfiles("test")
+//@Transactional
+@ActiveProfiles({"test", "base"})
 class MemberServiceTest {
 
     @Autowired
