@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    public void join(String username, String password, String email, String nickname) {
+    public Member join(String username, String password, String email, String nickname) {
         Member member = Member.builder()
                 .username(username)
                 .password(password)
@@ -18,5 +18,7 @@ public class MemberService {
                 .nickname(nickname)
                 .build();
         memberRepository.save(member);
+
+        return member;
     }
 }
