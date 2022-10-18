@@ -4,13 +4,15 @@
         layout:decorate="~{layout/layout}">
 
 <div layout:fragment="content">
-    <body>
-        <h1>메인 페이지</h1>
-    </body>
-
+  <h3>
+    게시글 상세 페이지
+  </h3>
+  <div>
     <div>
-        <a href="/post/list">게시글 리스트</a>
+      <span th:text="${post.id}"></span>
+      <span th:text="${post.subject}"></span>
+      <span th:text="${post.content}"></span>
     </div>
-
+  </div>
 </div>
 </html>
