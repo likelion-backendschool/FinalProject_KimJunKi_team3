@@ -3,7 +3,10 @@ package com.ll.finalproject.app.post.service;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.post.entity.Post;
 import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
+import com.ll.finalproject.app.post.hashTag.repository.PostHashTagRepository;
 import com.ll.finalproject.app.post.hashTag.service.PostHashTagService;
+import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
+import com.ll.finalproject.app.post.keyword.repository.PostKeywordRepository;
 import com.ll.finalproject.app.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,9 +14,11 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -24,6 +29,8 @@ import static java.util.stream.Collectors.toList;
 public class PostService {
     private final PostRepository postRepository;
     private final PostHashTagService postHashTagService;
+    private final PostKeywordRepository postKeywordRepository;
+    private final PostHashTagRepository postHashTagRepository;
 
     public List<Post> getLatestPost() {
         return postRepository.findFirst100ByOrderByIdDesc();
@@ -50,6 +57,26 @@ public class PostService {
         return postRepository.findAll();
     }
 
+    public List<Post> getPostListByPostKeyword(Member member, String kw) {
+
+        PostKeyword postKeyword = postKeywordRepository.findByContent(kw).orElse(null);
+        if (postKeyword == null) {
+            return null;
+        }
+        List<PostHashTag> postHashTags = postHashTagRepository.findByPostKeyword(postKeyword).orElse(null);
+        if (postHashTags == null) {
+            return null;
+        }
+
+        List<Post> postLists = new ArrayList<>();
+        for (PostHashTag postHashTag : postHashTags) {
+            if (postHashTag.getPost().getAuthor() == member) {
+                postLists.add(postHashTag.getPost());
+            }
+        }
+
+        return postLists;
+    }
     public Post getPostById(Long id) {
         Post post = findById(id).orElse(null);
         loadForPrintData(post);
@@ -98,4 +125,5 @@ public class PostService {
     public void delete(Post post) {
         postRepository.delete(post);
     }
+
 }

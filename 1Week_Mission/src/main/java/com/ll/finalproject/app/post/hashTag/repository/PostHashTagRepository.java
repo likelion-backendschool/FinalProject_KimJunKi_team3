@@ -1,6 +1,7 @@
 package com.ll.finalproject.app.post.hashTag.repository;
 
 import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
+import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -12,4 +13,6 @@ public interface PostHashTagRepository extends JpaRepository<PostHashTag, Long> 
     List<PostHashTag> findAllByPostId(Long postId);
 
     List<PostHashTag> findAllByPostIdIn(long[] ids);
+
+    Optional<List<PostHashTag>> findByPostKeyword(PostKeyword postKeyword);
 }

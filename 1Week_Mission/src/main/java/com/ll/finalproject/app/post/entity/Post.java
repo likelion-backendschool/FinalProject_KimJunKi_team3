@@ -85,7 +85,7 @@ public class Post extends BaseEntity {
                     String text = "#" + postHashTag.getPostKeyword().getContent();
 
                     return """
-                            <a href="%s" target="_blank">%s</a>
+                            <a href="%s" >%s</a>
                             """
                             .stripIndent()
                             .formatted(postHashTag.getPostKeyword().getListUrl(), text);

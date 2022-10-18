@@ -5,26 +5,18 @@ import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.post.entity.Post;
 import com.ll.finalproject.app.post.form.PostForm;
 import com.ll.finalproject.app.post.service.PostService;
-import com.ll.finalproject.app.security.dto.MemberContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartRequest;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
 
 @Controller
 @RequestMapping("/post")
@@ -44,6 +36,21 @@ public class PostController {
 
         model.addAttribute("postList", postList);
         return "post/list";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/keyword/list")
+    public String list(@RequestParam("kw") String kw, Principal principal, Model model) {
+
+        Member member = memberService.findByUsername(principal.getName()).get();
+        List<Post> postList = postService.getPostListByPostKeyword(member, kw);
+        if (postList == null) {
+            return "post/keyword";
+        }
+        postService.loadForPrintData(postList);
+
+        model.addAttribute("postList", postList);
+        return "post/keyword";
     }
 
     @GetMapping("/{id}")

@@ -15,6 +15,6 @@ public class PostKeyword extends BaseEntity {
     private String content;
 
     public String getListUrl() {
-        return "/article/list?kwType=keyword&kw=%s".formatted(content);
+        return "/post/keyword/list?kw=%s".formatted(content);
     }
 }
