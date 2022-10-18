@@ -41,7 +41,7 @@ public class PostController {
     @GetMapping("/{id}")
     public String detail(@PathVariable("id") Long id, Model model) {
 
-        Post post = postService.findById(id).orElse(null);
+        Post post = postService.getPostById(id);
         if (post == null) {
             return "post/list";
         }

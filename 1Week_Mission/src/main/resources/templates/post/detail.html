@@ -12,6 +12,16 @@
       <span th:text="${post.id}"></span>
       <span th:text="${post.subject}"></span>
       <span th:text="${post.content}"></span>
+
+      <div>
+        해시태그 :
+        <th:block th:each="postHashTag : ${post.extra.postHashTags}">
+          <a th:href="@{${postHashTag.postKeyword.listUrl}}">
+            [[${postHashTag.postKeyword.content}]]
+          </a>
+          <span>|</span>
+        </th:block>
+      </div>
     </div>
   </div>
 </div>

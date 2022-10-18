@@ -12,7 +12,11 @@ public interface InitDataBefore {
         Member member3 = memberService.join("user3", "1234!","user3@test.com","유저3");
         Member member4 = memberService.join("user4", "1234!","user4@test.com","유저4");
 
-        for (int i = 0; i < 110; i++) {
+        for (int i = 0; i < 10; i++) {
+            postService.write(member1, "제목 " + i, "내용 " + i,"#그리움 #행복");
+
+        }
+        for (int i = 0; i < 100; i++) {
             postService.write(member1, "제목 " + i, "내용 " + i,null);
         }
     }

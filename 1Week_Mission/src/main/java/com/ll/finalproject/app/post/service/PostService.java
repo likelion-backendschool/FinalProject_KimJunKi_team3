@@ -2,6 +2,8 @@ package com.ll.finalproject.app.post.service;
 
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.post.entity.Post;
+import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
+import com.ll.finalproject.app.post.hashTag.service.PostHashTagService;
 import com.ll.finalproject.app.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import java.util.Optional;
 @Slf4j
 public class PostService {
     private final PostRepository postRepository;
+    private final PostHashTagService postHashTagService;
 
     public List<Post> getLatestPost() {
         return postRepository.findFirst100ByOrderByIdDesc();
@@ -32,7 +35,10 @@ public class PostService {
 
         postRepository.save(post);
 
-//        hashTagService.applyHashTags(article, hashTagContents);
+        if (hashTagContents != null) {
+            postHashTagService.applyPostHashTags(post, hashTagContents);
+        }
+
         return post;
     }
 
@@ -40,6 +46,13 @@ public class PostService {
         return postRepository.findAll();
     }
 
+    public Post getPostById(Long id) {
+        Post post = findById(id).orElse(null);
+        List<PostHashTag> postHashTags = postHashTagService.getPostHashTags(post);
+        post.getExtra().put("postHashTags", postHashTags);
+
+        return post;
+    }
     @Transactional(readOnly = true)
     public Optional<Post> findById(Long id) {
         return postRepository.findById(id);
