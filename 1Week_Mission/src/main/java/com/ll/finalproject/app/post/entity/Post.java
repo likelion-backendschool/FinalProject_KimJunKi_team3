@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 import java.util.List;
@@ -39,11 +37,13 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String contentHtml;
 
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.ALL}, orphanRemoval=true)
+    private List<PostHashTag> postHashTagList;
+
     public void changeSubjectAndContent(String subject, String content) {
         this.subject = subject;
         this.content = content;
     }
-
 
     // 해시태그 수정 input 형식에 맞게 가공
     public String getExtra_inputValue_hashTagContents() {

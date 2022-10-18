@@ -120,7 +120,6 @@ public class PostController {
         }
 
         postService.delete(post);
-
-        return "post/modify";
+        return "redirect:/post/list";
     }
 }
