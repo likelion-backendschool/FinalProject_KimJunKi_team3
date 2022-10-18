@@ -1,0 +1,21 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+  <h3>
+    프로필 페이지
+  </h3>
+  <div>
+    <span>이메일 : </span>
+    <span>[[${memberModifyForm.email}]]</span>
+  </div>
+  <div>
+    <span>닉네임 : </span>
+    <span>[[${memberModifyForm.nickname}]]</span>
+  </div>
+  <a href="/member/modify">수정 페이지</a>
+  <a href="/member/modifyPassword">비밀번호 변경</a>
+</div>
+</html>
