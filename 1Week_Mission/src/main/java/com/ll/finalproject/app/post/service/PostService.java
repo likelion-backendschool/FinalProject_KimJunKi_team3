@@ -8,6 +8,7 @@ import com.ll.finalproject.app.post.hashTag.service.PostHashTagService;
 import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import com.ll.finalproject.app.post.keyword.repository.PostKeywordRepository;
 import com.ll.finalproject.app.post.repository.PostRepository;
+import com.ll.finalproject.app.post.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.parameters.P;
@@ -31,6 +32,7 @@ public class PostService {
     private final PostHashTagService postHashTagService;
     private final PostKeywordRepository postKeywordRepository;
     private final PostHashTagRepository postHashTagRepository;
+    private final CommonUtil commonUtil;
 
     public List<Post> getLatestPost() {
         return postRepository.findFirst100ByOrderByIdDesc();
@@ -42,6 +44,7 @@ public class PostService {
                 .author(author)
                 .subject(subject)
                 .content(content)
+                .contentHtml(commonUtil.markdown(content))
                 .build();
 
         postRepository.save(post);
