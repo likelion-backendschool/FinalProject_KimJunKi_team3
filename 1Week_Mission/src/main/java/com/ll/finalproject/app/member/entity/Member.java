@@ -20,6 +20,7 @@ public class Member extends BaseEntity {
     private String username;
     @JsonIgnore
     private String password;
+    @Column(unique = true)
     private String email;
     private String nickname;
 }
