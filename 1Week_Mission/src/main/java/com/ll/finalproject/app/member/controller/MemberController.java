@@ -8,12 +8,15 @@ import com.ll.finalproject.app.member.form.MemberModifyForm;
 import com.ll.finalproject.app.member.form.MemberModifyPasswordForm;
 import com.ll.finalproject.app.member.service.MailService;
 import com.ll.finalproject.app.member.service.MemberService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping("/member")
@@ -84,10 +88,7 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/profile")
     public String showProfile(Principal principal, Model model) {
-        Member member = memberService.findByUsername(principal.getName()).orElse(null);
-        if (member == null) {
-            return "redirect:/";
-        }
+        Member member = memberService.findByUsername(principal.getName()).get();
 
         model.addAttribute("memberModifyForm", member);
         return "member/profile";
@@ -98,10 +99,8 @@ public class MemberController {
     public String showModify(Principal principal, Model model) {
         log.info("principal = {}", principal.getName());
 
-        Member member = memberService.findByUsername(principal.getName()).orElse(null);
-        if (member == null) {
-            return "redirect:/";
-        }
+        Member member = memberService.findByUsername(principal.getName()).get();
+
         model.addAttribute("memberModifyForm", member);
         return "member/modify";
     }
@@ -114,10 +113,7 @@ public class MemberController {
             return "member/modify";
         }
 
-        Member member = memberService.findByUsername(principal.getName()).orElse(null);
-        if (member == null) {
-            return "redirect:/";
-        }
+        Member member = memberService.findByUsername(principal.getName()).get();
 
         memberService.modify(member, memberModifyForm.getEmail(), memberModifyForm.getNickname());
         return "redirect:/member/profile";
@@ -138,10 +134,7 @@ public class MemberController {
             return "member/modifyPassword";
         }
 
-        Member member = memberService.findByUsername(principal.getName()).orElse(null);
-        if (member == null) {
-            return "redirect:/";
-        }
+        Member member = memberService.findByUsername(principal.getName()).get();
 
         log.info("memberModifyPasswordForm = {}", memberModifyPasswordForm);
 
@@ -158,5 +151,26 @@ public class MemberController {
         memberService.modifyPassword(member, memberModifyPasswordForm.getNewPassword());
 
         return "redirect:/member/profile";
+    }
+
+    @PreAuthorize("isAnonymous()")
+    @GetMapping("/findUsername")
+    public String showFindUsername(Model model) {
+        model.addAttribute("memberModifyForm", new MemberModifyForm());
+        return "member/findUsername";
+    }
+
+    @PreAuthorize("isAnonymous()")
+    @PostMapping("/findUsername")
+    public String findUsername(MemberModifyForm memberModifyForm, BindingResult bindingResult) {
+
+        Member member = memberService.findByEmail(memberModifyForm.getEmail()).orElse(null);
+        if (member == null) {
+            bindingResult.rejectValue("email",null, "존재하지 않는 이메일입니다.");
+            return "member/findUsername";
+        }
+
+        bindingResult.reject(null, "아이디는 " + member.getUsername() + "입니다.");
+        return "member/findUsername";
     }
 }

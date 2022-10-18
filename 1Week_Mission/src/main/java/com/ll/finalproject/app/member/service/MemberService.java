@@ -49,6 +49,11 @@ public class MemberService {
         return memberRepository.findByUsername(username);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<Member> findByEmail(String email) {
+        return memberRepository.findByEmail(email);
+    }
+
     public void modify(Member member, String email, String nickname) {
         member.changeEmailAndNickname(email, nickname);
         memberRepository.save(member);

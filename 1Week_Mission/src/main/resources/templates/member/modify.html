@@ -4,27 +4,17 @@
         layout:decorate="~{layout/layout}">
 
 <div layout:fragment="content">
-  <style>
-    .container {
-      max-width: 560px;
-    }
-    .field-error {
-      border-color: #dc3545;
-      color: #dc3545;
-    }
-  </style>
-
 
   <h3>회원정보 수정 페이지</h3>
   <div class="container">
     <form th:action th:object="${memberModifyForm}" method="post">
       <div>
-        <input type="email" th:field="*{email}" th:errorclass="field-error" placeholder="이메일을 입력해주세요.">
+        <input type="email" th:field="*{email}" placeholder="이메일을 입력해주세요.">
       </div>
       <div class="field-error" th:errors="*{email}">이메일 오류</div>
 
       <div>
-        <input type="text" th:field="*{nickname}" th:errorclass="field-error" placeholder="닉네임을 입력해주세요.">
+        <input type="text" th:field="*{nickname}" placeholder="닉네임을 입력해주세요.">
       </div>
       <div class="field-error" th:errors="*{nickname}">닉네임 오류</div>
 

@@ -18,12 +18,6 @@ public class MailService {
     @Async
     public void sendMail(String email) {
 
-//        // 수신 대상을 담을 ArrayList 생성
-//        List<String> toUserList = new ArrayList<>();
-//
-//        // 수신 대상 추가
-//        toUserList.add(email);
-
         // SimpleMailMessage (단순 텍스트 구성 메일 메시지 생성할 때 이용)
         SimpleMailMessage simpleMessage = new SimpleMailMessage();
 

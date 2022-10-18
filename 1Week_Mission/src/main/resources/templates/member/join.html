@@ -26,15 +26,6 @@
       MemberJoin__submitDone = true;
     }
   </script>
-  <style>
-    .container {
-      max-width: 560px;
-    }
-    .field-error {
-      border-color: #dc3545;
-      color: #dc3545;
-    }
-  </style>
 
 
   <h3>회원가입 페이지</h3>
@@ -42,27 +33,27 @@
     <form th:action th:object="${memberJoinForm}" method="post" onsubmit="MemberJoin__submit(this); return false;">
 
       <div>
-        <input type="text" th:field="*{username}" th:errorclass="field-error" placeholder="아이디를 입력해주세요.">
+        <input type="text" th:field="*{username}" placeholder="아이디를 입력해주세요.">
       </div>
       <div class="field-error" th:errors="*{username}">아이디 오류</div>
 
       <div>
-        <input type="password" th:field="*{password}" th:errorclass="field-error" placeholder="비밀번호를 입력해주세요.">
+        <input type="password" th:field="*{password}" placeholder="비밀번호를 입력해주세요.">
       </div>
       <div class="field-error" th:errors="*{password}">패스워드 오류</div>
 
       <div>
-        <input type="password" th:field="*{passwordConfirm}" th:errorclass="field-error" placeholder="비밀번호 확인을 입력해주세요.">
+        <input type="password" th:field="*{passwordConfirm}" placeholder="비밀번호 확인을 입력해주세요.">
       </div>
       <div class="field-error" th:errors="*{passwordConfirm}">패스워드 오류</div>
 
       <div>
-        <input type="email" th:field="*{email}" th:errorclass="field-error" placeholder="이메일을 입력해주세요.">
+        <input type="email" th:field="*{email}" placeholder="이메일을 입력해주세요.">
       </div>
       <div class="field-error" th:errors="*{email}">이메일 오류</div>
 
       <div>
-        <input type="text" th:field="*{nickname}" th:errorclass="field-error" placeholder="닉네임을 입력해주세요.">
+        <input type="text" th:field="*{nickname}" placeholder="닉네임을 입력해주세요.">
       </div>
       <div class="field-error" th:errors="*{nickname}">닉네임 오류</div>
 
