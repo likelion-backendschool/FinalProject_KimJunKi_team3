@@ -23,4 +23,9 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String email;
     private String nickname;
+
+    public void changeEmailAndNickname(String email, String nickname) {
+        this.email = email;
+        this.nickname = nickname;
+    }
 }

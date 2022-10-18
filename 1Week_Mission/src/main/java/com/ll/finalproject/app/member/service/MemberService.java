@@ -46,4 +46,9 @@ public class MemberService {
     public Optional<Member> findByUsername(String username) {
         return memberRepository.findByUsername(username);
     }
+
+    public void modify(Member member, String email, String nickname) {
+        member.changeEmailAndNickname(email, nickname);
+        memberRepository.save(member);
+    }
 }

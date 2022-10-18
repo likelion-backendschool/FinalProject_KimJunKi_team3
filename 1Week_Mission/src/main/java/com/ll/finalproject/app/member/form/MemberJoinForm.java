@@ -1,5 +1,6 @@
 package com.ll.finalproject.app.member.form;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
