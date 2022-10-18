@@ -1,0 +1,33 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+  <h3>
+    게시글 페이지
+  </h3>
+
+  <div>
+    <a href="/post/write">게시글 작성</a>
+  </div>
+
+  <div th:each="post : ${postList}">
+    <div>
+      <a th:href="@{|/post/${post.id}|}"+>
+        <span th:text="${post.id}"></span>
+        <span>|</span>
+        <span th:text="${post.subject}"></span>
+        <span>|</span>
+        <span th:text="${post.author.username}"></span>
+        <span>|</span>
+        <span th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+        <span>|</span>
+        <span th:text="${#temporals.format(post.modifyDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+      </a>
+      <span>|</span>
+      <th:block th:utext="${post.extra_postHashTagLinks}"/>
+    </div>
+  </div>
+</div>
+</html>
