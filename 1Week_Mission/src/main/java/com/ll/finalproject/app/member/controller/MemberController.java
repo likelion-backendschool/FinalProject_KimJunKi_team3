@@ -5,6 +5,7 @@ import com.ll.finalproject.app.member.exception.JoinEmailDuplicatedException;
 import com.ll.finalproject.app.member.exception.JoinUsernameDuplicatedException;
 import com.ll.finalproject.app.member.form.MemberJoinForm;
 import com.ll.finalproject.app.member.form.MemberModifyForm;
+import com.ll.finalproject.app.member.form.MemberModifyPasswordForm;
 import com.ll.finalproject.app.member.service.MailService;
 import com.ll.finalproject.app.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -119,6 +120,43 @@ public class MemberController {
         }
 
         memberService.modify(member, memberModifyForm.getEmail(), memberModifyForm.getNickname());
-        return "redirect:/member/modify";
+        return "redirect:/member/profile";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/modifyPassword")
+    public String showModifyPassword(Model model) {
+        model.addAttribute("memberModifyPasswordForm", new MemberModifyPasswordForm());
+        return "member/modifyPassword";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/modifyPassword")
+    public String modifyPassword(@Valid MemberModifyPasswordForm memberModifyPasswordForm, BindingResult bindingResult, Principal principal) {
+
+        if (bindingResult.hasErrors()) {
+            return "member/modifyPassword";
+        }
+
+        Member member = memberService.findByUsername(principal.getName()).orElse(null);
+        if (member == null) {
+            return "redirect:/";
+        }
+
+        log.info("memberModifyPasswordForm = {}", memberModifyPasswordForm);
+
+        if (!memberModifyPasswordForm.getNewPassword().equals(memberModifyPasswordForm.getNewPasswordConfirm())) {
+            bindingResult.rejectValue("newPassword",null,"패스워드와 패스워드 확인이 불일치합니다.");
+            return "member/modifyPassword";
+        }
+
+        if (!memberService.checkOldPassword(memberModifyPasswordForm.getOldPassword(), member.getPassword())) {
+            bindingResult.rejectValue("oldPassword",null,"기존 패스워드가 불일치합니다.");
+            return "member/modifyPassword";
+        }
+
+        memberService.modifyPassword(member, memberModifyPasswordForm.getNewPassword());
+
+        return "redirect:/member/profile";
     }
 }

@@ -5,6 +5,7 @@ import com.ll.finalproject.app.member.exception.JoinEmailDuplicatedException;
 import com.ll.finalproject.app.member.exception.JoinUsernameDuplicatedException;
 import com.ll.finalproject.app.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -50,5 +52,15 @@ public class MemberService {
     public void modify(Member member, String email, String nickname) {
         member.changeEmailAndNickname(email, nickname);
         memberRepository.save(member);
+    }
+
+    public void modifyPassword(Member member, String newPassword) {
+        member.changePassword(passwordEncoder.encode(newPassword));
+        memberRepository.save(member);
+    }
+
+    public boolean checkOldPassword(String oldPassword, String password) {
+        log.info("oldPassword = {} : password = {}", oldPassword, password);
+        return passwordEncoder.matches(oldPassword, password);
     }
 }
