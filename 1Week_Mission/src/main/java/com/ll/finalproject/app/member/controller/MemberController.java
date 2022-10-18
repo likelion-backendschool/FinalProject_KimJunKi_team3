@@ -3,6 +3,7 @@ package com.ll.finalproject.app.member.controller;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.exception.JoinEmailDuplicatedException;
 import com.ll.finalproject.app.member.exception.JoinUsernameDuplicatedException;
+import com.ll.finalproject.app.member.form.MemberFindPasswordForm;
 import com.ll.finalproject.app.member.form.MemberJoinForm;
 import com.ll.finalproject.app.member.form.MemberModifyForm;
 import com.ll.finalproject.app.member.form.MemberModifyPasswordForm;
@@ -11,6 +12,7 @@ import com.ll.finalproject.app.member.service.MemberService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.Random;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/member")
@@ -80,7 +84,7 @@ public class MemberController {
             return "member/join";
         }
 
-        mailService.sendMail(memberJoinForm.getEmail());
+        mailService.sendJoinMail(memberJoinForm.getEmail());
 
         return "redirect:/";
     }
@@ -172,5 +176,39 @@ public class MemberController {
 
         bindingResult.reject(null, "아이디는 " + member.getUsername() + "입니다.");
         return "member/findUsername";
+    }
+
+    @PreAuthorize("isAnonymous()")
+    @GetMapping("/findPassword")
+    public String showFindPassword(Model model) {
+        model.addAttribute("memberFindPasswordForm", new MemberFindPasswordForm());
+        return "member/findPassword";
+    }
+
+    @PreAuthorize("isAnonymous()")
+    @PostMapping("/findPassword")
+    public String findPassword(@Valid MemberFindPasswordForm memberFindPasswordForm, BindingResult bindingResult) {
+
+        Member member = memberService.findByUsername(memberFindPasswordForm.getUsername()).orElse(null);
+        if (member == null) {
+            bindingResult.rejectValue("username",null, "존재하지 않는 아이디입니다.");
+            return "member/findPassword";
+        }
+
+        if (!memberFindPasswordForm.getEmail().equals(member.getEmail())) {
+            bindingResult.rejectValue("email",null, "이메일이 틀렸습니다.");
+            return "member/findPassword";
+        }
+
+        // 10자리수의 임시 비밀번호 생성
+        String tempPassword = new RandomString(10, new Random()).nextString();
+        log.info("rs = {}", tempPassword);
+        memberService.modifyPassword(member, tempPassword);
+
+        mailService.sendTempPasswordMail(member.getEmail(), tempPassword);
+
+        bindingResult.reject(null, "이메일이 전송되었습니다.\n 1~2분의 시간이 소요될 수 있습니다.");
+
+        return "member/findPassword";
     }
 }
