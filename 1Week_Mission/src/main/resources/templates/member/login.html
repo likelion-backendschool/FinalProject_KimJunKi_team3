@@ -1,75 +1,73 @@
-<!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>회원가입</title>
-  <script>
-    let MemberLogin__submitDone = false;
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout/layout}">
 
-    function MemberLogin__submit(form) {
-      if (MemberLogin__submitDone) {
-        return;
-      }
+<div layout:fragment="content">
+    <script>
+        let MemberLogin__submitDone = false;
 
-      form.username.value = form.username.value.trim();
+        function MemberLogin__submit(form) {
+            if (MemberLogin__submitDone) {
+                return;
+            }
 
-      if (form.username.value.length == 0) {
-        alert("아이디를 입력해주세요.");
-        form.username.focus();
+            form.username.value = form.username.value.trim();
 
-        return;
-      }
+            if (form.username.value.length == 0) {
+                alert("아이디를 입력해주세요.");
+                form.username.focus();
 
-      form.password.value = form.password.value.trim();
+                return;
+            }
 
-      if (form.password.value.length == 0) {
-        alert("비밀번호를 입력해주세요.");
-        form.password.focus();
+            form.password.value = form.password.value.trim();
 
-        return;
-      }
+            if (form.password.value.length == 0) {
+                alert("비밀번호를 입력해주세요.");
+                form.password.focus();
 
-      form.submit();
-      MemberLogin__submitDone = true;
-    }
-  </script>
-  <style>
-    .container {
-      max-width: 560px;
-    }
-    .field-error {
-      border-color: #dc3545;
-      color: #dc3545;
-    }
-  </style>
-</head>
-<body>
-<h1>회원가입 페이지</h1>
-<div class="container">
-  <div th:if="${param.error}">
-    <div class="field-error">
-      아이디 또는 비밀번호가 일치하지 않습니다.
+                return;
+            }
+
+            form.submit();
+            MemberLogin__submitDone = true;
+        }
+    </script>
+    <style>
+        .container {
+            max-width: 560px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+
+    <h3>회원가입 페이지</h3>
+    <div class="container">
+        <div th:if="${param.error}">
+            <div class="field-error">
+                아이디 또는 비밀번호가 일치하지 않습니다.
+            </div>
+        </div>
+        <form th:action method="POST" onsubmit="MemberLogin__submit(this); return false;">
+            <div>
+                <span>아이디</span>
+                <input type="text" name="username">
+            </div>
+            <div>
+                <span>비밀번호</span>
+                <input type="password" name="password">
+            </div>
+            <div>
+                <input type="submit" value="로그인">
+            </div>
+        </form>
+        <div >
+            <a href="/member/join">가입하기</a>
+        </div>
     </div>
-  </div>
-  <form th:action method="POST" onsubmit="MemberLogin__submit(this); return false;">
-      <div>
-        <span>아이디</span>
-        <input type="text" name="username">
-      </div>
-      <div>
-        <span>비밀번호</span>
-        <input type="password" name="password">
-      </div>
-      <div>
-        <input type="submit" value="로그인">
-      </div>
-  </form>
-  <div >
-    <a href="/member/join">가입하기</a>
-  </div>
 </div>
-</body>
 </html>
+

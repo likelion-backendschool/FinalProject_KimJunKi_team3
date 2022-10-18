@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Final 프로젝트</title>
+</head>
+<body>
+  <h1>
+    <a href="/" sec:authorize="isAnonymous()">메인 페이지</a>
+  </h1>
+  <div>
+    <a href="/member/login" sec:authorize="isAnonymous()">로그인</a>
+    <a href="/member/join" sec:authorize="isAnonymous()">회원가입</a>
+    <a href="/member/logout" sec:authorize="isAuthenticated()">로그아웃</a>
+    <a href="/member/profile" sec:authorize="isAuthenticated()">프로파일</a>
+  </div>
+
+  <div layout:fragment="content">
+    하
+  </div>
+
+</body>
+</html>
