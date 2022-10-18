@@ -12,7 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -48,13 +52,50 @@ public class PostService {
 
     public Post getPostById(Long id) {
         Post post = findById(id).orElse(null);
-        List<PostHashTag> postHashTags = postHashTagService.getPostHashTags(post);
-        post.getExtra().put("postHashTags", postHashTags);
+        loadForPrintData(post);
 
         return post;
+    }
+    public void loadForPrintData(Post post) {
+        List<PostHashTag> postHashTags = postHashTagService.getPostHashTags(post);
+        post.getExtra().put("postHashTags", postHashTags);
+    }
+    public void loadForPrintData(List<Post> posts) {
+        long[] ids = posts
+                .stream()
+                .mapToLong(Post::getId)
+                .toArray();
+
+        List<PostHashTag> postHashTagsByPostIds = postHashTagService.getPostHashTagsByPostIdIn(ids);
+
+        Map<Long, List<PostHashTag>> postHashTagsByPostIdsMap = postHashTagsByPostIds.stream()
+                .collect(groupingBy(
+                        postHashTag -> postHashTag.getPost().getId(), toList()
+                ));
+
+        posts.stream().forEach(post -> {
+            List<PostHashTag> postHashTags = postHashTagsByPostIdsMap.get(post.getId());
+
+            if (postHashTags == null || postHashTags.size() == 0) return;
+
+            post.getExtra().put("postHashTags", postHashTags);
+        });
+
+        log.debug("posts : " + posts);
     }
     @Transactional(readOnly = true)
     public Optional<Post> findById(Long id) {
         return postRepository.findById(id);
+    }
+
+    public void modify(Post post, String subject, String content, String hashTagContents) {
+        post.changeSubjectAndContent(subject, content);
+        postRepository.save(post);
+
+        postHashTagService.applyPostHashTags(post, hashTagContents);
+    }
+
+    public void delete(Post post) {
+        postRepository.delete(post);
     }
 }

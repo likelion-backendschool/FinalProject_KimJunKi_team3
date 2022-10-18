@@ -1,6 +1,6 @@
 <html
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        xmlns:th="http://thymeleaf.org"
+        xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
         layout:decorate="~{layout/layout}">
 
 <div layout:fragment="content">
@@ -15,12 +15,14 @@
 
       <div>
         해시태그 :
-        <th:block th:each="postHashTag : ${post.extra.postHashTags}">
-          <a th:href="@{${postHashTag.postKeyword.listUrl}}">
-            [[${postHashTag.postKeyword.content}]]
-          </a>
-          <span>|</span>
-        </th:block>
+        <th:block th:utext="${post.extra_postHashTagLinks}"/>
+      </div>
+
+      <div>
+        <a th:href="@{|/post/${post.id}/modify|}" sec:authorize="isAuthenticated()"
+           th:if="${post.author.username == #authentication.getPrincipal().getUsername()}">수정</a>
+        <a onclick="return confirm('정말로 삭제하시겠습니까?')" th:href="@{|/post/${post.id}/delete|}" sec:authorize="isAuthenticated()"
+           th:if="${post.author.username == #authentication.getPrincipal().getUsername()}">삭제</a>
       </div>
     </div>
   </div>
