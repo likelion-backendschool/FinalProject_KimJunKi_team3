@@ -4,64 +4,75 @@
         layout:decorate="~{layout/layout}">
 
 <div layout:fragment="content">
-    <h3>
-        도서 등록 페이지
-    </h3>
-    <div class="container">
-        <h1>글쓰기</h1>
 
-        <script>
-            function WriteForm__submit(form) {
-                form.subject.value = form.subject.value.trim();
+    <script>
+        function WriteForm__submit(form) {
+            form.subject.value = form.subject.value.trim();
 
-                if (form.subject.value.length == 0) {
-                    alert("제목을 입력해주세요.");
-                    form.subject.focus();
-                    return;
-                }
-
-                form.content.value = form.content.value.trim();
-
-                if (form.content.value.length == 0) {
-                    alert("내용을 입력해주세요.");
-                    form.content.focus();
-                    return;
-                }
-
-                form.submit();
+            if (form.subject.value.length == 0) {
+                alert("제목을 입력해주세요.");
+                form.subject.focus();
+                return;
             }
 
-        </script>
+            form.content.value = form.content.value.trim();
 
-        <form th:action th:object="${productCreateForm}" method="POST" onsubmit="WriteForm__submit(this); return false;" >
-            <div>
-                <span>도서명</span>
-                <input type="text" th:field="*{subject}">
-                <div class="field-error" th:errors="*{subject}">도서명 오류</div>
-            </div>
-            <div>
-                <span>가격</span>
-                <input type="number" th:field="*{price}">
-                <div class="field-error" th:errors="*{price}">가격 오류</div>
-            </div>
-            <div>
-                <span>설명</span>
-                <textarea th:field="*{description}"></textarea>
-                <div class="field-error" th:errors="*{description}">설명 오류</div>
-            </div>
-            <div>
-                <div>해시태그 선택</div>
-                <select th:field="*{postKeywordId}">
-                    <option value="">==키워드 선택==</option>
-                    <option th:each="postKeyword : ${postKeywordSet}" th:value="${postKeyword.id}"
-                            th:text="${postKeyword.content}">Tag</option>
-                </select>
-            </div>
-            <div>
-                <span>글쓰기</span>
-                <input type="submit" value="작성">
-            </div>
-        </form>
-    </div>
+            if (form.content.value.length == 0) {
+                alert("내용을 입력해주세요.");
+                form.content.focus();
+                return;
+            }
+
+            form.submit();
+        }
+
+    </script>
+
+    <section class="section section-join flex-grow flex flex-col items-center justify-center">
+        <div class="max-w-md w-full px-2 pt-4">
+            <h1 class="font-bold text-lg">도서 등록</h1>
+
+            <form th:action th:object="${productCreateForm}" class="flex flex-col gap-3" method="POST" onsubmit="WriteForm__submit(this); return false;" >
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">도서명</span>
+                    </label>
+                    <input type="text" th:field="*{subject}" class="input input-bordered">
+                    <div class="field-error" th:errors="*{subject}">도서명 오류</div>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">가격</span>
+                    </label>
+                    <input type="number" th:field="*{price}" class="input input-bordered">
+                    <div class="field-error" th:errors="*{price}">가격 오류</div>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">설명</span>
+                    </label>
+                    <textarea th:field="*{description}" class="input-bordered border rounded border-gray-600" rows="5"></textarea>
+                    <div class="field-error" th:errors="*{description}">설명 오류</div>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">해시태그</span>
+                    </label>
+                    <select th:field="*{postKeywordId}" class="input input-bordered">
+                        <option value="">==키워드 선택==</option>
+                        <option th:each="postKeyword : ${postKeywordSet}" th:value="${postKeyword.id}"
+                                th:text="${postKeyword.content}">Tag</option>
+                    </select>
+                </div>
+
+                <input type="submit" value="작성" class="btn btn-primary mt-5">
+
+            </form>
+
+        </div>
+    </section>
+
+
 </div>
 </html>

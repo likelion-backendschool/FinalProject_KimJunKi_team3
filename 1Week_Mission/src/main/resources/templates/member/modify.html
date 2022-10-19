@@ -5,21 +5,34 @@
 
 <div layout:fragment="content">
 
-  <h3>회원정보 수정 페이지</h3>
-  <div class="container">
-    <form th:action th:object="${memberModifyForm}" method="post">
-      <div>
-        <input type="email" th:field="*{email}" placeholder="이메일을 입력해주세요.">
-      </div>
-      <div class="field-error" th:errors="*{email}">이메일 오류</div>
+  <section class="section section-join flex-grow flex flex-col items-center justify-center">
+    <div class="max-w-md w-full px-2 pt-4">
+      <h1 class="font-bold text-lg">회원정보 수정</h1>
 
-      <div>
-        <input type="text" th:field="*{nickname}" placeholder="닉네임을 입력해주세요.">
-      </div>
-      <div class="field-error" th:errors="*{nickname}">닉네임 오류</div>
+      <form th:action th:object="${memberModifyForm}" method="post" class="flex flex-col gap-3">
 
-      <input type="submit" value="정보 수정"/>
-    </form>
-  </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">이메일</span>
+          </label>
+          <input type="email" th:field="*{email}" placeholder="이메일을 입력해주세요." class="input input-bordered">
+          <div class="field-error" th:errors="*{email}">이메일 오류</div>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">닉네임</span>
+          </label>
+          <input type="text" th:field="*{nickname}" placeholder="닉네임을 입력해주세요." class="input input-bordered">
+          <div class="field-error" th:errors="*{nickname}">닉네임 오류</div>
+        </div>
+
+        <input type="submit" value="정보 수정" class="btn btn-primary"/>
+      </form>
+
+    </div>
+  </section>
+
+
 </div>
 </html>

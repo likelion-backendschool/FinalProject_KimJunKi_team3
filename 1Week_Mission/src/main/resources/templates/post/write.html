@@ -4,56 +4,67 @@
         layout:decorate="~{layout/layout}">
 
 <div layout:fragment="content">
-    <h3>
-        게시글 작성 페이지
-    </h3>
-    <div class="container">
-        <h1>글쓰기</h1>
 
-        <script>
-            function WriteForm__submit(form) {
-                form.subject.value = form.subject.value.trim();
 
-                if (form.subject.value.length == 0) {
-                    alert("제목을 입력해주세요.");
-                    form.subject.focus();
-                    return;
-                }
+    <script>
+        function WriteForm__submit(form) {
+            form.subject.value = form.subject.value.trim();
 
-                form.content.value = form.content.value.trim();
-
-                if (form.content.value.length == 0) {
-                    alert("내용을 입력해주세요.");
-                    form.content.focus();
-                    return;
-                }
-
-                form.submit();
+            if (form.subject.value.length == 0) {
+                alert("제목을 입력해주세요.");
+                form.subject.focus();
+                return;
             }
 
-        </script>
+            const editor = $(form).find(".toast-ui-editor").data("data-toast-editor");
+            const markdown = editor.getMarkdown();
+            console.log(markdown);
+            form.content.value = markdown.trim();
+            if (form.content.value.length == 0) {
+                alert("내용을 입력해주세요");
+                editor.focus();
+                return;
+            }
 
-        <form th:action th:object="${postForm}" method="POST" onsubmit="WriteForm__submit(this); return false;" >
-            <div>
-                <span>제목</span>
-                <input type="text" th:field="*{subject}">
-                <div class="field-error" th:errors="*{subject}">제목 오류</div>
-            </div>
-            <div>
-                <span>내용</span>
-                <textarea th:field="*{content}"></textarea>
-                <div class="field-error" th:errors="*{content}">내용 오류</div>
-            </div>
-            <div>
-                <span>해시태그</span>
-                <input type="text" th:field="*{hashTagContents}" placeholder="#태그1 #태그2" />
-                <div class="field-error" th:errors="*{hashTagContents}">해시태크 오류</div>
-            </div>
-            <div>
-                <span>글쓰기</span>
-                <input type="submit" value="작성">
-            </div>
-        </form>
-    </div>
+            form.submit();
+        }
+
+    </script>
+
+    <section class="section section-join flex-grow flex flex-col items-center justify-center">
+        <div class="max-w-md w-full px-2 pt-4">
+            <h1 class="font-bold text-lg">글 작성</h1>
+
+            <form th:action th:object="${postForm}" method="POST" class="flex flex-col gap-3" onsubmit="WriteForm__submit(this); return false;" >
+                <input type="hidden" th:field="*{content}" />
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">제목</span>
+                    </label>
+                    <input type="text" th:field="*{subject}" class="input input-bordered">
+                    <div class="field-error" th:errors="*{subject}">제목 오류</div>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">내용</span>
+                    </label>
+                    <div class="toast-ui-editor" toast-ui-editor--height="calc(100vh - 300px)"></div>
+                    <div class="field-error" th:errors="*{content}">내용 오류</div>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">해시태크</span>
+                    </label>
+                    <input type="text" th:field="*{hashTagContents}" placeholder="#태그1 #태그2" class="input input-bordered"/>
+                    <div class="field-error" th:errors="*{hashTagContents}">해시태크 오류</div>
+                </div>
+
+                <input type="submit" value="작성" class="btn btn-primary">
+            </form>
+
+        </div>
+    </section>
+
 </div>
 </html>

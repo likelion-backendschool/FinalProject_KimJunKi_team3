@@ -4,28 +4,32 @@
         layout:decorate="~{layout/layout}">
 
 <div layout:fragment="content">
-  <h3>
-    도서 페이지
-  </h3>
 
-  <div>
-    <a href="/product/create">도서 등록</a>
-  </div>
+  <section class="section section-write container mx-auto">
 
-  <div th:each="product : ${productList}">
-    <div>
-      <a th:href="@{|/product/${product.id}|}"+>
-        <span th:text="${product.id}"></span>
-        <span>|</span>
-        <span th:text="${product.subject}"></span>
-        <span>|</span>
-        <span th:text="${product.price}"></span>
-        <span>|</span>
-        <span th:text="${product.author.username}"></span>
-        <span>|</span>
-        <span th:text="${#temporals.format(product.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
-      </a>
+    <div class="px-2 pt-4">
+      <h1 class="font-bold text-lg">도서 목록</h1>
+      <a class="btn btn-primary btn-sm" href="/product/create">도서 등록</a>
+      <ul>
+        <li th:each="product : ${productList}" class="flex flex-col gap-3 my-5 p-2 border">
+          <div>
+            <a th:href="@{|/product/${product.id}|}">
+              <span th:text="${product.id}"></span>
+            </a>
+            <a th:href="@{|/product/${product.id}|}">
+              <span th:text="${product.subject}"></span>
+            </a>
+            <a th:href="@{|/product/${product.id}|}">
+              <span th:text="${product.author.username}"></span>
+            </a>
+            <a th:href="@{|/product/${product.id}|}">
+              <span th:text="${product.price}"></span>
+            </a>
+            <span th:text="${#temporals.format(product.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+          </div>
+        </li>
+      </ul>
     </div>
-  </div>
+  </section>
 </div>
 </html>
