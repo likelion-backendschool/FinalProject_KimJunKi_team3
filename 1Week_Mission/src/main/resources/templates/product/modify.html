@@ -1,0 +1,70 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+
+
+
+  <script>
+    function ModifyForm__submit(form) {
+      form.subject.value = form.subject.value.trim();
+
+      if (form.subject.value.length == 0) {
+        alert("제목을 입력해주세요.");
+        form.subject.focus();
+        return;
+      }
+
+      form.content.value = form.content.value.trim();
+
+      if (form.content.value.length == 0) {
+        alert("내용을 입력해주세요.");
+        form.content.focus();
+        return;
+      }
+
+      form.submit();
+    }
+
+  </script>
+  <section class="section section-join flex-grow flex flex-col items-center justify-center">
+    <div class="max-w-md w-full px-2 pt-4">
+      <h1 class="font-bold text-lg">도서 수정</h1>
+
+      <form th:action method="POST" th:object="${product}" class="flex flex-col gap-3" onsubmit="ModifyForm__submit(this); return false;">
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">제목</span>
+          </label>
+          <input type="text" th:field="*{subject}" class="input input-bordered">
+          <div class="field-error" th:errors="*{subject}">제목 오류</div>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">가격</span>
+          </label>
+          <input type="number" th:field="*{price}" class="input input-bordered">
+          <div class="field-error" th:errors="*{price}">가격 오류</div>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">설명</span>
+          </label>
+          <textarea th:field="*{description}" class="input-bordered border rounded border-gray-600"></textarea>
+          <div class="field-error" th:errors="*{description}">설명 오류</div>
+        </div>
+
+        <input type="submit" value="수정" class="btn btn-primary mt-5">
+
+      </form>
+
+    </div>
+  </section>
+
+</div>
+</html>

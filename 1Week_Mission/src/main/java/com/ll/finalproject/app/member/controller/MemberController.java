@@ -9,7 +9,6 @@ import com.ll.finalproject.app.member.form.MemberModifyForm;
 import com.ll.finalproject.app.member.form.MemberModifyPasswordForm;
 import com.ll.finalproject.app.member.service.MailService;
 import com.ll.finalproject.app.member.service.MemberService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
@@ -17,19 +16,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.Random;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/member")

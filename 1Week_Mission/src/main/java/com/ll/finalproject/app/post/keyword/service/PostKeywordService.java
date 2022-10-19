@@ -28,4 +28,11 @@ public class PostKeywordService {
 
         return postKeyword;
     }
+
+    public Optional<PostKeyword> findById(Long id) {
+        return keywordRepository.findById(id);
+    }
+    public Optional<PostKeyword> findByContent(String content) {
+        return keywordRepository.findByContent(content);
+    }
 }
