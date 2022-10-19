@@ -3,12 +3,14 @@ package com.ll.finalproject.app.product.contoller;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.post.entity.Post;
+import com.ll.finalproject.app.post.form.PostForm;
 import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
 import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import com.ll.finalproject.app.post.keyword.service.PostKeywordService;
 import com.ll.finalproject.app.post.service.PostService;
 import com.ll.finalproject.app.product.entity.Product;
 import com.ll.finalproject.app.product.form.ProductCreateForm;
+import com.ll.finalproject.app.product.form.ProductModifyForm;
 import com.ll.finalproject.app.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,14 +18,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -110,18 +108,42 @@ public class ProductController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}/modify")
-    public String showModify() {
+    public String showModify(@PathVariable Long id, Model model, Principal principal) {
+
+        Product product = productService.getProductById(id);
+
+        if (!product.getAuthor().getUsername().equals(principal.getName())) {
+            return "redirect:/product/%d".formatted(product.getId());
+        }
+        model.addAttribute("product", product);
         return "product/modify";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/modify")
-    public String modify() {
-        return "product/modify";
+    public String modify(@PathVariable Long id, Principal principal, @Valid @ModelAttribute("product") ProductModifyForm productModifyForm) {
+
+        Product product = productService.getProductById(id);
+
+        if (!product.getAuthor().getUsername().equals(principal.getName())) {
+            return "redirect:/product/%d".formatted(product.getId());
+        }
+
+        productService.modify(product, productModifyForm.getSubject(), productModifyForm.getPrice(), productModifyForm.getDescription());
+
+        return "redirect:/product/%d".formatted(product.getId());
     }
 
     @GetMapping("/{id}/delete")
-    public String delete() {
-        return "product/list";
+    public String delete(@PathVariable Long id, Principal principal) {
+
+        Product product = productService.getProductById(id);
+
+        if (!product.getAuthor().getUsername().equals(principal.getName())) {
+            return "redirect:/product/%d".formatted(product.getId());
+        }
+        productService.delete(product);
+
+        return "redirect:/product/list";
     }
 }

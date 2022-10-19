@@ -48,4 +48,13 @@ public class ProductService {
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
     }
+
+    public void delete(Product product) {
+        productRepository.delete(product);
+    }
+
+    public void modify(Product product, String subject, Integer price, String description) {
+        product.changeModifyForm(subject, price, description);
+        productRepository.save(product);
+    }
 }

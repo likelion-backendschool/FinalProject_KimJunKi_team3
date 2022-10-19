@@ -6,7 +6,7 @@
 <div layout:fragment="content">
 
   <div class="container">
-    <h3>게시글 수정 페이지</h3>
+    <h3>도서 수정 페이지</h3>
 
     <script>
       function ModifyForm__submit(form) {
@@ -31,7 +31,7 @@
 
     </script>
 
-    <form th:action method="POST" th:object="${post}" onsubmit="ModifyForm__submit(this); return false;">
+    <form th:action method="POST" th:object="${product}" onsubmit="ModifyForm__submit(this); return false;">
       <div>
         <span>제목</span>
         <input type="text" th:field="*{subject}" >
@@ -39,15 +39,15 @@
       </div>
 
       <div>
-        <span>내용</span>
-        <textarea th:field="*{content}" ></textarea>
-        <div class="field-error" th:errors="*{content}">내용 오류</div>
+        <span>가격</span>
+        <input type="number" th:field="*{price}" >
+        <div class="field-error" th:errors="*{price}">가격 오류</div>
       </div>
 
       <div>
-        <span>해시태그</span>
-        <input type="text" name="hashTagContents" placeholder="#태그1 #태그2"
-               th:value="${post.extra_inputValue_hashTagContents}"/>
+        <span>설명</span>
+        <textarea th:field="*{description}"></textarea>
+        <div class="field-error" th:errors="*{description}">설명 오류</div>
       </div>
 
       <div>

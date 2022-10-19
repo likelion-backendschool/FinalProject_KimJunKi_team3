@@ -38,4 +38,10 @@ public class Product extends BaseEntity {
 
     private int price;
 
+    public void changeModifyForm(String subject, int price, String description) {
+        this.subject = subject;
+        this.price = price;
+        this.description = description;
+    }
+
 }
