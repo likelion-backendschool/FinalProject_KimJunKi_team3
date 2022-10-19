@@ -3,7 +3,6 @@ package com.ll.finalproject.app.product.contoller;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.post.entity.Post;
-import com.ll.finalproject.app.post.form.PostForm;
 import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
 import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import com.ll.finalproject.app.post.keyword.service.PostKeywordService;

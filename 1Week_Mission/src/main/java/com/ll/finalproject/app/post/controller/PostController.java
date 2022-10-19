@@ -5,7 +5,6 @@ import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.post.entity.Post;
 import com.ll.finalproject.app.post.form.PostForm;
 import com.ll.finalproject.app.post.service.PostService;
-import com.ll.finalproject.app.post.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;

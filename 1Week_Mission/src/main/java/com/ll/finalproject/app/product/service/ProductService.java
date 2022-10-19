@@ -1,7 +1,6 @@
 package com.ll.finalproject.app.product.service;
 
 import com.ll.finalproject.app.member.entity.Member;
-import com.ll.finalproject.app.post.entity.Post;
 import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import com.ll.finalproject.app.product.entity.Product;
 import com.ll.finalproject.app.product.repository.ProductRepository;
@@ -52,7 +51,6 @@ public class ProductService {
     public void delete(Product product) {
         productRepository.delete(product);
     }
-
     public void modify(Product product, String subject, Integer price, String description) {
         product.changeModifyForm(subject, price, description);
         productRepository.save(product);
