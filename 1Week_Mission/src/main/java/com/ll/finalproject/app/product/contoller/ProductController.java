@@ -3,11 +3,12 @@ package com.ll.finalproject.app.product.contoller;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.post.entity.Post;
-import com.ll.finalproject.app.post.form.PostForm;
+import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
 import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import com.ll.finalproject.app.post.keyword.service.PostKeywordService;
+import com.ll.finalproject.app.post.service.PostService;
 import com.ll.finalproject.app.product.entity.Product;
-import com.ll.finalproject.app.product.form.PostCreateForm;
+import com.ll.finalproject.app.product.form.ProductCreateForm;
 import com.ll.finalproject.app.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/product")
@@ -33,6 +37,7 @@ public class ProductController {
     private final ProductService productService;
     private final MemberService memberService;
     private final PostKeywordService postKeywordService;
+    private final PostService postService;
 
     @GetMapping("/list")
     public String list(Model model) {
@@ -54,14 +59,25 @@ public class ProductController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
-    public String showCreate(Model model) {
-        model.addAttribute("postCreateForm", new PostCreateForm());
+    public String showCreate(Model model, Principal principal) {
+        Member member = memberService.findByUsername(principal.getName()).get();
+        List<Post> postList = postService.getPostByAuthor(member);
+
+        Set<PostKeyword> postKeywordSet = new HashSet<>();
+        for (Post post : postList) {
+            for (PostHashTag postHashTag : post.getPostHashTagList()) {
+                postKeywordSet.add(postHashTag.getPostKeyword());
+            }
+        }
+
+        model.addAttribute("postKeywordSet", postKeywordSet);
+        model.addAttribute("productCreateForm", new ProductCreateForm());
         return "product/create";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String create(@Valid PostCreateForm postCreateForm, BindingResult bindingResult, Principal principal) {
+    public String create(@Valid ProductCreateForm postCreateForm, BindingResult bindingResult, Principal principal) {
 
         if (bindingResult.hasErrors()) {
             return "product/create";
@@ -74,7 +90,20 @@ public class ProductController {
             return "product/create";
         }
 
-        Product product = productService.create(member, postKeyword, postCreateForm.getSubject(), postCreateForm.getDescription(), postCreateForm.getPrice());
+        // content 생성
+        List<Post> postList = postService.getPostByAuthor(member);
+        StringBuffer sb = new StringBuffer();
+        for (Post post : postList) {
+            for (PostHashTag postHashTag : post.getPostHashTagList()) {
+                if (postHashTag.getPostKeyword().getId().equals(postCreateForm.getPostKeywordId())) {
+                    sb.append(post.getContent() + "\n");
+                    break;
+                }
+            }
+        }
+
+        Product product = productService.create(member, postKeyword, postCreateForm.getSubject(),
+                sb.toString(), postCreateForm.getDescription(), postCreateForm.getPrice());
 
         return "redirect:/product/%d".formatted(product.getId());
     }

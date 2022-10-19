@@ -1,0 +1,67 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+    <h3>
+        게시글 페이지
+    </h3>
+    <div class="container">
+        <h1>글쓰기</h1>
+
+        <script>
+            function WriteForm__submit(form) {
+                form.subject.value = form.subject.value.trim();
+
+                if (form.subject.value.length == 0) {
+                    alert("제목을 입력해주세요.");
+                    form.subject.focus();
+                    return;
+                }
+
+                form.content.value = form.content.value.trim();
+
+                if (form.content.value.length == 0) {
+                    alert("내용을 입력해주세요.");
+                    form.content.focus();
+                    return;
+                }
+
+                form.submit();
+            }
+
+        </script>
+
+        <form th:action th:object="${productCreateForm}" method="POST" onsubmit="WriteForm__submit(this); return false;" >
+            <div>
+                <span>도서명</span>
+                <input type="text" th:field="*{subject}">
+                <div class="field-error" th:errors="*{subject}">도서명 오류</div>
+            </div>
+            <div>
+                <span>가격</span>
+                <input type="number" th:field="*{price}">
+                <div class="field-error" th:errors="*{price}">가격 오류</div>
+            </div>
+            <div>
+                <span>설명</span>
+                <textarea th:field="*{description}"></textarea>
+                <div class="field-error" th:errors="*{description}">설명 오류</div>
+            </div>
+            <div>
+                <div>해시태그 선택</div>
+                <select th:field="*{postKeywordId}">
+                    <option value="">==키워드 선택==</option>
+                    <option th:each="postKeyword : ${postKeywordSet}" th:value="${postKeyword.id}"
+                            th:text="${postKeyword.content}">Tag</option>
+                </select>
+            </div>
+            <div>
+                <span>글쓰기</span>
+                <input type="submit" value="작성">
+            </div>
+        </form>
+    </div>
+</div>
+</html>

@@ -20,13 +20,14 @@ public class ProductService {
 
     final private ProductRepository productRepository;
 
-    public Product create(Member member, PostKeyword postKeyword, String subject, String description, int price) {
+    public Product create(Member member, PostKeyword postKeyword, String subject, String content, String description, int price) {
 
         Product product = Product
                 .builder()
                 .author(member)
                 .postKeyword(postKeyword)
                 .subject(subject)
+                .content(content)
                 .description(description)
                 .price(price)
                 .build();

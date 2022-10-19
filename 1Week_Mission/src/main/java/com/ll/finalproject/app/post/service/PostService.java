@@ -129,4 +129,11 @@ public class PostService {
         postRepository.delete(post);
     }
 
+    public List<Post> getPostByAuthor(Member member) {
+        List<Post> posts = postRepository.findByAuthor(member).orElse(null);
+        if (posts == null) {
+            return null;
+        }
+        return posts;
+    }
 }
