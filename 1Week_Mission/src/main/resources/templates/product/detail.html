@@ -1,0 +1,50 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+  <h3>
+    게시글 상세 페이지
+  </h3>
+  <div>
+    <div>
+      <div>
+        <span>번호 : </span>
+        <span th:text="${product.id}"></span>
+      </div>
+      <div>
+        <span>제목 : </span>
+        <span th:text="${product.subject}"></span>
+      </div>
+      <div>
+        <span>작성자 : </span>
+        <span th:text="${product.author.username}"></span>
+      </div>
+      <div>
+        <span>가격 : </span>
+        <span th:text="${product.price}"></span>
+      </div>
+      <div>
+        <span>설명 : </span>
+        <span th:text="${product.description}"></span>
+      </div>
+      <div>
+        <span>생성 날짜 :</span>
+        <span th:text="${#temporals.format(product.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+      </div>
+      <div>
+        <span>수정 날짜 :</span>
+        <span th:text="${#temporals.format(product.modifyDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+      </div>
+
+      <div>
+        <a th:href="@{|/product/${product.id}/modify|}" sec:authorize="isAuthenticated()"
+           th:if="${product.author.username == #authentication.getPrincipal().getUsername()}">수정</a>
+        <a onclick="return confirm('정말로 삭제하시겠습니까?')" th:href="@{|/product/${product.id}/delete|}" sec:authorize="isAuthenticated()"
+           th:if="${product.author.username == #authentication.getPrincipal().getUsername()}">삭제</a>
+      </div>
+    </div>
+  </div>
+</div>
+</html>

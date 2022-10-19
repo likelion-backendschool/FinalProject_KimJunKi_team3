@@ -30,6 +30,8 @@ public class Product extends BaseEntity {
 
     private String subject;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
     private int price;
 
 }

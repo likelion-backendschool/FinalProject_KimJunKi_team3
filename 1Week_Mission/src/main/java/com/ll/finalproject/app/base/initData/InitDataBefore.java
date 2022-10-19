@@ -29,7 +29,7 @@ public interface InitDataBefore {
         PostKeyword keyword1 = postKeywordService.findByContent("그리움").get();
         PostKeyword keyword2 = postKeywordService.findByContent("행복").get();
 
-        Product product1 = productService.create(member1, keyword1, "그리움 도서", 12000);
-        Product product2 = productService.create(member1, keyword2, "행복 도서", 22000);
+        Product product1 = productService.create(member1, keyword1, "그리움 도서", "그리움 도서에 대한 설명", 12000);
+        Product product2 = productService.create(member1, keyword2, "행복 도서", "행복 도서에 대한 설명", 22000);
     }
 }

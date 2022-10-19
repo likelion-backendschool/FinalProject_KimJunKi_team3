@@ -9,10 +9,23 @@
   </h3>
 
   <div>
-    <a href="product/write">상품 등록</a>
+    <a href="/product/create">도서 등록</a>
   </div>
 
-
+  <div th:each="product : ${productList}">
+    <div>
+      <a th:href="@{|/product/${product.id}|}"+>
+        <span th:text="${product.id}"></span>
+        <span>|</span>
+        <span th:text="${product.subject}"></span>
+        <span>|</span>
+        <span th:text="${product.price}"></span>
+        <span>|</span>
+        <span th:text="${product.author.username}"></span>
+        <span>|</span>
+        <span th:text="${#temporals.format(product.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+      </a>
+    </div>
   </div>
 </div>
 </html>

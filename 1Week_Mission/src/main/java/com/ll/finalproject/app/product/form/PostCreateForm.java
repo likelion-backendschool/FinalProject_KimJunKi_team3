@@ -12,6 +12,8 @@ public class PostCreateForm {
 
     @NotBlank(message = "가격은 필수항목입니다.")
     private int price;
+    @NotBlank(message = "도서 설명은 필수항목입니다.")
+    private String description;
 
     @NotBlank(message = "키워드는 필수항목입니다.")
     private Long postKeywordId;
