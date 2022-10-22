@@ -93,6 +93,7 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/profile")
     public String showProfile(@AuthenticationPrincipal MemberContext memberContext, Model model) {
+
         Member member = memberService.findByUsername(memberContext.getUsername()).get();
 
         model.addAttribute("memberModifyForm", member);
