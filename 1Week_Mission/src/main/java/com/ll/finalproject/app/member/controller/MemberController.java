@@ -79,7 +79,6 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/profile")
     public String showProfile() {
-        log.info("Asdsadas = {}", rq.getMember().getEmail());
         return "member/profile";
     }
 
@@ -159,8 +158,7 @@ public class MemberController {
     public String findPassword(@Valid MemberFindPasswordForm memberFindPasswordForm, BindingResult bindingResult) {
 
         try {
-            Member member = memberService.findByUsernameAndEmail(memberFindPasswordForm.getUsername(), memberFindPasswordForm.getEmail());
-            memberService.sendTempPasswordToEmail(member);
+            memberService.sendTempPasswordToEmail(memberFindPasswordForm.getUsername(), memberFindPasswordForm.getEmail());
             bindingResult.reject(null, "이메일이 전송되었습니다.\n 1~2분의 시간이 소요될 수 있습니다.");
         } catch (MemberNotFoundException e) {
             bindingResult.reject(null, e.getMessage());

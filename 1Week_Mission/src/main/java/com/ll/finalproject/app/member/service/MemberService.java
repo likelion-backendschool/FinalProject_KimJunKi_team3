@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import net.bytebuddy.utility.RandomString;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,7 +49,6 @@ public class MemberService {
         mailService.sendJoinMail(email);
 
         return member;
-
     }
 
     @Transactional(readOnly = true)
@@ -62,11 +60,6 @@ public class MemberService {
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email).orElseThrow(
                 () -> new MemberNotFoundException("존재하지 않는 이메일입니다."));
-    }
-
-    public Member findByUsernameAndEmail(String username, String email) {
-        return memberRepository.findByUsernameAndEmail(username, email).orElseThrow(
-                () -> new MemberNotFoundException("일치하는 회원이 존재하지 않습니다."));
     }
 
     public void modify(String username, String email, String nickname) {
@@ -100,7 +93,9 @@ public class MemberService {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
-    public void sendTempPasswordToEmail(Member member) {
+    public void sendTempPasswordToEmail(String username, String email) {
+        Member member = memberRepository.findByUsernameAndEmail(username, email).orElseThrow(
+                () -> new MemberNotFoundException("일치하는 회원이 존재하지 않습니다."));
 
         // 10자리수의 임시 비밀번호 생성
         String tempPassword = new RandomString(10, new Random()).nextString();
