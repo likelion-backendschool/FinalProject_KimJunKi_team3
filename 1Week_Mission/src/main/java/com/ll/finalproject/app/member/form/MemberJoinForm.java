@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class MemberJoinForm {
-
     @NotBlank(message = "아이디는 필수항목입니다.")
     private String username;
 

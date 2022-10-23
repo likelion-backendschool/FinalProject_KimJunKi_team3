@@ -2,9 +2,7 @@ package com.ll.finalproject.app.member.controller;
 
 import com.ll.finalproject.app.base.rq.Rq;
 import com.ll.finalproject.app.member.entity.Member;
-import com.ll.finalproject.app.member.exception.JoinEmailDuplicatedException;
-import com.ll.finalproject.app.member.exception.JoinUsernameDuplicatedException;
-import com.ll.finalproject.app.member.exception.MemberNotFoundException;
+import com.ll.finalproject.app.member.exception.*;
 import com.ll.finalproject.app.member.form.*;
 import com.ll.finalproject.app.member.service.MemberService;
 
@@ -121,8 +119,11 @@ public class MemberController {
             bindingResult.rejectValue("newPassword",null,"패스워드와 패스워드 확인이 불일치합니다.");
             return "member/modifyPassword";
         }
-
-        memberService.modifyPassword(principal.getName(), memberModifyPasswordForm.getOldPassword(), memberModifyPasswordForm.getNewPassword());
+        try {
+            memberService.modifyPassword(principal.getName(), memberModifyPasswordForm.getOldPassword(), memberModifyPasswordForm.getNewPassword());
+        } catch (PasswordNotSameException e) {
+            bindingResult.rejectValue("oldPassword",null,e.getMessage());
+        }
 
         return "redirect:/member/profile";
     }
@@ -183,7 +184,11 @@ public class MemberController {
 
         Member member = rq.getMember();
 
-        memberService.beAuthor(member, memberBeAuthorForm.getNickname());
+        try {
+            memberService.beAuthor(member, memberBeAuthorForm.getNickname());
+        } catch (AlreadyExistsNicknameException e) {
+            bindingResult.rejectValue("nickname",null, e.getMessage());
+        }
 
         return "redirect:/member/profile";
     }

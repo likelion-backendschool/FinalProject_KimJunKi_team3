@@ -27,9 +27,10 @@ public class Member extends BaseEntity {
     private String password;
     @Column(unique = true)
     private String email;
+    @Column(unique = true)
     private String nickname;
-
     private int authLevel;
+
     public void changeEmailAndNickname(String email, String nickname) {
         this.email = email;
         this.nickname = nickname;
@@ -42,9 +43,11 @@ public class Member extends BaseEntity {
     public void changePassword(String password) {
         this.password = password;
     }
+
     public void changeEmail(String email) {
         this.email = email;
     }
+
     public List<GrantedAuthority> genAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_MEMBER"));
@@ -56,6 +59,4 @@ public class Member extends BaseEntity {
 
         return authorities;
     }
-
-
 }
