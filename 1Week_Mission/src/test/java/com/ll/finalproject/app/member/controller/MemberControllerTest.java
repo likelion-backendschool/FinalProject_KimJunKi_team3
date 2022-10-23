@@ -35,10 +35,6 @@ class MemberControllerTest {
     @Autowired
     private MemberService memberService;
 
-    @Autowired
-    private TestInitData testInitData;
-
-
     @Test
     @DisplayName("정상적인 회원가입")
     void t1() throws Exception {
