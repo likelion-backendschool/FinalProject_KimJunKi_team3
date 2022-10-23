@@ -8,6 +8,7 @@ import com.ll.finalproject.app.security.dto.MemberContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import net.bytebuddy.utility.RandomString;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -58,15 +60,18 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member findByEmail(String email) {
-        return memberRepository.findByEmail(email).orElseThrow(() -> {
-            throw new MemberNotFoundException("존재하지 않는 이메일입니다.");
-        });
+        return memberRepository.findByEmail(email).orElseThrow(
+                () -> new MemberNotFoundException("존재하지 않는 이메일입니다."));
+    }
+
+    public Member findByUsernameAndEmail(String username, String email) {
+        return memberRepository.findByUsernameAndEmail(username, email).orElseThrow(
+                () -> new MemberNotFoundException("일치하는 회원이 존재하지 않습니다."));
     }
 
     public void modify(String username, String email, String nickname) {
         Member member = memberRepository.findByUsername(username).orElseThrow(
-                () -> new MemberNotFoundException("존재하지 않는 회원입니다.")
-        );
+                () -> new MemberNotFoundException("존재하지 않는 회원입니다."));
 
         if (StringUtils.hasText(nickname)) {
             member.changeEmailAndNickname(email, nickname);
@@ -80,8 +85,7 @@ public class MemberService {
 
     public void modifyPassword(String username, String oldPassword, String newPassword) {
         Member member = memberRepository.findByUsername(username).orElseThrow(
-                () -> new MemberNotFoundException("존재하지 않는 회원입니다.")
-        );
+                () -> new MemberNotFoundException("존재하지 않는 회원입니다."));
 
         if (!checkOldPassword(oldPassword, member.getPassword())) {
             throw new PasswordNotSameException("기존 비밀번호와 일치하지 않습니다.");
@@ -89,12 +93,22 @@ public class MemberService {
 
         member.changePassword(passwordEncoder.encode(newPassword));
         memberRepository.save(member);
-        mailService.sendTempPasswordMail(member.getEmail(), newPassword);
     }
 
     public boolean checkOldPassword(String rawPassword, String encodedPassword) {
         log.info("oldPassword = {} : password = {}", rawPassword, encodedPassword);
         return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+
+    public void sendTempPasswordToEmail(Member member) {
+
+        // 10자리수의 임시 비밀번호 생성
+        String tempPassword = new RandomString(10, new Random()).nextString();
+
+        member.changePassword(passwordEncoder.encode(tempPassword));
+        memberRepository.save(member);
+
+        mailService.sendTempPasswordMail(member.getEmail(), tempPassword);
     }
 
     public Member beAuthor(Member member, String nickname) {
