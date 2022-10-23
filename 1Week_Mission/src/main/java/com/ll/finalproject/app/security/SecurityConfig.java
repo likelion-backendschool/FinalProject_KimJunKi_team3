@@ -25,6 +25,8 @@ public class SecurityConfig {
                 )
                 .authorizeRequests(
                         authorizeRequests -> authorizeRequests
+                                .antMatchers("/product/**")
+                                .hasRole("AUTHOR")
                                 .antMatchers("/**")
                                 .permitAll()
                 )
