@@ -1,10 +1,7 @@
 package com.ll.finalproject.app.member.service;
 
 import com.ll.finalproject.app.member.entity.Member;
-import com.ll.finalproject.app.member.exception.AlreadyExistsNicknameException;
-import com.ll.finalproject.app.member.exception.JoinEmailDuplicatedException;
-import com.ll.finalproject.app.member.exception.JoinUsernameDuplicatedException;
-import com.ll.finalproject.app.member.exception.MemberNotFoundException;
+import com.ll.finalproject.app.member.exception.*;
 import com.ll.finalproject.app.member.repository.MemberRepository;
 import com.ll.finalproject.app.security.dto.MemberContext;
 
@@ -79,15 +76,23 @@ public class MemberService {
         forceAuthentication(member); // 세션 갱신
     }
 
-    public void modifyPassword(Member member, String tempPassword) {
-        member.changePassword(passwordEncoder.encode(tempPassword));
+    public void modifyPassword(String username, String oldPassword, String newPassword) {
+        Member member = memberRepository.findByUsername(username).orElseThrow(
+                () -> new MemberNotFoundException("존재하지 않는 회원입니다.")
+        );
+
+        if (!checkOldPassword(oldPassword, member.getPassword())) {
+            throw new PasswordNotSameException("기존 비밀번호와 일치하지 않습니다.");
+        }
+
+        member.changePassword(passwordEncoder.encode(newPassword));
         memberRepository.save(member);
-        mailService.sendTempPasswordMail(member.getEmail(), tempPassword);
+        mailService.sendTempPasswordMail(member.getEmail(), newPassword);
     }
 
-    public boolean checkOldPassword(String oldPassword, String password) {
-        log.info("oldPassword = {} : password = {}", oldPassword, password);
-        return passwordEncoder.matches(oldPassword, password);
+    public boolean checkOldPassword(String rawPassword, String encodedPassword) {
+        log.info("oldPassword = {} : password = {}", rawPassword, encodedPassword);
+        return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
     public Member beAuthor(Member member, String nickname) {

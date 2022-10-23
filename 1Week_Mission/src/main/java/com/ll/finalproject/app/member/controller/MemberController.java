@@ -109,8 +109,7 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modifyPassword")
-    public String showModifyPassword(Model model) {
-        model.addAttribute("memberModifyPasswordForm", new MemberModifyPasswordForm());
+    public String showModifyPassword(@ModelAttribute MemberModifyPasswordForm memberModifyPasswordForm) {
         return "member/modifyPassword";
     }
 
@@ -122,21 +121,12 @@ public class MemberController {
             return "member/modifyPassword";
         }
 
-        Member member = memberService.findByUsername(principal.getName()).get();
-
-        log.info("memberModifyPasswordForm = {}", memberModifyPasswordForm);
-
         if (!memberModifyPasswordForm.getNewPassword().equals(memberModifyPasswordForm.getNewPasswordConfirm())) {
             bindingResult.rejectValue("newPassword",null,"패스워드와 패스워드 확인이 불일치합니다.");
             return "member/modifyPassword";
         }
 
-        if (!memberService.checkOldPassword(memberModifyPasswordForm.getOldPassword(), member.getPassword())) {
-            bindingResult.rejectValue("oldPassword",null,"기존 패스워드가 불일치합니다.");
-            return "member/modifyPassword";
-        }
-
-        memberService.modifyPassword(member, memberModifyPasswordForm.getNewPassword());
+        memberService.modifyPassword(principal.getName(), memberModifyPasswordForm.getOldPassword(), memberModifyPasswordForm.getNewPassword());
 
         return "redirect:/member/profile";
     }
@@ -187,7 +177,7 @@ public class MemberController {
         // 10자리수의 임시 비밀번호 생성
         String tempPassword = new RandomString(10, new Random()).nextString();
         log.info("rs = {}", tempPassword);
-        memberService.modifyPassword(member, tempPassword);
+//        memberService.modifyPassword(member, tempPassword);
 
         bindingResult.reject(null, "이메일이 전송되었습니다.\n 1~2분의 시간이 소요될 수 있습니다.");
 
