@@ -32,9 +32,8 @@ class MemberServiceTest {
         String username = "user123";
         String password = "1234!";
         String email = "user123@test.com";
-        String nickname = "유저123";
 
-        memberService.join(username, password, email, nickname);
+        memberService.join(username, password, email);
         Member foundMember = memberService.findByUsername(username).get();
 
         assertThat(foundMember.getCreateDate()).isNotNull();
@@ -45,10 +44,10 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("동일한 닉네임으로 회원가입을 하는 경우 JoinUsernameDuplicatedException 예외가 발생한다.")
+    @DisplayName("동일한 아이디로 회원가입을 하는 경우 JoinUsernameDuplicatedException 예외가 발생한다.")
     void t2() {
         assertThrows(JoinUsernameDuplicatedException.class, () -> {
-            Member member = memberService.join("user1", "1234", "user123@naver.com", null);
+            Member member = memberService.join("user1", "1234", "user123@naver.com");
         });
     }
 
@@ -56,7 +55,7 @@ class MemberServiceTest {
     @DisplayName("동일한 이메일로 회원가입을 하는 경우 JoinUsernameDuplicatedException 예외가 발생한다.")
     void t3() {
         assertThrows(JoinEmailDuplicatedException.class, () -> {
-            Member member = memberService.join("user123", "1234", "user1@test.com", null);
+            Member member = memberService.join("user123", "1234", "user1@test.com");
         });
     }
 }

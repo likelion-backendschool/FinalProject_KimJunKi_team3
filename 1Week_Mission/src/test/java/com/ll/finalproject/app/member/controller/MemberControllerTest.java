@@ -43,7 +43,6 @@ class MemberControllerTest {
                         .param("password","1234!")
                         .param("passwordConfirm","1234!")
                         .param("email","user123@naver.com")
-                        .param("nickname","")
                 ).andDo(print());
 
         // THEN
@@ -67,7 +66,6 @@ class MemberControllerTest {
                         .param("password","1234!")
                         .param("passwordConfirm","1234!")
                         .param("email","user123@naver.com")
-                        .param("nickname","")
                 ).andDo(print());
 
         // THEN

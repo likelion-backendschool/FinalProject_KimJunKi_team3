@@ -1,12 +1,10 @@
 package com.ll.finalproject.app.member.controller;
 
+import com.ll.finalproject.app.base.rq.Rq;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.exception.JoinEmailDuplicatedException;
 import com.ll.finalproject.app.member.exception.JoinUsernameDuplicatedException;
-import com.ll.finalproject.app.member.form.MemberFindPasswordForm;
-import com.ll.finalproject.app.member.form.MemberJoinForm;
-import com.ll.finalproject.app.member.form.MemberModifyForm;
-import com.ll.finalproject.app.member.form.MemberModifyPasswordForm;
+import com.ll.finalproject.app.member.form.*;
 import com.ll.finalproject.app.member.service.MailService;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.security.dto.MemberContext;
@@ -18,7 +16,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -35,6 +35,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final MailService mailService;
+    private final Rq rq;
 
     @PreAuthorize("isAnonymous()")
     @GetMapping("/login")
@@ -75,8 +76,7 @@ public class MemberController {
         }
 
         try {
-            memberService.join(memberJoinForm.getUsername(), memberJoinForm.getPassword(),
-                    memberJoinForm.getEmail(), memberJoinForm.getNickname());
+            memberService.join(memberJoinForm.getUsername(), memberJoinForm.getPassword(), memberJoinForm.getEmail());
         } catch (JoinUsernameDuplicatedException e) {
             bindingResult.rejectValue("username", null, e.getMessage());
             return "member/join";
@@ -212,5 +212,26 @@ public class MemberController {
         bindingResult.reject(null, "이메일이 전송되었습니다.\n 1~2분의 시간이 소요될 수 있습니다.");
 
         return "member/findPassword";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/beAuthor")
+    public String showBeAuthor(@ModelAttribute("memberBeAuthorForm") MemberBeAuthorForm memberBeAuthorForm) {
+        return "member/beAuthor";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/beAuthor")
+    public String beAuthor(@Validated MemberBeAuthorForm memberBeAuthorForm, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "member/beAuthor";
+        }
+
+        Member member = rq.getMember();
+
+        memberService.beAuthor(member, memberBeAuthorForm.getNickname());
+
+        return "redirect:/member/profile";
     }
 }
