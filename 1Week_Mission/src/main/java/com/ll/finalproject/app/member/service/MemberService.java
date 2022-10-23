@@ -25,8 +25,8 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 
     public Member join(String username, String password, String email) {
 
@@ -37,6 +37,7 @@ public class MemberService {
                     .email(email)
                     .build();
             memberRepository.save(member);
+            mailService.sendJoinMail(email);
 
             return member;
 
@@ -64,9 +65,10 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public void modifyPassword(Member member, String newPassword) {
-        member.changePassword(passwordEncoder.encode(newPassword));
+    public void modifyPassword(Member member, String tempPassword) {
+        member.changePassword(passwordEncoder.encode(tempPassword));
         memberRepository.save(member);
+        mailService.sendTempPasswordMail(member.getEmail(), tempPassword);
     }
 
     public boolean checkOldPassword(String oldPassword, String password) {

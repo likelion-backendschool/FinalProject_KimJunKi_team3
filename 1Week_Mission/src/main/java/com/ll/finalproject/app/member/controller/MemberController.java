@@ -34,7 +34,6 @@ import java.util.Random;
 public class MemberController {
 
     private final MemberService memberService;
-    private final MailService mailService;
     private final Rq rq;
 
     @PreAuthorize("isAnonymous()")
@@ -44,27 +43,19 @@ public class MemberController {
         if (uri != null && !uri.contains("/member/login")) {
             request.getSession().setAttribute("prevPage", uri);
         }
+
         return "member/login";
     }
 
     @PreAuthorize("isAnonymous()")
-    @PostMapping("/login")
-    public String login() {
-        return "redirect:/";
-    }
-
-    @PreAuthorize("isAnonymous()")
     @GetMapping("/join")
-    public String showJoin(Model model) {
-        model.addAttribute("memberJoinForm", new MemberJoinForm());
+    public String showJoin(@ModelAttribute MemberJoinForm memberJoinForm) {
         return "member/join";
     }
 
     @PreAuthorize("isAnonymous()")
     @PostMapping("/join")
     public String join(@Valid MemberJoinForm memberJoinForm, BindingResult bindingResult) {
-
-        log.info("memberJoinForm = {}", memberJoinForm);
 
         if (bindingResult.hasErrors()) {
             return "member/join";
@@ -85,18 +76,12 @@ public class MemberController {
             return "member/join";
         }
 
-        mailService.sendJoinMail(memberJoinForm.getEmail());
-
         return "redirect:/";
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/profile")
-    public String showProfile(@AuthenticationPrincipal MemberContext memberContext, Model model) {
-
-        Member member = memberService.findByUsername(memberContext.getUsername()).get();
-
-        model.addAttribute("memberModifyForm", member);
+    public String showProfile() {
         return "member/profile";
     }
 
@@ -206,8 +191,6 @@ public class MemberController {
         String tempPassword = new RandomString(10, new Random()).nextString();
         log.info("rs = {}", tempPassword);
         memberService.modifyPassword(member, tempPassword);
-
-        mailService.sendTempPasswordMail(member.getEmail(), tempPassword);
 
         bindingResult.reject(null, "이메일이 전송되었습니다.\n 1~2분의 시간이 소요될 수 있습니다.");
 
