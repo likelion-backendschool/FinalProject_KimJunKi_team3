@@ -6,14 +6,11 @@ import com.ll.finalproject.app.member.exception.JoinEmailDuplicatedException;
 import com.ll.finalproject.app.member.exception.JoinUsernameDuplicatedException;
 import com.ll.finalproject.app.member.exception.MemberNotFoundException;
 import com.ll.finalproject.app.member.form.*;
-import com.ll.finalproject.app.member.service.MailService;
 import com.ll.finalproject.app.member.service.MemberService;
-import com.ll.finalproject.app.security.dto.MemberContext;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.utility.RandomString;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Random;
 
 @Controller
 @RequestMapping("/member")
@@ -169,6 +165,7 @@ public class MemberController {
         } catch (MemberNotFoundException e) {
             bindingResult.reject(null, e.getMessage());
         }
+
         return "member/findPassword";
     }
 

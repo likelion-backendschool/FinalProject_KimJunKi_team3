@@ -33,24 +33,24 @@ public class MemberService {
 
     public Member join(String username, String password, String email) {
 
-        try {
-            Member member = Member.builder()
-                    .username(username)
-                    .password(passwordEncoder.encode(password))
-                    .email(email)
-                    .build();
-            memberRepository.save(member);
-            mailService.sendJoinMail(email);
-
-            return member;
-
-        } catch (DataIntegrityViolationException e) {
-            if (memberRepository.existsByUsername(username)) {
-                throw new JoinUsernameDuplicatedException("이미 사용중인 아이디 입니다.");
-            } else {
-                throw new JoinEmailDuplicatedException("이미 사용중인 이메일 입니다.");
-            }
+        if (memberRepository.existsByUsername(username)) {
+            throw new JoinUsernameDuplicatedException("이미 사용중인 아이디 입니다.");
         }
+
+        if (memberRepository.existsByEmail(email)) {
+            throw new JoinEmailDuplicatedException("이미 사용중인 이메일 입니다.");
+        }
+
+        Member member = Member.builder()
+                .username(username)
+                .password(passwordEncoder.encode(password))
+                .email(email)
+                .build();
+        memberRepository.save(member);
+        mailService.sendJoinMail(email);
+
+        return member;
+
     }
 
     @Transactional(readOnly = true)
