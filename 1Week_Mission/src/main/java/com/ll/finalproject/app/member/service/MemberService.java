@@ -89,7 +89,6 @@ public class MemberService {
     }
 
     public boolean checkOldPassword(String rawPassword, String encodedPassword) {
-        log.info("oldPassword = {} : password = {}", rawPassword, encodedPassword);
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
