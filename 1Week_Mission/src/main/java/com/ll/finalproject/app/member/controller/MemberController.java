@@ -4,6 +4,7 @@ import com.ll.finalproject.app.base.rq.Rq;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.exception.JoinEmailDuplicatedException;
 import com.ll.finalproject.app.member.exception.JoinUsernameDuplicatedException;
+import com.ll.finalproject.app.member.exception.MemberNotFoundException;
 import com.ll.finalproject.app.member.form.*;
 import com.ll.finalproject.app.member.service.MailService;
 import com.ll.finalproject.app.member.service.MemberService;
@@ -133,22 +134,21 @@ public class MemberController {
 
     @PreAuthorize("isAnonymous()")
     @GetMapping("/findUsername")
-    public String showFindUsername(Model model) {
-//        model.addAttribute("memberModifyForm", new MemberModifyForm());
+    public String showFindUsername(@ModelAttribute MemberModifyForm memberModifyForm) {
         return "member/findUsername";
     }
 
     @PreAuthorize("isAnonymous()")
     @PostMapping("/findUsername")
-    public String findUsername(MemberModifyForm memberModifyForm, BindingResult bindingResult) {
+    public String findUsername(@Valid MemberModifyForm memberModifyForm, BindingResult bindingResult) {
 
-        Member member = memberService.findByEmail(memberModifyForm.getEmail()).orElse(null);
-        if (member == null) {
-            bindingResult.rejectValue("email",null, "존재하지 않는 이메일입니다.");
-            return "member/findUsername";
+        try {
+            Member member = memberService.findByEmail(memberModifyForm.getEmail());
+            bindingResult.reject(null, "아이디는 " + member.getUsername() + "입니다.");
+        } catch (MemberNotFoundException e) {
+            bindingResult.rejectValue("email",null, e.getMessage());
         }
 
-        bindingResult.reject(null, "아이디는 " + member.getUsername() + "입니다.");
         return "member/findUsername";
     }
 

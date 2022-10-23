@@ -57,8 +57,10 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Member> findByEmail(String email) {
-        return memberRepository.findByEmail(email);
+    public Member findByEmail(String email) {
+        return memberRepository.findByEmail(email).orElseThrow(() -> {
+            throw new MemberNotFoundException("존재하지 않는 이메일입니다.");
+        });
     }
 
     public void modify(String username, String email, String nickname) {
