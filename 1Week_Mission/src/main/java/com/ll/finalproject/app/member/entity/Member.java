@@ -39,11 +39,12 @@ public class Member extends BaseEntity {
         this.nickname = nickname;
     }
 
-
     public void changePassword(String password) {
         this.password = password;
     }
-
+    public void changeEmail(String email) {
+        this.email = email;
+    }
     public List<GrantedAuthority> genAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_MEMBER"));
@@ -55,4 +56,6 @@ public class Member extends BaseEntity {
 
         return authorities;
     }
+
+
 }

@@ -7,8 +7,10 @@ import com.ll.finalproject.app.member.exception.JoinUsernameDuplicatedException;
 import com.ll.finalproject.app.member.exception.MemberNotFoundException;
 import com.ll.finalproject.app.member.repository.MemberRepository;
 import com.ll.finalproject.app.security.dto.MemberContext;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -16,12 +18,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -60,9 +64,19 @@ public class MemberService {
         return memberRepository.findByEmail(email);
     }
 
-    public void modify(Member member, String email, String nickname) {
-        member.changeEmailAndNickname(email, nickname);
+    public void modify(String username, String email, String nickname) {
+        Member member = memberRepository.findByUsername(username).orElseThrow(
+                () -> new MemberNotFoundException("존재하지 않는 회원입니다.")
+        );
+
+        if (StringUtils.hasText(nickname)) {
+            member.changeEmailAndNickname(email, nickname);
+        } else {
+            member.changeEmail(email);
+        }
+
         memberRepository.save(member);
+        forceAuthentication(member); // 세션 갱신
     }
 
     public void modifyPassword(Member member, String tempPassword) {
@@ -92,7 +106,7 @@ public class MemberService {
         return member;
     }
 
-    // 나중에 로직 알아보자
+    // 세션 갱신
     private void forceAuthentication(Member member) {
         MemberContext memberContext = new MemberContext(member, member.genAuthorities());
 

@@ -82,17 +82,16 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/profile")
     public String showProfile() {
+        log.info("Asdsadas = {}", rq.getMember().getEmail());
         return "member/profile";
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify")
-    public String showModify(Principal principal, Model model) {
-        log.info("principal = {}", principal.getName());
+    public String showModify(Model model) {
+        Member member = rq.getMember();
 
-        Member member = memberService.findByUsername(principal.getName()).get();
-
-        model.addAttribute("memberModifyForm", member);
+        model.addAttribute("memberModifyForm", new MemberModifyForm(member.getEmail(), member.getNickname()));
         return "member/modify";
     }
 
@@ -104,9 +103,7 @@ public class MemberController {
             return "member/modify";
         }
 
-        Member member = memberService.findByUsername(principal.getName()).get();
-
-        memberService.modify(member, memberModifyForm.getEmail(), memberModifyForm.getNickname());
+        memberService.modify(principal.getName(), memberModifyForm.getEmail(), memberModifyForm.getNickname());
         return "redirect:/member/profile";
     }
 
@@ -147,7 +144,7 @@ public class MemberController {
     @PreAuthorize("isAnonymous()")
     @GetMapping("/findUsername")
     public String showFindUsername(Model model) {
-        model.addAttribute("memberModifyForm", new MemberModifyForm());
+//        model.addAttribute("memberModifyForm", new MemberModifyForm());
         return "member/findUsername";
     }
 
