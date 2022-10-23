@@ -175,12 +175,17 @@ class MemberControllerTest {
     @DisplayName("user1의 비밀번호 변경, 기존 비밀번호가 틀렸을 경우 PasswordNotSameException 예외 발생.")
     @WithUserDetails("user1")
     void t8() throws Exception {
-        assertThatThrownBy(() -> {
-            mvc.perform(post("/member/modifyPassword")
+        ResultActions resultActions = mvc.perform(post("/member/modifyPassword")
                             .param("oldPassword", "123123")
                             .param("newPassword", "123")
                             .param("newPasswordConfirm", "123"));
-        }).hasCause(new PasswordNotSameException("기존 비밀번호와 일치하지 않습니다."));
+        // THEN
+        resultActions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(handler().handlerType(MemberController.class))
+                .andExpect(handler().methodName("modifyPassword"))
+                .andExpect(model().hasErrors())
+                .andExpect(model().attributeHasFieldErrors("memberModifyPasswordForm", "oldPassword"));
     }
 
     @Test

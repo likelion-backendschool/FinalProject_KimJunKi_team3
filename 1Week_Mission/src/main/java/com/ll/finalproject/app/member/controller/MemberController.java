@@ -122,7 +122,8 @@ public class MemberController {
         try {
             memberService.modifyPassword(principal.getName(), memberModifyPasswordForm.getOldPassword(), memberModifyPasswordForm.getNewPassword());
         } catch (PasswordNotSameException e) {
-            bindingResult.rejectValue("oldPassword",null,e.getMessage());
+            bindingResult.rejectValue("oldPassword",null, e.getMessage());
+            return "member/modifyPassword";
         }
 
         return "redirect:/member/profile";
@@ -188,6 +189,7 @@ public class MemberController {
             memberService.beAuthor(member, memberBeAuthorForm.getNickname());
         } catch (AlreadyExistsNicknameException e) {
             bindingResult.rejectValue("nickname",null, e.getMessage());
+            return "member/beAuthor";
         }
 
         return "redirect:/member/profile";
