@@ -21,7 +21,7 @@ public class PostHashTagService {
     private final PostHashTagRepository postHashTagRepository;
 
     public void applyPostHashTags(Post post, String hashTagContents) {
-        List<PostHashTag> oldPostHashTags = getPostHashTags(post);
+        List<PostHashTag> oldPostHashTags = getPostHashTags(post); // 수정 전의 태크가 있는 경우
 
         List<String> keywordContents = Arrays.stream(hashTagContents.split("#"))
                 .map(String::trim)
@@ -29,7 +29,7 @@ public class PostHashTagService {
                 .collect(Collectors.toList());
 
         List<PostHashTag> needToDelete = new ArrayList<>();
-
+        // 수정 전의 태그가 수정 후의 태그에 더 이상 존재하지 않을 경우 삭제
         for (PostHashTag oldPostHashTag : oldPostHashTags) {
             boolean contains = keywordContents.stream().anyMatch(s -> s.equals(oldPostHashTag.getPostKeyword().getContent()));
 
@@ -58,6 +58,7 @@ public class PostHashTagService {
 
         PostHashTag postHashTag = PostHashTag.builder()
                 .post(post)
+                .member(post.getAuthor())
                 .postKeyword(postKeyword)
                 .build();
 

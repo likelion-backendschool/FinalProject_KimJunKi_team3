@@ -55,28 +55,27 @@ public class PostService {
     }
 
     public List<Post> getPostList() {
-        return postRepository.findAll();
+        List<Post> posts = postRepository.findAllByOrderByIdDesc();
+        loadForPrintData(posts);
+        return posts;
     }
 
     public List<Post> getPostListByPostKeyword(Member member, String kw) {
+        // member 가 썼던 글 중에 kw 태그가 들어간 PostHashTag 데이터 목록
+        List<PostHashTag> postHashTags = postHashTagRepository.findAllByMemberIdAndPostKeyword_contentOrderByPost_idDesc(member.getId(), kw);
 
-        PostKeyword postKeyword = postKeywordRepository.findByContent(kw).orElse(null);
-        if (postKeyword == null) {
+        log.info("postHashTags = {}", postHashTags);
+
+        if (postHashTags == null || postHashTags.size() == 0) {
             return null;
         }
-        List<PostHashTag> postHashTags = postHashTagRepository.findByPostKeyword(postKeyword).orElse(null);
-        if (postHashTags == null) {
-            return null;
-        }
+        // PostHashTag 필드의 Post만 가져옴
+        List<Post> posts = postHashTags.stream()
+                .map(PostHashTag::getPost)
+                .collect(toList());
 
-        List<Post> postLists = new ArrayList<>();
-        for (PostHashTag postHashTag : postHashTags) {
-            if (postHashTag.getPost().getAuthor() == member) {
-                postLists.add(postHashTag.getPost());
-            }
-        }
-
-        return postLists;
+        loadForPrintData(posts);
+        return posts;
     }
     public Post getPostById(Long id) {
         Post post = findById(id).orElse(null);

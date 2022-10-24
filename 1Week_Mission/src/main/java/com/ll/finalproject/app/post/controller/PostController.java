@@ -1,5 +1,6 @@
 package com.ll.finalproject.app.post.controller;
 
+import com.ll.finalproject.app.base.rq.Rq;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.post.entity.Post;
@@ -26,29 +27,24 @@ public class PostController {
 
     private final PostService postService;
     private final MemberService memberService;
+    private final Rq rq;
 
     @GetMapping("/list")
     public String list(Model model) {
-        List<Post> postList = postService.getPostList();
+        List<Post> posts = postService.getPostList();
 
-        postService.loadForPrintData(postList);
-
-        model.addAttribute("postList", postList);
+        model.addAttribute("posts", posts);
         return "post/list";
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/keyword/list")
-    public String list(@RequestParam("kw") String kw, Principal principal, Model model) {
+    public String list(@RequestParam("kw") String kw, Model model) {
+        Member member = rq.getMember();
 
-        Member member = memberService.findByUsername(principal.getName()).get();
-        List<Post> postList = postService.getPostListByPostKeyword(member, kw);
-        if (postList == null) {
-            return "post/keyword";
-        }
-        postService.loadForPrintData(postList);
+        List<Post> posts = postService.getPostListByPostKeyword(member, kw);
 
-        model.addAttribute("postList", postList);
+        model.addAttribute("posts", posts);
         return "post/keyword";
     }
 
@@ -66,20 +62,19 @@ public class PostController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/write")
-    public String showWrite(Model model) {
-        model.addAttribute("postForm", new PostForm());
+    public String showWrite(@ModelAttribute PostForm postForm) {
         return "post/write";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/write")
-    public String write(@Valid PostForm postForm, BindingResult bindingResult, Principal principal) {
+    public String write(@Valid PostForm postForm, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             return "post/write";
         }
 
-        Member member = memberService.findByUsername(principal.getName()).get();
+        Member member = rq.getMember();
         Post post = postService.write(member, postForm.getSubject(), postForm.getContent(), postForm.getHashTagContents());
 
         return "redirect:/post/%d".formatted(post.getId());
