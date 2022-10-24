@@ -1,0 +1,75 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+  <script>
+    let MemberJoin__submitDone = false;
+
+    function MemberJoin__submit(form) {
+      if (MemberJoin__submitDone) {
+        return;
+      }
+
+      form.password.value = form.password.value.trim();
+      form.passwordConfirm.value = form.passwordConfirm.value.trim();
+
+      if (form.password.value != form.passwordConfirm.value) {
+        alert("비밀번호가 다릅니다.");
+        form.password.focus();
+
+        return;
+      }
+
+      form.submit();
+      MemberJoin__submitDone = true;
+    }
+  </script>
+
+  <section class="section section-join flex-grow flex flex-col items-center justify-center">
+    <div class="max-w-md w-full px-2 pt-4">
+      <h1 class="font-bold text-lg">회원가입</h1>
+
+      <form th:action th:object="${memberJoinForm}" method="post" class="flex flex-col gap-3" onsubmit="MemberJoin__submit(this); return false;">
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">아이디</span>
+          </label>
+          <input type="text" th:field="*{username}" placeholder="아이디를 입력해주세요." class="input input-bordered">
+          <div class="field-error" th:errors="*{username}">아이디 오류</div>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">패스워드</span>
+          </label>
+          <input type="password" th:field="*{password}" placeholder="비밀번호를 입력해주세요." class="input input-bordered">
+          <div class="field-error" th:errors="*{password}">패스워드 오류</div>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">패스워드 확인</span>
+          </label>
+          <input type="password" th:field="*{passwordConfirm}" placeholder="비밀번호 확인을 입력해주세요." class="input input-bordered">
+          <div class="field-error" th:errors="*{passwordConfirm}">패스워드 오류</div>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">이메일</span>
+          </label>
+          <input type="email" th:field="*{email}" placeholder="이메일을 입력해주세요." class="input input-bordered">
+          <div class="field-error" th:errors="*{email}">이메일 오류</div>
+        </div>
+
+        <input type="submit" value="회원가입" class="btn btn-secondary btn-outline"/>
+      </form>
+
+    </div>
+  </section>
+
+</div>
+</html>

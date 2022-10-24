@@ -1,0 +1,66 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+  <section class="section section-write container mx-auto">
+
+    <div class="px-2 pt-4">
+      <h1 class="font-bold text-lg">도서</h1>
+
+      <div class="flex flex-col gap-3 mt-3">
+        <div>
+          <div class="badge badge-primary">
+            번호
+          </div>
+          <span th:text="${product.id}"></span>
+          <div class="badge badge-primary">
+            제목
+          </div>
+          <span th:text="${product.subject}"></span>
+        </div>
+        <div>
+          <div class="badge badge-primary">
+            작성자
+          </div>
+          <span th:text="${product.author.username}"></span>
+        </div>
+        <div>
+          <div class="badge badge-primary">
+            가격
+          </div>
+          <span th:text="${product.author.username}"></span>
+        </div>
+        <div>
+          <div class="badge badge-primary">
+            생성 날짜
+          </div>
+          <span th:text="${#temporals.format(product.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+
+          <div class="badge badge-primary">
+            수정 날짜
+          </div>
+          <span th:text="${#temporals.format(product.modifyDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+        </div>
+        <div>
+          <div class="badge badge-primary">
+            도서 설명
+          </div>
+          <span th:text="${product.description}"></span>
+        </div>
+
+        <div>
+          <a th:href="@{|/product/${product.id}/modify|}" sec:authorize="isAuthenticated()" class="btn btn-primary"
+             th:if="${product.author.username == #authentication.getPrincipal().getUsername()}">수정</a>
+          <a onclick="return confirm('정말로 삭제하시겠습니까?')" th:href="@{|/product/${product.id}/delete|}" sec:authorize="isAuthenticated()" class="btn btn-primary"
+             th:if="${product.author.username == #authentication.getPrincipal().getUsername()}">삭제</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+</html>

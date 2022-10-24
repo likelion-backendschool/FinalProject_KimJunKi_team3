@@ -1,0 +1,54 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+  <script>
+    let MemberEmail__submitDone = false;
+
+    function MemberEmail__submit(form) {
+      if (MemberEmail__submitDone) {
+        return;
+      }
+
+      form.email.value = form.email.value.trim();
+
+      if (form.email.value.length == 0) {
+        alert("이메일을 입력해주세요.");
+        form.email.focus();
+
+        return;
+      }
+
+      form.submit();
+      MemberEmail__submitDone = true;
+    }
+  </script>
+  <section class="section section-join flex-grow flex flex-col items-center justify-center">
+    <div class="max-w-md w-full px-2 pt-4">
+      <h1 class="font-bold text-lg">아이디 찾기</h1>
+
+      <form th:action method="post" th:object="${memberModifyForm}" class="flex flex-col gap-3" onsubmit="MemberEmail__submit(this); return false;">
+
+        <div th:if="${#fields.hasGlobalErrors()}">
+          <p th:each="err : ${#fields.globalErrors()}" th:text="${err}">아이디 알려주기</p>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">이메일</span>
+          </label>
+          <input type="email" th:field="*{email}" placeholder="이메일을 입력해주세요." class="input input-bordered">
+          <div class="field-error" th:errors="*{email}">이메일 오류</div>
+        </div>
+
+        <input type="submit" value="아이디 찾기" class="btn btn-primary"/>
+      </form>
+
+    </div>
+  </section>
+
+  </div>
+</div>
+</html>
