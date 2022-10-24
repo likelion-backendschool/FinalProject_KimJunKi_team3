@@ -6,6 +6,8 @@ import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.order.entity.Order;
 import com.ll.finalproject.app.order.entity.OrderItem;
+import com.ll.finalproject.app.order.exception.ActorCanNotSeeOrderException;
+import com.ll.finalproject.app.order.exception.OrderNotFoundException;
 import com.ll.finalproject.app.order.repository.OrderRepository;
 import com.ll.finalproject.app.product.entity.Product;
 import lombok.RequiredArgsConstructor;
@@ -89,5 +91,18 @@ public class OrderService {
 
         order.setRefundDone();
         orderRepository.save(order);
+    }
+
+    public Order findForPrintById(long id) {
+        return orderRepository.findById(id).orElseThrow(
+                () -> new OrderNotFoundException("해당 주문은 존재하지 않습니다")
+        );
+    }
+
+    public boolean actorCanSee(Member actor, Order order) {
+        if (!actor.getId().equals(order.getBuyer().getId())) {
+            throw new ActorCanNotSeeOrderException("조회할 수 없는 주문입니다");
+        }
+        return true;
     }
 }
