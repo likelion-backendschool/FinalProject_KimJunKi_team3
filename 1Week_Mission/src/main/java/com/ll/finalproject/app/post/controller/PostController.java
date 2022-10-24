@@ -4,6 +4,8 @@ import com.ll.finalproject.app.base.rq.Rq;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.post.entity.Post;
+import com.ll.finalproject.app.post.exception.NoAuthorizationException;
+import com.ll.finalproject.app.post.exception.PostNotFoundException;
 import com.ll.finalproject.app.post.form.PostForm;
 import com.ll.finalproject.app.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.Binding;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -51,11 +54,13 @@ public class PostController {
     @GetMapping("/{id}")
     public String detail(@PathVariable("id") Long id, Model model) {
 
-        Post post = postService.getPostById(id);
-        if (post == null) {
+        try {
+            Post post = postService.getPostById(id);
+            model.addAttribute("post", post);
+        } catch (PostNotFoundException e) {
             return "post/list";
         }
-        model.addAttribute("post", post);
+
         return "post/detail";
     }
 
@@ -82,41 +87,47 @@ public class PostController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}/modify")
-    public String showModify(@PathVariable Long id, Model model, Principal principal) {
+    public String showModify(@PathVariable Long id, Model model) {
 
-        Post post = postService.getPostById(id);
-
-        if (!post.getAuthor().getUsername().equals(principal.getName())) {
-            return "redirect:/post/%d".formatted(post.getId());
+        try {
+            Post post = postService.getPostById(id);
+            if (post.getAuthor().getId() != rq.getId()) {
+                return "redirect:/post/%d".formatted(post.getId());
+            }
+            model.addAttribute("post", post);
+        } catch (PostNotFoundException e) {
+            return "post/list";
         }
-
-        model.addAttribute("post", post);
 
         return "post/modify";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/modify")
-    public String modify(@PathVariable Long id, Principal principal, @Valid @ModelAttribute("post") PostForm postForm) {
+    public String modify(@PathVariable Long id, @Valid @ModelAttribute("post") PostForm postForm, BindingResult bindingResult) {
 
-        Post post = postService.getPostById(id);
-
-        if (!post.getAuthor().getUsername().equals(principal.getName())) {
-            return "redirect:/post/%d".formatted(post.getId());
+        if (bindingResult.hasErrors()) {
+            return "post/modify";
         }
 
-        postService.modify(post, postForm.getSubject(), postForm.getContent(), postForm.getHashTagContents());
+        try {
+            postService.modify(rq.getId(), id, postForm.getSubject(), postForm.getContent(), postForm.getHashTagContents());
+        } catch (PostNotFoundException e) {
+            return "post/list";
+        } catch (NoAuthorizationException e) {
+            return "redirect:/post/%d".formatted(id);
+        }
 
-        return "redirect:/post/%d".formatted(post.getId());
+        return "redirect:/post/%d".formatted(id);
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}/delete")
-    public String delete(@PathVariable Long id, Principal principal) {
+    public String delete(@PathVariable Long id) {
 
         Post post = postService.getPostById(id);
 
-        if (!post.getAuthor().getUsername().equals(principal.getName())) {
+        if (post.getAuthor().getId() != rq.getId()) {
             return "redirect:/post/%d".formatted(post.getId());
         }
 

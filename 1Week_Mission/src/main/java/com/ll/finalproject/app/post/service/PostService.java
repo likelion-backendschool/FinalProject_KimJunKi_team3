@@ -2,6 +2,8 @@ package com.ll.finalproject.app.post.service;
 
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.post.entity.Post;
+import com.ll.finalproject.app.post.exception.NoAuthorizationException;
+import com.ll.finalproject.app.post.exception.PostNotFoundException;
 import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
 import com.ll.finalproject.app.post.hashTag.repository.PostHashTagRepository;
 import com.ll.finalproject.app.post.hashTag.service.PostHashTagService;
@@ -78,9 +80,10 @@ public class PostService {
         return posts;
     }
     public Post getPostById(Long id) {
-        Post post = findById(id).orElse(null);
+        Post post = findById(id).orElseThrow(
+                () -> new PostNotFoundException("해당 글은 존재하지 않습니다")
+        );
         loadForPrintData(post);
-
         return post;
     }
     public void loadForPrintData(Post post) {
@@ -115,11 +118,21 @@ public class PostService {
         return postRepository.findById(id);
     }
 
-    public void modify(Post post, String subject, String content, String hashTagContents) {
+    public Post modify(long authorId, long postId, String subject, String content, String hashTagContents) {
+        Post post = getPostById(postId);
+        if (post == null) {
+            throw new PostNotFoundException("해당 글은 존재하지 않습니다.");
+        }
+        if (post.getAuthor().getId() != authorId) {
+            throw new NoAuthorizationException("해당 글의 수정 권한이 없습니다.");
+        }
+
         post.changeSubjectAndContent(subject, content);
         postRepository.save(post);
 
         postHashTagService.applyPostHashTags(post, hashTagContents);
+
+        return post;
     }
 
     public void delete(Post post) {

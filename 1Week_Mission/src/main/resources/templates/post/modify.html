@@ -34,7 +34,8 @@
         <h1 class="font-bold text-lg">글 수정</h1>
 
         <form th:action method="POST" th:object="${post}" class="flex flex-col gap-3" onsubmit="ModifyForm__submit(this); return false;">
-          <input type="hidden" th:field="*{content}" />
+          <input type="hidden" name="content">
+          <input type="hidden" name="contentHtml">
           <div class="form-control">
             <label class="label">
               <span class="label-text">제목</span>
@@ -47,7 +48,9 @@
             <label class="label">
               <span class="label-text">내용</span>
             </label>
-            <div class="toast-ui-editor" toast-ui-editor--height="calc(100vh - 300px)"></div>
+            <div class="toast-ui-editor" toast-ui-editor--height="calc(100vh)">
+              <script type="text/x-template" th:utext="${post.content}"></script>
+            </div>
             <div class="field-error" th:errors="*{content}">내용 오류</div>
           </div>
 
