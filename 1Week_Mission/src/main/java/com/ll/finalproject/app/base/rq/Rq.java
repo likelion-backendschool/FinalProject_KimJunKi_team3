@@ -45,5 +45,12 @@ public class Rq {
 
         return memberContext.hasAuthority("ROLE_" + authorityName);
     }
+
+    public long getId() {
+        if (this.member != null) {
+            return member.getId();
+        }
+        return 0;
+    }
 }
 
