@@ -25,6 +25,8 @@ public class SecurityConfig {
                 )
                 .authorizeRequests(
                         authorizeRequests -> authorizeRequests
+                                .antMatchers("/product/**")
+                                .hasRole("AUTHOR")
                                 .antMatchers("/**")
                                 .permitAll()
                 )
@@ -32,7 +34,7 @@ public class SecurityConfig {
                         formLogin -> formLogin
                                 .loginPage("/member/login") // GET
                                 .loginProcessingUrl("/member/login") // POST
-                                .successHandler(authenticationSuccessHandler)
+                                .defaultSuccessUrl("/")
                 )
                 .logout(logout -> logout
                         .logoutUrl("/member/logout")

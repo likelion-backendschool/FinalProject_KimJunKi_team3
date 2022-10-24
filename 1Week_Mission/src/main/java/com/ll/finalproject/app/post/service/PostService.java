@@ -2,6 +2,8 @@ package com.ll.finalproject.app.post.service;
 
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.post.entity.Post;
+import com.ll.finalproject.app.post.exception.NoAuthorizationException;
+import com.ll.finalproject.app.post.exception.PostNotFoundException;
 import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
 import com.ll.finalproject.app.post.hashTag.repository.PostHashTagRepository;
 import com.ll.finalproject.app.post.hashTag.service.PostHashTagService;
@@ -55,33 +57,33 @@ public class PostService {
     }
 
     public List<Post> getPostList() {
-        return postRepository.findAll();
+        List<Post> posts = postRepository.findAllByOrderByIdDesc();
+        loadForPrintData(posts);
+        return posts;
     }
 
     public List<Post> getPostListByPostKeyword(Member member, String kw) {
+        // member 가 썼던 글 중에 kw 태그가 들어간 PostHashTag 데이터 목록
+        List<PostHashTag> postHashTags = postHashTagRepository.findAllByMemberIdAndPostKeyword_contentOrderByPost_idDesc(member.getId(), kw);
 
-        PostKeyword postKeyword = postKeywordRepository.findByContent(kw).orElse(null);
-        if (postKeyword == null) {
+        log.info("postHashTags = {}", postHashTags);
+
+        if (postHashTags == null || postHashTags.size() == 0) {
             return null;
         }
-        List<PostHashTag> postHashTags = postHashTagRepository.findByPostKeyword(postKeyword).orElse(null);
-        if (postHashTags == null) {
-            return null;
-        }
+        // PostHashTag 필드의 Post만 가져옴
+        List<Post> posts = postHashTags.stream()
+                .map(PostHashTag::getPost)
+                .collect(toList());
 
-        List<Post> postLists = new ArrayList<>();
-        for (PostHashTag postHashTag : postHashTags) {
-            if (postHashTag.getPost().getAuthor() == member) {
-                postLists.add(postHashTag.getPost());
-            }
-        }
-
-        return postLists;
+        loadForPrintData(posts);
+        return posts;
     }
     public Post getPostById(Long id) {
-        Post post = findById(id).orElse(null);
+        Post post = findById(id).orElseThrow(
+                () -> new PostNotFoundException("해당 글은 존재하지 않습니다")
+        );
         loadForPrintData(post);
-
         return post;
     }
     public void loadForPrintData(Post post) {
@@ -116,11 +118,21 @@ public class PostService {
         return postRepository.findById(id);
     }
 
-    public void modify(Post post, String subject, String content, String hashTagContents) {
+    public Post modify(long authorId, long postId, String subject, String content, String hashTagContents) {
+        Post post = getPostById(postId);
+        if (post == null) {
+            throw new PostNotFoundException("해당 글은 존재하지 않습니다.");
+        }
+        if (post.getAuthor().getId() != authorId) {
+            throw new NoAuthorizationException("해당 글의 수정 권한이 없습니다.");
+        }
+
         post.changeSubjectAndContent(subject, content);
         postRepository.save(post);
 
         postHashTagService.applyPostHashTags(post, hashTagContents);
+
+        return post;
     }
 
     public void delete(Post post) {

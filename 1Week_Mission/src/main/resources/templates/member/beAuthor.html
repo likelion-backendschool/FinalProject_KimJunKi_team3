@@ -1,0 +1,33 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+
+
+  <section class="section section-join flex-grow flex flex-col items-center justify-center">
+    <div class="max-w-md w-full px-2 pt-4">
+      <h1 class="font-bold text-lg">작가명 등록</h1>
+
+      <form th:action method="POST" th:object="${memberBeAuthorForm}" class="flex flex-col gap-3"
+            onsubmit="MemberBeAuthor__submit(this); return false;">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">필명</span>
+          </label>
+          <input type="text" th:field="*{nickname}"
+                 placeholder="필명" class="input input-bordered" maxlength="50">
+          <div class="field-error" th:errors="*{nickname}">이메일 오류</div>
+        </div>
+
+        <input class="btn btn-primary" type="submit" value="작가 활동 시작">
+      </form>
+
+    </div>
+  </section>
+
+
+
+</div>
+</html>

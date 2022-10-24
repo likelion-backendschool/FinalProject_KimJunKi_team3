@@ -23,20 +23,15 @@ import static javax.persistence.FetchType.LAZY;
 @SuperBuilder
 @ToString(callSuper = true)
 public class Post extends BaseEntity {
-
     @ManyToOne(fetch = LAZY)
     private Member author;
-
     @NotBlank(message = "제목은 필수항목입니다.")
     private String subject;
-
     @NotBlank(message = "내용은 필수항목입니다.")
     @Column(columnDefinition = "TEXT")
     private String content;
-
     @Column(columnDefinition = "TEXT")
     private String contentHtml;
-
     @OneToMany(mappedBy = "post", cascade = {CascadeType.ALL}, orphanRemoval=true)
     private List<PostHashTag> postHashTagList;
 

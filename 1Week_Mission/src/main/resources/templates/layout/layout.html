@@ -489,6 +489,8 @@
                     프로필
           </span>
         </a>
+        <a th:unless="${@rq.hasAuthority('AUTHOR')}" href="/member/beAuthor" class="inline-flex">작가 등록</a>
+
       </div>
 
     </div>
