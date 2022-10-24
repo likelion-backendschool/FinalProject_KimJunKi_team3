@@ -1,5 +1,6 @@
 package com.ll.finalproject.app.base.initData;
 
+import com.ll.finalproject.app.cart.service.CartService;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.post.keyword.service.PostKeywordService;
 import com.ll.finalproject.app.post.service.PostService;
@@ -14,9 +15,10 @@ import org.springframework.context.annotation.Profile;
 public class TestInitData implements InitDataBefore {
     @Bean
     CommandLineRunner initData(
-            MemberService memberService, PostService postService, ProductService productService, PostKeywordService postKeywordService) {
+            MemberService memberService, PostService postService, ProductService productService,
+            PostKeywordService postKeywordService, CartService cartService) {
         return args -> {
-            before(memberService, postService, productService, postKeywordService);
+            before(memberService, postService, productService, postKeywordService, cartService);
         };
     }
 }

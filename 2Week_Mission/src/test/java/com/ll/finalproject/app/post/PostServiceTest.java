@@ -1,6 +1,7 @@
-package com.ll.finalproject.app.post.service;
+package com.ll.finalproject.app.post;
 
 import com.ll.finalproject.app.post.entity.Post;
+import com.ll.finalproject.app.post.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

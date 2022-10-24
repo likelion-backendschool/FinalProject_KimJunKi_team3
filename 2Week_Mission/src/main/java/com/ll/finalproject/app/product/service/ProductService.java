@@ -39,12 +39,12 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product getProductById(Long id) {
+    public Product getProductById(long id) {
         return findById(id).orElse(null);
     }
 
     @Transactional(readOnly = true)
-    public Optional<Product> findById(Long id) {
+    public Optional<Product> findById(long id) {
         return productRepository.findById(id);
     }
 

@@ -1,5 +1,6 @@
-package com.ll.finalproject.app.member.controller;
+package com.ll.finalproject.app.member;
 
+import com.ll.finalproject.app.member.controller.MemberController;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.exception.PasswordNotSameException;
 import com.ll.finalproject.app.member.service.MemberService;
