@@ -1,4 +1,4 @@
-package com.ll.finalproject.app.member;
+package com.ll.finalproject.app.service;
 
 import com.ll.finalproject.app.base.rq.Rq;
 import com.ll.finalproject.app.member.entity.Member;
@@ -6,7 +6,6 @@ import com.ll.finalproject.app.member.exception.AlreadyExistsNicknameException;
 import com.ll.finalproject.app.member.exception.JoinEmailDuplicatedException;
 import com.ll.finalproject.app.member.exception.JoinUsernameDuplicatedException;
 import com.ll.finalproject.app.member.exception.PasswordNotSameException;
-import com.ll.finalproject.app.member.repository.MemberRepository;
 import com.ll.finalproject.app.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @Transactional
 @ActiveProfiles({"test", "base"})
-class MemberServiceTest {
+class MemberServiceTests {
 
     @Autowired
     private MemberService memberService;

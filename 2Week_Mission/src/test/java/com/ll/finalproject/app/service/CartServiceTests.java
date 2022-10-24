@@ -1,10 +1,9 @@
-package com.ll.finalproject.app.cart;
+package com.ll.finalproject.app.service;
 
 import com.ll.finalproject.app.cart.entity.CartItem;
 import com.ll.finalproject.app.cart.service.CartService;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.repository.MemberRepository;
-import com.ll.finalproject.app.post.keyword.service.PostKeywordService;
 import com.ll.finalproject.app.product.entity.Product;
 import com.ll.finalproject.app.product.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
@@ -12,14 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 //@Transactional
 @ActiveProfiles({"test", "base"})
-public class CartServiceTest {
+public class CartServiceTests {
 
     @Autowired
     private ProductService productService;

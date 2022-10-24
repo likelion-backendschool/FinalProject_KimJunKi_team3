@@ -1,4 +1,4 @@
-package com.ll.finalproject.app.post;
+package com.ll.finalproject.app.service;
 
 import com.ll.finalproject.app.post.entity.Post;
 import com.ll.finalproject.app.post.service.PostService;
@@ -10,11 +10,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @ActiveProfiles({"test", "base"})
-class PostServiceTest {
+class PostServiceTests {
 
     @Autowired
     private PostService postService;

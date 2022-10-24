@@ -1,5 +1,6 @@
-package com.ll.finalproject.app.product;
+package com.ll.finalproject.app.controller;
 
+import com.ll.finalproject.app.base.rq.Rq;
 import com.ll.finalproject.app.product.contoller.ProductController;
 import com.ll.finalproject.app.product.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,9 +34,10 @@ public class ProductControllerTests {
     @Autowired
     private ProductService productService;
 
+
     @Test
     @DisplayName("도서 등록 폼")
-    @WithUserDetails("user5")
+    @WithMockUser(username = "user5", roles = {"MEMBER","AUTHOR"})
     void t1() throws Exception {
 
         // WHEN
@@ -52,7 +55,7 @@ public class ProductControllerTests {
 
     @Test
     @DisplayName("도서 등록")
-    @WithUserDetails("user5")
+    @WithMockUser(username = "user5", roles = {"MEMBER","AUTHOR"})
     void t2() throws Exception {
         // WHEN
         ResultActions resultActions = mvc

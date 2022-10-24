@@ -1,4 +1,4 @@
-package com.ll.finalproject.app.product;
+package com.ll.finalproject.app.service;
 
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.repository.MemberRepository;
