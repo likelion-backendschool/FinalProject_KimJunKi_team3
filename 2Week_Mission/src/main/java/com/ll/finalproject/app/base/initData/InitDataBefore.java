@@ -51,11 +51,16 @@ public interface InitDataBefore {
         Product product3 = productService.create(member1, keyword2, "슬픔 도서", "임시 책내용","슬픔 도서에 대한 설명", 1000);
         Product product4 = productService.create(member1, keyword2, "역경 도서", "임시 책내용","역경 도서에 대한 설명", 30000);
 
-
         CartItem cartItem1 = cartService.addItem(member3, product1);
         CartItem cartItem2 = cartService.addItem(member3, product2);
         CartItem cartItem3 = cartService.addItem(member4, product3);
         CartItem cartItem4 = cartService.addItem(member4, product4);
 
+        memberService.addCash(member1, 10_000, "충전__무통장입금");
+        memberService.addCash(member1, 20_000, "충전__무통장입금");
+        memberService.addCash(member1, -5_000, "출금__일반");
+        memberService.addCash(member1, 1_000_000, "충전__무통장입금");
+
+        memberService.addCash(member2, 2_000_000, "충전__무통장입금");
     }
 }

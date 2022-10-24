@@ -1,5 +1,7 @@
 package com.ll.finalproject.app.member.service;
 
+import com.ll.finalproject.app.cash.entity.CashLog;
+import com.ll.finalproject.app.cash.sevice.CashService;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.exception.*;
 import com.ll.finalproject.app.member.repository.MemberRepository;
@@ -29,6 +31,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
+    private final CashService cashService;
 
     public Member join(String username, String password, String email) {
 
@@ -134,5 +137,19 @@ public class MemberService {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
+    }
+
+    public long addCash(Member member, long price, String eventType) {
+        CashLog cashLog = cashService.addCash(member, price, eventType);
+
+        long newRestCash = member.getRestCash() + cashLog.getPrice();
+        member.changeRestCash(newRestCash);
+        memberRepository.save(member);
+
+        return newRestCash;
+    }
+
+    public long getRestCash(Member member) {
+        return member.getRestCash();
     }
 }

@@ -30,6 +30,7 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String nickname;
     private int authLevel;
+    private long restCash; // 남은 캐시
 
     public void changeEmailAndNickname(String email, String nickname) {
         this.email = email;
@@ -47,7 +48,9 @@ public class Member extends BaseEntity {
     public void changeEmail(String email) {
         this.email = email;
     }
-
+    public void changeRestCash(long restCash) {
+        this.restCash = restCash;
+    }
     public List<GrantedAuthority> genAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_MEMBER"));
