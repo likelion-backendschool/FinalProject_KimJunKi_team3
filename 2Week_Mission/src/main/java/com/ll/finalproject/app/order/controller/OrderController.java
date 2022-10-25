@@ -6,9 +6,7 @@ import com.ll.finalproject.app.base.rq.Rq;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.order.entity.Order;
-import com.ll.finalproject.app.order.exception.ActorCanNotSeeOrderException;
-import com.ll.finalproject.app.order.exception.OrderIdNotMatchedException;
-import com.ll.finalproject.app.order.exception.OrderNotFoundException;
+import com.ll.finalproject.app.order.exception.*;
 import com.ll.finalproject.app.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,15 +16,14 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -102,7 +99,15 @@ public class OrderController {
 
         Map<String, String> payloadMap = new HashMap<>();
         payloadMap.put("orderId", orderId);
-        payloadMap.put("amount", String.valueOf(order.calculatePayPrice()));
+        payloadMap.put("amount", String.valueOf(amount));
+
+        Member actor = rq.getMember();
+        long restCash = memberService.getRestCash(actor);
+        long payPriceRestCash = order.calculatePayPrice() - amount; // 예치금으로 결제할 금액
+
+        if (payPriceRestCash > restCash) {
+            throw new OrderNotEnoughRestCashException();
+        }
 
         HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(payloadMap), headers);
 
@@ -111,7 +116,7 @@ public class OrderController {
 
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
 
-            orderService.payByTossPayments(order);
+            orderService.payByTossPayments(order, payPriceRestCash);
 
             JsonNode successNode = responseEntity.getBody();
             model.addAttribute("orderId", successNode.get("orderId").asText());
@@ -130,6 +135,26 @@ public class OrderController {
         model.addAttribute("message", message);
         model.addAttribute("code", code);
         return "order/fail";
+    }
+    @PostMapping("/{id}/payByRestCashOnly")
+    @PreAuthorize("isAuthenticated()")
+    public String payByRestCashOnly(@PathVariable long id) {
+        Order order = orderService.findForPrintById(id);
+
+        Member actor = rq.getMember();
+
+        if (orderService.actorCanPayment(actor, order) == false) {
+            throw new ActorCanNotPayOrderException();
+        }
+
+        orderService.payByRestCashOnly(order);
+
+        try {
+            String str = URLEncoder.encode("예치금으로 결제했습니다.", "UTF-8");
+            return "redirect:/order/%d?msg=%s".formatted(order.getId(),str);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

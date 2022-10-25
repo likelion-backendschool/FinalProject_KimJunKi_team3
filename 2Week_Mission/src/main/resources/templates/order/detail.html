@@ -53,7 +53,7 @@
                     <div>
                         보유 예치금 : [[${actorRestCash}]]
                     </div>
-                    <div th:with="maxUseRestCash = ${order.calculatePayPrice > actorRestCash ? actorRestCash : order.calculatePayPrice}">
+                    <div th:if="${order.payable}" th:with="maxUseRestCash = ${order.calculatePayPrice > actorRestCash ? actorRestCash : order.calculatePayPrice}">
                         <span>사용할 예치금 : </span>
                         <input type="number" id="PaymentForm__useRestCash"
                                th:placeholder="|0 ~ ${maxUseRestCash}|"
@@ -86,7 +86,7 @@
         const $PaymentForm__useRestCashAll = $("#PaymentForm__useRestCashAll");
         const $PaymentForm__pgPayPriceDisplay = $("#PaymentForm__pgPayPriceDisplay");
 
-        const tossPayments = TossPayments("test_ck_BE92LAa5PVbDMxDgLzB87YmpXyJj");
+        const tossPayments = TossPayments("test_ck_7DLJOpm5Qrl2NoRba0L3PNdxbWnY");
 
         function payment() {
             let useRestCash = parseInt($PaymentForm__useRestCash.val());
