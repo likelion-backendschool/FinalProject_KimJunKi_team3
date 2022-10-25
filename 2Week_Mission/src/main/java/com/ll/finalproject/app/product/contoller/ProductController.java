@@ -75,7 +75,7 @@ public class ProductController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String create(@Valid ProductCreateForm postCreateForm, BindingResult bindingResult, Principal principal) {
-
+        log.info("postCreateForm = {}", postCreateForm);
         if (bindingResult.hasErrors()) {
             return "product/create";
         }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head>
   <meta charset="UTF-8">
@@ -494,6 +494,12 @@
                     프로필
           </span>
         </a>
+        <a href="/cart/items" class="inline-flex" sec:authorize="isAuthenticated()">
+        <i class="fa-solid fa-user"></i>
+        <span class="ml-[2px] hidden sm:block">
+                    장바구니
+          </span>
+      </a>
         <a th:unless="${@rq.hasAuthority('AUTHOR')}" href="/member/beAuthor" class="inline-flex">작가 등록</a>
 
       </div>

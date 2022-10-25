@@ -64,6 +64,7 @@
                         <option th:each="postKeyword : ${postKeywordSet}" th:value="${postKeyword.id}"
                                 th:text="${postKeyword.content}">Tag</option>
                     </select>
+                    <div class="field-error" th:errors="*{postKeywordId}">키워드 오류</div>
                 </div>
 
                 <input type="submit" value="작성" class="btn btn-primary mt-5">
