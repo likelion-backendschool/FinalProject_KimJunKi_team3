@@ -5,6 +5,34 @@
 
 <div layout:fragment="content">
 
+    <script src="https://js.tosspayments.com/v1/payment"></script>
+    <script th:inline="javascript">
+        const orderId = /*[[ ${order.id} ]]*/ null;
+        const buyerName = /*[[ ${order.buyer.username} ]]*/ null;
+        const orderName = /*[[ ${order.name} ]]*/ null;
+        const orderPayPrice = /*[[ ${order.calculatePayPrice} ]]*/ null;
+    </script>
+
+    <script>
+        const tossPayments = TossPayments("test_ck_7DLJOpm5Qrl2NoRba0L3PNdxbWnY");
+
+        function payment() {
+            const method = "카드"; // "카드" 혹은 "가상계좌"
+
+            const paymentData = {
+                amount: orderPayPrice,
+                orderId: "order__" + orderId + "__" + (Math.random() + "").substring(2),
+                orderName,
+                customerName: buyerName,
+                successUrl: window.location.origin + "/order/" + orderId + "/success",
+                failUrl: window.location.origin + "/order/" + orderId + "/fail"
+            };
+
+            tossPayments.requestPayment(method, paymentData);
+        }
+    </script>
+
+
     <section class="section section-write container mx-auto">
 
         <div class="px-2 pt-4">
@@ -35,6 +63,10 @@
                             가격 : [[${orderItem.salePrice}]]
                         </div>
                     </div>
+                </div>
+
+                <div>
+                    <button onclick="payment();" class="btn btn-sm btn-primary">카드결제</button>
                 </div>
             </div>
         </div>
