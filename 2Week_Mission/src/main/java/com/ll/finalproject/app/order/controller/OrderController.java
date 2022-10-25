@@ -6,6 +6,7 @@ import com.ll.finalproject.app.base.rq.Rq;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.order.entity.Order;
 import com.ll.finalproject.app.order.exception.ActorCanNotSeeOrderException;
+import com.ll.finalproject.app.order.exception.OrderIdNotMatchedException;
 import com.ll.finalproject.app.order.exception.OrderNotFoundException;
 import com.ll.finalproject.app.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -76,9 +77,20 @@ public class OrderController {
 
     @RequestMapping("/{id}/success")
     public String confirmPayment(
-            @RequestParam String paymentKey, @RequestParam String orderId, @RequestParam Long amount,
-            Model model) throws Exception {
+            @PathVariable long id,
+            @RequestParam String paymentKey,
+            @RequestParam String orderId,
+            @RequestParam Long amount,
+            Model model
+    ) throws Exception {
 
+        Order order = orderService.findForPrintById(id);
+
+        long orderIdInputed = Long.parseLong(orderId.split("__")[1]);
+
+        if ( id != orderIdInputed ) {
+            throw new OrderIdNotMatchedException();
+        }
         HttpHeaders headers = new HttpHeaders();
         // headers.setBasicAuth(SECRET_KEY, ""); // spring framework 5.2 이상 버전에서 지원
         headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString((SECRET_KEY + ":").getBytes()));
@@ -86,7 +98,7 @@ public class OrderController {
 
         Map<String, String> payloadMap = new HashMap<>();
         payloadMap.put("orderId", orderId);
-        payloadMap.put("amount", String.valueOf(amount));
+        payloadMap.put("amount", String.valueOf(order.calculatePayPrice()));
 
         HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(payloadMap), headers);
 
