@@ -50,7 +50,7 @@
                 </div>
 
                 <div>
-                    <div>
+                    <div th:if="${order.payable}">
                         보유 예치금 : [[${actorRestCash}]]
                     </div>
                     <div th:if="${order.payable}" th:with="maxUseRestCash = ${order.calculatePayPrice > actorRestCash ? actorRestCash : order.calculatePayPrice}">
