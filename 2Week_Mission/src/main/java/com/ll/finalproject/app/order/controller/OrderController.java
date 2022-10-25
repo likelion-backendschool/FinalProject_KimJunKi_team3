@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.finalproject.app.base.rq.Rq;
 import com.ll.finalproject.app.member.entity.Member;
+import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.order.entity.Order;
 import com.ll.finalproject.app.order.exception.ActorCanNotSeeOrderException;
 import com.ll.finalproject.app.order.exception.OrderIdNotMatchedException;
@@ -39,6 +40,7 @@ public class OrderController {
     private final Rq rq;
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper;
+    private final MemberService memberService;
 
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
@@ -48,8 +50,10 @@ public class OrderController {
             Order order = orderService.findForPrintById(id);
             Member actor = rq.getMember();
 
+            long restCash = memberService.getRestCash(actor);
             orderService.actorCanSee(actor, order);
             model.addAttribute("order", order);
+            model.addAttribute("actorRestCash", restCash);
         } catch (OrderNotFoundException e){
             return "";
         } catch (ActorCanNotSeeOrderException e) {
