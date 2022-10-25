@@ -17,13 +17,5 @@ class PostServiceTests {
     @Autowired
     private PostService postService;
 
-    @Test
-    @DisplayName("최신글 100개 불러오기")
-    void t1() {
-        List<Post> posts = postService.getLatestPost();
-        for (Post post : posts) {
-            System.out.println("post = " + post);
-        }
-    }
 
 }

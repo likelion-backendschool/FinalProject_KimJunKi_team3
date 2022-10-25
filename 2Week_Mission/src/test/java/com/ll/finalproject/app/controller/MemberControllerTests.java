@@ -262,11 +262,12 @@ class MemberControllerTests {
 
     @Test
     @DisplayName("일반 권한을 가진 user1 회원을 작가로 등록")
-    @WithUserDetails("user5")
+    @WithUserDetails("user1")
     void t13() throws Exception {
         // WHEN
         ResultActions resultActions = mvc
                 .perform(post("/member/beAuthor")
+                        .with(csrf())
                         .param("nickname", "김작가")
                 )
                 .andDo(print());

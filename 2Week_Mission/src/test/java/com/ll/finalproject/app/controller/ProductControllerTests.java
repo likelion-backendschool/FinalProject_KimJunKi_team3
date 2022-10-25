@@ -37,7 +37,7 @@ public class ProductControllerTests {
 
     @Test
     @DisplayName("도서 등록 폼")
-    @WithMockUser(username = "user5", roles = {"MEMBER","AUTHOR"})
+    @WithMockUser(username = "user1", roles = {"MEMBER","AUTHOR"})
     void t1() throws Exception {
 
         // WHEN
@@ -55,7 +55,7 @@ public class ProductControllerTests {
 
     @Test
     @DisplayName("도서 등록")
-    @WithMockUser(username = "user5", roles = {"MEMBER","AUTHOR"})
+    @WithMockUser(username = "user1", roles = {"MEMBER","AUTHOR"})
     void t2() throws Exception {
         // WHEN
         ResultActions resultActions = mvc

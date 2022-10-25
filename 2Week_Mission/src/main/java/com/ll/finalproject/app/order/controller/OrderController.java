@@ -8,6 +8,7 @@ import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.order.entity.Order;
 import com.ll.finalproject.app.order.exception.*;
 import com.ll.finalproject.app.order.service.OrderService;
+import com.ll.finalproject.util.Ut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -148,13 +149,7 @@ public class OrderController {
         }
 
         orderService.payByRestCashOnly(order);
-
-        try {
-            String str = URLEncoder.encode("예치금으로 결제했습니다.", "UTF-8");
-            return "redirect:/order/%d?msg=%s".formatted(order.getId(),str);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        return "redirect:/order/%d?msg=%s".formatted(order.getId(), Ut.url.encode("예치금으로 결제했습니다."));
     }
 
 }

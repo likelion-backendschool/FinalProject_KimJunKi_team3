@@ -29,11 +29,12 @@ public interface InitDataBefore {
          * user1은 #그리움 #행복 #슬픔 #역경 태그가 달린 글 작성
          * user1은 #그리움 #행복 #슬픔 #역경 각각 태그에 대한 도서 등록
          * user3은 user1의 도서1, 도서2를 장바구니에 추가
-         * user4은 user1의 도서3, 도서4를 장바구니에 추가
+         * user4는 user1의 도서3, 도서4를 장바구니에 추가
          *
          * user1은 각 키워드에 대한 4권의 도서 등록
          *
          * user3과 user4에 예치금 추가
+         * user2는 도서1,2,3,4를 장바구니에 추가
          */
 
         class Helper {
@@ -63,6 +64,7 @@ public interface InitDataBefore {
         for (int i = 0; i < 10; i++) {
             postService.write(member1, "제목 " + i, "내용 " + i,null);
         }
+        postService.write(member2, "제목 ", "내용 ", "#안녕");
 
         PostKeyword keyword1 = postKeywordService.findByContent("그리움").get();
         PostKeyword keyword2 = postKeywordService.findByContent("행복").get();
@@ -107,5 +109,10 @@ public interface InitDataBefore {
                         product2
                 )
         );
+
+        cartService.addItem(member2, product1);
+        cartService.addItem(member2, product2);
+        cartService.addItem(member2, product3);
+        cartService.addItem(member2, product4);
     }
 }

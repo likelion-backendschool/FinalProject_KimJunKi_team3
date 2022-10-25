@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -63,5 +64,13 @@ public class CartService {
 
     public List<CartItem> getItemsByBuyer(Member buyer) {
         return cartItemRepository.findAllByBuyerId(buyer.getId());
+    }
+
+    public Optional<CartItem> findItemById(long id) {
+        return cartItemRepository.findById(id);
+    }
+
+    public boolean actorCanDelete(Member buyer, CartItem cartItem) {
+        return buyer.getId().equals(cartItem.getBuyer().getId());
     }
 }

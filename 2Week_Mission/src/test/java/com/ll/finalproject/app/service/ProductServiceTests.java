@@ -31,10 +31,10 @@ public class ProductServiceTests {
     @Test
     @DisplayName("도서 등록")
     void t1() {
-        Member author = memberRepository.findByUsername("user5").get();
-        PostKeyword postKeyword1 = postKeywordService.findByContent("그리움").get();
+        Member author = memberRepository.findByUsername("user2").get();
+        PostKeyword postKeyword1 = postKeywordService.findByContent("안녕").get();
 
-        Product product3 = productService.create(author, postKeyword1, "그리움 책 제목입니다", "임시 내용입니다", "이 책은 ...", 1999);
+        Product product3 = productService.create(author, postKeyword1, "안녕 책 제목입니다", "안녕 내용입니다", "이 책은 ...", 1999);
 
         assertThat(product3).isNotNull();
     }
