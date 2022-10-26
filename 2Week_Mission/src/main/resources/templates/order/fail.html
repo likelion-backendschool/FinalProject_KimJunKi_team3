@@ -1,0 +1,23 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+        layout:decorate="~{layout/layout}">
+<head>
+  <title>주문 결제실패</title>
+</head>
+
+<div layout:fragment="content">
+  <section class="section section-payment-fail container mx-auto">
+    <div>
+      주문 결제실패
+    </div>
+
+    <div>
+      주문번호 : [[${orderId}]]
+    </div>
+
+    <div>[[${message}]]</div>
+    <div>[[${code}]]</div>
+  </section>
+</div>
+</html>

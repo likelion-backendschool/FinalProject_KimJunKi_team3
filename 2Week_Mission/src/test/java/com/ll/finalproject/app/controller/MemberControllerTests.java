@@ -1,7 +1,7 @@
-package com.ll.finalproject.app.member.controller;
+package com.ll.finalproject.app.controller;
 
+import com.ll.finalproject.app.member.controller.MemberController;
 import com.ll.finalproject.app.member.entity.Member;
-import com.ll.finalproject.app.member.exception.PasswordNotSameException;
 import com.ll.finalproject.app.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @ActiveProfiles({"test", "base"})
 @AutoConfigureMockMvc
-class MemberControllerTest {
+class MemberControllerTests {
 
     @Autowired
     private MockMvc mvc;
@@ -263,11 +263,11 @@ class MemberControllerTest {
     @Test
     @DisplayName("일반 권한을 가진 user1 회원을 작가로 등록")
     @WithUserDetails("user1")
-
     void t13() throws Exception {
         // WHEN
         ResultActions resultActions = mvc
                 .perform(post("/member/beAuthor")
+                        .with(csrf())
                         .param("nickname", "김작가")
                 )
                 .andDo(print());

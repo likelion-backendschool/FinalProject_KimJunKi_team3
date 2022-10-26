@@ -30,7 +30,7 @@
           <div class="badge badge-primary">
             가격
           </div>
-          <span th:text="${product.author.username}"></span>
+          <span th:text="${product.price}"></span>
         </div>
         <div>
           <div class="badge badge-primary">
@@ -56,10 +56,19 @@
           <a onclick="return confirm('정말로 삭제하시겠습니까?')" th:href="@{|/product/${product.id}/delete|}" sec:authorize="isAuthenticated()" class="btn btn-primary"
              th:if="${product.author.username == #authentication.getPrincipal().getUsername()}">삭제</a>
         </div>
+
+
+        <a href="javascript:;" onClick="AddCartItemsForm__submit();" class="btn btn-primary btn-sm">장바구니 추가</a>
+        <form method="POST" name="addCartItemsForm" th:action="@{|/cart/add/${product.id}|}" hidden></form>
+
       </div>
     </div>
   </section>
-
+  <script>
+    function AddCartItemsForm__submit() {
+      document.addCartItemsForm.submit();
+    }
+  </script>
 
 
 </div>

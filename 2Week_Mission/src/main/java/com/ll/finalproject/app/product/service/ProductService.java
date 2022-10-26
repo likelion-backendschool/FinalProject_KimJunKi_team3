@@ -3,6 +3,7 @@ package com.ll.finalproject.app.product.service;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import com.ll.finalproject.app.product.entity.Product;
+import com.ll.finalproject.app.product.exception.ProductNotFoundException;
 import com.ll.finalproject.app.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,12 +40,14 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product getProductById(Long id) {
-        return findById(id).orElse(null);
+    public Product getProductById(long id) {
+        return findById(id).orElseThrow(
+                () -> new ProductNotFoundException()
+        );
     }
 
     @Transactional(readOnly = true)
-    public Optional<Product> findById(Long id) {
+    public Optional<Product> findById(long id) {
         return productRepository.findById(id);
     }
 

@@ -11,10 +11,11 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.*;
 
 import static javax.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
 @SuperBuilder
 @ToString(callSuper = true)
 public class Product extends BaseEntity {
@@ -35,10 +36,28 @@ public class Product extends BaseEntity {
 
     private int price;
 
+    public Product(long id) {
+        super(id);
+    }
+
     public void changeModifyForm(String subject, int price, String description) {
         this.subject = subject;
         this.price = price;
         this.description = description;
     }
 
+    public int getSalePrice() {
+        return getPrice();
+    }
+
+    public int getWholesalePrice() {
+        return (int) Math.ceil(getPrice() * 0.7);
+    }
+
+    public boolean isOrderable() {
+        return true;
+    }
+    public String getJdenticon() {
+        return "product__" + getId();
+    }
 }
