@@ -3,6 +3,7 @@ package com.ll.finalproject.app.controller;
 import com.ll.finalproject.app.member.controller.MemberController;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.order.controller.OrderController;
+import org.assertj.core.api.UrlAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +49,22 @@ public class OrderControllerTests {
                 .andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("showDetail"))
                 .andExpect(content().string(containsString("주문")));
+    }
+
+    @Test
+    @DisplayName("주문 취소")
+    @WithUserDetails("user4")
+    void t2() throws Exception {
+        // WHEN
+        ResultActions resultActions = mvc
+                .perform(post("/order/3/cancel")
+                        .with(csrf())
+                ).andDo(print());
+
+        // THEN
+        resultActions
+                .andExpect(status().is3xxRedirection())
+                .andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("cancel"));
     }
 }

@@ -51,7 +51,7 @@ public class CartControllerTests {
     void t2() throws Exception{
         // WHEN
         Member user4 = memberService.findByUsername("user4").get();
-        List<CartItem> itemsByBuyer1 = cartService.getItemsByBuyer(user4);
+        List<CartItem> itemsByBuyer1 = cartService.getCartItemsByBuyer(user4);
 
         ResultActions resultActions = mvc
                 .perform(post("/cart/add/1")
@@ -64,7 +64,7 @@ public class CartControllerTests {
                 .andExpect(handler().handlerType(CartController.class))
                 .andExpect(handler().methodName("addItem"));
 
-        List<CartItem> itemsByBuyer2 = cartService.getItemsByBuyer(user4);
+        List<CartItem> itemsByBuyer2 = cartService.getCartItemsByBuyer(user4);
         assertThat(itemsByBuyer2.size()).isEqualTo( itemsByBuyer1.size() + 1);
     }
 
@@ -74,7 +74,7 @@ public class CartControllerTests {
     void t3() throws Exception{
         // WHEN
         Member user4 = memberService.findByUsername("user2").get();
-        List<CartItem> itemsByBuyer1 = cartService.getItemsByBuyer(user4);
+        List<CartItem> itemsByBuyer1 = cartService.getCartItemsByBuyer(user4);
 
         ResultActions resultActions = mvc
                 .perform(post("/cart/add/1")
@@ -87,7 +87,7 @@ public class CartControllerTests {
                 .andExpect(handler().handlerType(CartController.class))
                 .andExpect(handler().methodName("addItem"));
 
-        List<CartItem> itemsByBuyer2 = cartService.getItemsByBuyer(user4);
+        List<CartItem> itemsByBuyer2 = cartService.getCartItemsByBuyer(user4);
         assertThat(itemsByBuyer2.size()).isEqualTo( itemsByBuyer1.size() );
     }
 }

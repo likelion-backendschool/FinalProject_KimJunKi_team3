@@ -67,8 +67,14 @@
                                    type="checkbox" class="ml-2 checkbox">
                         </label>
                     </div>
-                    <button th:if="${order.payable}" onclick="payment();" class="btn btn-sm btn-primary">카드결제</button>
+                    <div th:if="${order.payable}">
+                        <button  onclick="payment();" class="btn btn-sm btn-primary">카드결제</button>
+                        <a href="javascript:;" onClick="CancelForm__submit();" class="btn btn-primary btn-sm">주문 취소</a>
+                        <form method="POST" name="cancelForm" th:action="@{|/order/${order.id}/cancel|}" hidden></form>
+                    </div>
                     <span th:if="${order.isPaid}">결제완료</span>
+
+
                     <div>
                         <div>
                             <span>PG결제가격 : </span>
@@ -82,6 +88,9 @@
         </div>
     </section>
     <script>
+        function CancelForm__submit() {
+            document.cancelForm.submit();
+        }
         const $PaymentForm__useRestCash = $("#PaymentForm__useRestCash");
         const $PaymentForm__useRestCashAll = $("#PaymentForm__useRestCashAll");
         const $PaymentForm__pgPayPriceDisplay = $("#PaymentForm__pgPayPriceDisplay");

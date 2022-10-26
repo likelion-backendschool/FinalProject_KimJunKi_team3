@@ -61,20 +61,6 @@ public class OrderController {
         return "order/detail";
     }
 
-    @PostConstruct
-    private void init() {
-        restTemplate.setErrorHandler(new ResponseErrorHandler() {
-            @Override
-            public boolean hasError(ClientHttpResponse response) {
-                return false;
-            }
-
-            @Override
-            public void handleError(ClientHttpResponse response) {
-            }
-        });
-    }
-
     private final String SECRET_KEY = "test_sk_BE92LAa5PVbDMx4BAzP87YmpXyJj";
 
     @RequestMapping("/{id}/success")
@@ -160,6 +146,16 @@ public class OrderController {
         String redirect = "redirect:/order/%d".formatted(order.getId()) + "?msg=" + Ut.url.encode("%d번 주문이 생성되었습니다.".formatted(order.getId()));
 
         return redirect;
+    }
+
+    @PostMapping("/{id}/cancel")
+    @PreAuthorize("isAuthenticated()")
+    public String cancel(@PathVariable Long id) {
+        Member actor = rq.getMember();
+
+        orderService.cancelOrder(actor, id);
+
+        return "redirect:/cart/items/?msg=%s".formatted(Ut.url.encode("주문이 취소되었습니다."));
     }
 
 }

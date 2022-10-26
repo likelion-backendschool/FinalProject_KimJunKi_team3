@@ -23,5 +23,8 @@ public class CartItem extends BaseEntity {
     private Member buyer;
     @ManyToOne(fetch = LAZY)
     private Product product;
-
+    public CartItem(Product product, Member buyer) {
+        this.product = product;
+        this.buyer = buyer;
+    }
 }

@@ -40,7 +40,7 @@ public class CartController {
     @GetMapping("/items")
     public String showItems(Model model) {
         Member buyer = rq.getMember();
-        List<CartItem> items = cartService.getItemsByBuyer(buyer);
+        List<CartItem> items = cartService.getCartItemsByBuyer(buyer);
 
         model.addAttribute("items", items);
         return "cart/items";
