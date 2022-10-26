@@ -530,5 +530,16 @@
       </div>
     </div>
   </footer>
+<script th:inline="javascript">
+  const params = /*[[ ${param} ]]*/ null;
+
+  if (params.msg) {
+    alert(params.msg[0]);
+  }
+
+  if (params.errorMsg) {
+    alert(params.errorMsg[0]);
+  }
+</script>
 </body>
 </html>

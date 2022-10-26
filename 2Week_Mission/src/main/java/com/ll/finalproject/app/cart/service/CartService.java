@@ -1,8 +1,10 @@
 package com.ll.finalproject.app.cart.service;
 
 import com.ll.finalproject.app.cart.entity.CartItem;
+import com.ll.finalproject.app.cart.exception.AlreadyExistsCartItemException;
 import com.ll.finalproject.app.cart.repository.CartItemRepository;
 import com.ll.finalproject.app.member.entity.Member;
+import com.ll.finalproject.app.member.exception.AlreadyExistsNicknameException;
 import com.ll.finalproject.app.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +22,10 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
 
     public CartItem addItem(Member buyer, Product product) {
-        CartItem oldCartItem = cartItemRepository.findByBuyerIdAndProductId(buyer.getId(), product.getId()).orElse(null);
+        boolean hasCartItem = cartItemRepository.existsByBuyerIdAndProductId(buyer.getId(), product.getId());
 
-        if (oldCartItem != null) {
-            return oldCartItem;
+        if (hasCartItem) {
+            throw new AlreadyExistsCartItemException();
         }
 
         CartItem cartItem = CartItem.builder()
