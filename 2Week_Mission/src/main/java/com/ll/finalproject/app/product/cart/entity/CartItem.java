@@ -1,4 +1,4 @@
-package com.ll.finalproject.app.cart.entity;
+package com.ll.finalproject.app.product.cart.entity;
 
 import com.ll.finalproject.app.base.entity.BaseEntity;
 import com.ll.finalproject.app.member.entity.Member;

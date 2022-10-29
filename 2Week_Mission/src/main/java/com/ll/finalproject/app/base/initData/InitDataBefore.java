@@ -1,7 +1,6 @@
 package com.ll.finalproject.app.base.initData;
 
-import com.ll.finalproject.app.cart.entity.CartItem;
-import com.ll.finalproject.app.cart.service.CartService;
+import com.ll.finalproject.app.product.cart.service.CartService;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.order.entity.Order;
@@ -14,7 +13,6 @@ import com.ll.finalproject.app.product.service.ProductService;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public interface InitDataBefore {
     default void before(MemberService memberService,
