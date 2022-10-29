@@ -23,6 +23,7 @@ import static javax.persistence.FetchType.LAZY;
 @SuperBuilder
 @ToString(callSuper = true)
 public class Post extends BaseEntity {
+
     @ManyToOne(fetch = LAZY)
     private Member author;
     @NotBlank(message = "제목은 필수항목입니다.")

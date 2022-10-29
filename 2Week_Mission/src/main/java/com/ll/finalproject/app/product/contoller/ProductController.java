@@ -1,5 +1,6 @@
 package com.ll.finalproject.app.product.contoller;
 
+import com.ll.finalproject.app.base.rq.Rq;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.post.entity.Post;
@@ -35,30 +36,35 @@ public class ProductController {
     private final MemberService memberService;
     private final PostKeywordService postKeywordService;
     private final PostService postService;
+    private final Rq rq;
 
     @GetMapping("/list")
     public String list(Model model) {
+
         List<Product> productList = productService.getProductList();
+
         model.addAttribute("productList", productList);
         return "product/list";
     }
 
-    @GetMapping("/{id}")
-    public String detail(@PathVariable("id") Long id, Model model) {
+    @GetMapping("/{productId}")
+    public String detail(@PathVariable Long productId, Model model) {
 
-        Product product = productService.getProductById(id);
+        Product product = productService.getProductById(productId);
+
         if (product == null) {
             return "product/list";
         }
+
         model.addAttribute("product", product);
         return "product/detail";
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
-    public String showCreate(Model model, Principal principal) {
-        Member member = memberService.findByUsername(principal.getName()).get();
-        List<Post> postList = postService.getPostByAuthor(member);
+    public String showCreate(Model model) {
+
+        List<Post> postList = postService.getPostByAuthorId(rq.getId());
 
         Set<PostKeyword> postKeywordSet = new HashSet<>();
         for (Post post : postList) {
@@ -74,21 +80,21 @@ public class ProductController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String create(@Valid ProductCreateForm postCreateForm, BindingResult bindingResult, Principal principal) {
-        log.info("postCreateForm = {}", postCreateForm);
+    public String create(@Valid ProductCreateForm postCreateForm, BindingResult bindingResult) {
+        log.info("rq.getId() = {}", rq.getId());
+        log.info("rq.getId() = {}", rq.getMemberDto());
         if (bindingResult.hasErrors()) {
             return "product/create";
         }
 
-        Member member = memberService.findByUsername(principal.getName()).get();
         PostKeyword postKeyword = postKeywordService.findById(postCreateForm.getPostKeywordId()).orElse(null);
+
         if (postKeyword == null) {
             bindingResult.rejectValue("postKeywordId",null ,"존재하지 않는 키워드입니다.");
             return "product/create";
         }
-
         // content 생성
-        List<Post> postList = postService.getPostByAuthor(member);
+        List<Post> postList = postService.getPostByAuthorId(rq.getId());
         StringBuffer sb = new StringBuffer();
         for (Post post : postList) {
             for (PostHashTag postHashTag : post.getPostHashTagList()) {
@@ -99,32 +105,33 @@ public class ProductController {
             }
         }
 
-        Product product = productService.create(member, postKeyword, postCreateForm.getSubject(),
+        Product product = productService.create(rq.getId(), postKeyword, postCreateForm.getSubject(),
                 sb.toString(), postCreateForm.getDescription(), postCreateForm.getPrice());
 
         return "redirect:/product/%d".formatted(product.getId());
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}/modify")
-    public String showModify(@PathVariable Long id, Model model, Principal principal) {
+    @GetMapping("/{productId}/modify")
+    public String showModify(@PathVariable Long productId, Model model) {
 
-        Product product = productService.getProductById(id);
+        Product product = productService.getProductById(productId);
 
-        if (!product.getAuthor().getUsername().equals(principal.getName())) {
+        if (!product.getAuthor().getId().equals(rq.getId())) {
             return "redirect:/product/%d".formatted(product.getId());
         }
+
         model.addAttribute("product", product);
         return "product/modify";
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/{id}/modify")
-    public String modify(@PathVariable Long id, Principal principal, @Valid @ModelAttribute("product") ProductModifyForm productModifyForm) {
+    @PostMapping("/{productId}/modify")
+    public String modify(@PathVariable Long productId, @Valid @ModelAttribute("product") ProductModifyForm productModifyForm) {
 
-        Product product = productService.getProductById(id);
+        Product product = productService.getProductById(productId);
 
-        if (!product.getAuthor().getUsername().equals(principal.getName())) {
+        if (!product.getAuthor().getId().equals(rq.getId())) {
             return "redirect:/product/%d".formatted(product.getId());
         }
 
@@ -133,12 +140,12 @@ public class ProductController {
         return "redirect:/product/%d".formatted(product.getId());
     }
 
-    @GetMapping("/{id}/delete")
-    public String delete(@PathVariable Long id, Principal principal) {
+    @GetMapping("/{productId}/delete")
+    public String delete(@PathVariable Long productId) {
 
-        Product product = productService.getProductById(id);
+        Product product = productService.getProductById(productId);
 
-        if (!product.getAuthor().getUsername().equals(principal.getName())) {
+        if (!product.getAuthor().getId().equals(rq.getId())) {
             return "redirect:/product/%d".formatted(product.getId());
         }
         productService.delete(product);

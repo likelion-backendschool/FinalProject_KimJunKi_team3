@@ -1,4 +1,4 @@
-package com.ll.finalproject.app.member.form;
+package com.ll.finalproject.app.member.dto;
 
 import lombok.Data;
 

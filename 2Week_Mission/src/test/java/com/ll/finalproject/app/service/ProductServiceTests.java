@@ -34,7 +34,7 @@ public class ProductServiceTests {
         Member author = memberRepository.findByUsername("user2").get();
         PostKeyword postKeyword1 = postKeywordService.findByContent("안녕").get();
 
-        Product product3 = productService.create(author, postKeyword1, "안녕 책 제목입니다", "안녕 내용입니다", "이 책은 ...", 1999);
+        Product product3 = productService.create(author.getId(), postKeyword1, "안녕 책 제목입니다", "안녕 내용입니다", "이 책은 ...", 1999);
 
         assertThat(product3).isNotNull();
     }

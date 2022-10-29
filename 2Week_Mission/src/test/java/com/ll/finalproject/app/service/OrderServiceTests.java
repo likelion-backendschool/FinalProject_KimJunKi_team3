@@ -48,17 +48,17 @@ public class OrderServiceTests {
         Member buyer = memberRepository.findByUsername("user4").get();
 
         Order order1 = orderService.findOrderById(3).get();
-        List<CartItem> cartItemsByBuyer1 = cartService.getCartItemsByBuyer(buyer);
+        List<CartItem> cartItemsByBuyer1 = cartService.getCartItemsByBuyer(buyer.getId());
         List<OrderItem> orderItemsByOrder1 = orderItemService.getOrderItemsByOrder(order1);
 
         assertThat(order1).isNotNull();
         assertThat(cartItemsByBuyer1.size()).isEqualTo(0);
         assertThat(orderItemsByOrder1.size()).isEqualTo(2);
 
-        orderService.cancelOrder(buyer, order1.getId());
+        orderService.cancelOrder(buyer.getUsername(), order1.getId());
 
         Order order2 = orderService.findOrderById(3).orElse(null);
-        List<CartItem> cartItemsByBuyer2 = cartService.getCartItemsByBuyer(buyer);
+        List<CartItem> cartItemsByBuyer2 = cartService.getCartItemsByBuyer(buyer.getId());
         List<OrderItem> orderItemsByOrder2 = orderItemService.getOrderItemsByOrder(order1);
 
         assertThat(order2).isNull();

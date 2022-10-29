@@ -36,8 +36,8 @@ public class CartServiceTests {
         Product product1 = productService.findById(1).get();
         Product product2 = productService.findById(2).get();
 
-        CartItem cartItem1 = cartService.addItem(buyer, product1);
-        CartItem cartItem2 = cartService.addItem(buyer, product2);
+        CartItem cartItem1 = cartService.addItem(buyer.getId(), product1);
+        CartItem cartItem2 = cartService.addItem(buyer.getId(), product2);
 
         assertThat(cartItem1).isNotNull();
         assertThat(cartItem2).isNotNull();

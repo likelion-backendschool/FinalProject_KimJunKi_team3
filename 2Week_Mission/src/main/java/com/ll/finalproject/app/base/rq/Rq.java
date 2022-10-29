@@ -1,5 +1,6 @@
 package com.ll.finalproject.app.base.rq;
 
+import com.ll.finalproject.app.member.dto.MemberDto;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.security.dto.MemberContext;
 import lombok.Getter;
@@ -21,7 +22,7 @@ public class Rq {
     private final HttpServletResponse resp;
     private final MemberContext memberContext;
     @Getter
-    private final Member member;
+    private final MemberDto memberDto;
 
     public Rq(HttpServletRequest req, HttpServletResponse resp) {
         this.req = req;
@@ -33,10 +34,10 @@ public class Rq {
         log.info("member = {}", authentication.getPrincipal());
         if (authentication.getPrincipal() instanceof MemberContext) {
             this.memberContext = (MemberContext) authentication.getPrincipal();
-            this.member = memberContext.getMember();
+            this.memberDto = memberContext.getMemberDto();
         } else {
             this.memberContext = null;
-            this.member = null;
+            this.memberDto = null;
         }
     }
 
@@ -47,8 +48,8 @@ public class Rq {
     }
 
     public long getId() {
-        if (this.member != null) {
-            return member.getId();
+        if (this.memberDto != null) {
+            return memberDto.getId();
         }
         return 0;
     }

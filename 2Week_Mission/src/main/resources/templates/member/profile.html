@@ -14,13 +14,13 @@
         <div>
           <div class="badge badge-primary">이메일</div>
 
-          <span th:text="${@rq.member.email}"></span>
+          <span th:text="${@rq.memberDto.email}"></span>
         </div>
 
         <div>
           <div class="badge badge-primary">닉네임</div>
 
-          <span th:text="${@rq.member.nickname}?: '아직 작가명이 등록되어있지 않습니다.'"></span>
+          <span th:text="${@rq.memberDto.nickname}?: '아직 작가명이 등록되어있지 않습니다.'"></span>
         </div>
       </div>
 

@@ -2,12 +2,14 @@ package com.ll.finalproject.app.controller;
 
 import com.ll.finalproject.app.member.controller.MemberController;
 import com.ll.finalproject.app.member.entity.Member;
+import com.ll.finalproject.app.member.repository.MemberRepository;
 import com.ll.finalproject.app.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,9 +35,12 @@ class MemberControllerTests {
     private MockMvc mvc;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Test
     @DisplayName("정상적인 회원가입")
+    @WithAnonymousUser
     void t1() throws Exception {
         // WHEN
         ResultActions resultActions = mvc
@@ -54,7 +59,7 @@ class MemberControllerTests {
                 .andExpect(handler().methodName("join"))
                 .andExpect(redirectedUrl("/"));
 
-        assertThat(memberService.findByUsername("user123").isPresent()).isTrue();
+        assertThat(memberRepository.findByUsername("user123").isPresent()).isTrue();
     }
 
     @Test
@@ -128,7 +133,7 @@ class MemberControllerTests {
                 .andExpect(handler().handlerType(MemberController.class))
                 .andExpect(handler().methodName("modify"));
 
-        Member member = memberService.findByUsername("user1").get();
+        Member member = memberService.findByUsername("user1");
         assertThat(member.getEmail()).isEqualTo("user123@test.com");
     }
 
@@ -166,7 +171,7 @@ class MemberControllerTests {
                 .andExpect(handler().handlerType(MemberController.class))
                 .andExpect(handler().methodName("modifyPassword"));
 
-        Member member = memberService.findByUsername("user1").get();
+        Member member = memberService.findByUsername("user1");
 
         assertThat(memberService.checkOldPassword("123", member.getPassword())).isTrue();
     }

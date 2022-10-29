@@ -1,6 +1,7 @@
 package com.ll.finalproject.app.post.controller;
 
 import com.ll.finalproject.app.base.rq.Rq;
+import com.ll.finalproject.app.member.dto.MemberDto;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.post.entity.Post;
@@ -34,6 +35,7 @@ public class PostController {
 
     @GetMapping("/list")
     public String list(Model model) {
+
         List<Post> posts = postService.getPostList();
 
         model.addAttribute("posts", posts);
@@ -43,19 +45,18 @@ public class PostController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/keyword/list")
     public String list(@RequestParam("kw") String kw, Model model) {
-        Member member = rq.getMember();
 
-        List<Post> posts = postService.getPostListByPostKeyword(member, kw);
+        List<Post> posts = postService.getPostListByPostKeyword(rq.getId(), kw);
 
         model.addAttribute("posts", posts);
         return "post/keyword";
     }
 
-    @GetMapping("/{id}")
-    public String detail(@PathVariable("id") Long id, Model model) {
+    @GetMapping("/{postId}")
+    public String detail(@PathVariable Long postId, Model model) {
 
         try {
-            Post post = postService.getPostById(id);
+            Post post = postService.getPostById(postId);
             model.addAttribute("post", post);
         } catch (PostNotFoundException e) {
             return "post/list";
@@ -79,21 +80,22 @@ public class PostController {
             return "post/write";
         }
 
-        Member member = rq.getMember();
-        Post post = postService.write(member, postForm.getSubject(), postForm.getContent(), postForm.getHashTagContents());
+        Post post = postService.write(rq.getId(), postForm.getSubject(), postForm.getContent(), postForm.getHashTagContents());
 
         return "redirect:/post/%d".formatted(post.getId());
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}/modify")
-    public String showModify(@PathVariable Long id, Model model) {
+    @GetMapping("/{postId}/modify")
+    public String showModify(@PathVariable Long postId, Model model) {
 
         try {
-            Post post = postService.getPostById(id);
+            Post post = postService.getPostById(postId);
+
             if (post.getAuthor().getId() != rq.getId()) {
                 return "redirect:/post/%d".formatted(post.getId());
             }
+
             model.addAttribute("post", post);
         } catch (PostNotFoundException e) {
             return "post/list";
@@ -103,35 +105,36 @@ public class PostController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/{id}/modify")
-    public String modify(@PathVariable Long id, @Valid @ModelAttribute("post") PostForm postForm, BindingResult bindingResult) {
+    @PostMapping("/{postId}/modify")
+    public String modify(@PathVariable Long postId, @Valid @ModelAttribute("post") PostForm postForm, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             return "post/modify";
         }
 
         try {
-            postService.modify(rq.getId(), id, postForm.getSubject(), postForm.getContent(), postForm.getHashTagContents());
+            postService.modify(rq.getId(), postId, postForm.getSubject(), postForm.getContent(), postForm.getHashTagContents());
         } catch (PostNotFoundException e) {
             return "post/list";
         } catch (NoAuthorizationException e) {
-            return "redirect:/post/%d".formatted(id);
+            return "redirect:/post/%d".formatted(postId);
         }
 
-        return "redirect:/post/%d".formatted(id);
+        return "redirect:/post/%d".formatted(postId);
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}/delete")
-    public String delete(@PathVariable Long id) {
+    @GetMapping("/{postId}/delete")
+    public String delete(@PathVariable Long postId) {
 
-        Post post = postService.getPostById(id);
+        Post post = postService.getPostById(postId);
 
         if (post.getAuthor().getId() != rq.getId()) {
             return "redirect:/post/%d".formatted(post.getId());
         }
 
         postService.delete(post);
+
         return "redirect:/post/list";
     }
 }

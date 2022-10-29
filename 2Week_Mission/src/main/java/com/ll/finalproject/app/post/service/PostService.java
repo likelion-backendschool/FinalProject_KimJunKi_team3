@@ -1,6 +1,8 @@
 package com.ll.finalproject.app.post.service;
 
+import com.ll.finalproject.app.member.dto.MemberDto;
 import com.ll.finalproject.app.member.entity.Member;
+import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.post.entity.Post;
 import com.ll.finalproject.app.post.exception.NoAuthorizationException;
 import com.ll.finalproject.app.post.exception.PostNotFoundException;
@@ -27,18 +29,28 @@ import static java.util.stream.Collectors.toList;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class PostService {
     private final PostRepository postRepository;
-    private final PostHashTagService postHashTagService;
-    private final PostKeywordRepository postKeywordRepository;
     private final PostHashTagRepository postHashTagRepository;
+    private final PostHashTagService postHashTagService;
+    private final MemberService memberService;
     private final CommonUtil commonUtil;
+
+    @Transactional(readOnly = true)
+    public Post findById(Long postId) {
+        return postRepository.findById(postId).orElseThrow(
+                () -> new PostNotFoundException("해당 글은 존재하지 않습니다."));
+    }
 
     public List<Post> getLatestPost() {
         return postRepository.findFirst100ByOrderByIdDesc();
     }
 
-    public Post write(Member author, String subject, String content, String hashTagContents) {
+    public Post write(Long memberId, String subject, String content, String hashTagContents) {
+
+        Member author = memberService.findById(memberId);
+
         Post post = Post
                 .builder()
                 .author(author)
@@ -57,14 +69,16 @@ public class PostService {
     }
 
     public List<Post> getPostList() {
+
         List<Post> posts = postRepository.findAllByOrderByIdDesc();
         loadForPrintData(posts);
+
         return posts;
     }
 
-    public List<Post> getPostListByPostKeyword(Member member, String kw) {
+    public List<Post> getPostListByPostKeyword(Long memberId , String kw) {
         // member 가 썼던 글 중에 kw 태그가 들어간 PostHashTag 데이터 목록
-        List<PostHashTag> postHashTags = postHashTagRepository.findAllByMemberIdAndPostKeyword_contentOrderByPost_idDesc(member.getId(), kw);
+        List<PostHashTag> postHashTags = postHashTagRepository.findAllByMemberIdAndPostKeyword_contentOrderByPost_idDesc(memberId, kw);
 
         log.info("postHashTags = {}", postHashTags);
 
@@ -77,20 +91,25 @@ public class PostService {
                 .collect(toList());
 
         loadForPrintData(posts);
+
         return posts;
     }
-    public Post getPostById(Long id) {
-        Post post = findById(id).orElseThrow(
-                () -> new PostNotFoundException("해당 글은 존재하지 않습니다")
-        );
+
+    public Post getPostById(Long postId) {
+
+        Post post = findById(postId);
         loadForPrintData(post);
+
         return post;
     }
+
     public void loadForPrintData(Post post) {
         List<PostHashTag> postHashTags = postHashTagService.getPostHashTags(post);
         post.getExtra().put("postHashTags", postHashTags);
     }
+
     public void loadForPrintData(List<Post> posts) {
+
         long[] ids = posts
                 .stream()
                 .mapToLong(Post::getId)
@@ -113,16 +132,15 @@ public class PostService {
 
         log.debug("posts : " + posts);
     }
-    @Transactional(readOnly = true)
-    public Optional<Post> findById(Long id) {
-        return postRepository.findById(id);
-    }
 
-    public Post modify(long authorId, long postId, String subject, String content, String hashTagContents) {
+    public Post modify(Long authorId, Long postId, String subject, String content, String hashTagContents) {
+
         Post post = getPostById(postId);
+
         if (post == null) {
             throw new PostNotFoundException("해당 글은 존재하지 않습니다.");
         }
+
         if (post.getAuthor().getId() != authorId) {
             throw new NoAuthorizationException("해당 글의 수정 권한이 없습니다.");
         }
@@ -139,11 +157,9 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    public List<Post> getPostByAuthor(Member member) {
-        List<Post> posts = postRepository.findByAuthor(member).orElse(null);
-        if (posts == null) {
-            return null;
-        }
+    public List<Post> getPostByAuthorId(Long memberId) {
+
+        List<Post> posts = postRepository.findByAuthorId(memberId);
         return posts;
     }
 }

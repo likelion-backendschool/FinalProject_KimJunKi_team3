@@ -1,5 +1,6 @@
 package com.ll.finalproject.app.security.dto;
 
+import com.ll.finalproject.app.member.dto.MemberDto;
 import com.ll.finalproject.app.member.entity.Member;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,8 +28,8 @@ public class MemberContext extends User {
         this.nickname = member.getNickname();
     }
 
-    public Member getMember() {
-        return Member
+    public MemberDto getMemberDto() {
+        return MemberDto
                 .builder()
                 .id(id)
                 .createDate(createDate)

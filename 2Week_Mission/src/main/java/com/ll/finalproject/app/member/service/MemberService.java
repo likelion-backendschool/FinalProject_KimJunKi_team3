@@ -2,8 +2,10 @@ package com.ll.finalproject.app.member.service;
 
 import com.ll.finalproject.app.cash.entity.CashLog;
 import com.ll.finalproject.app.cash.sevice.CashService;
+import com.ll.finalproject.app.member.dto.MemberDto;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.exception.*;
+import com.ll.finalproject.app.member.mapper.MemberMapper;
 import com.ll.finalproject.app.member.repository.MemberRepository;
 import com.ll.finalproject.app.security.dto.MemberContext;
 
@@ -18,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Optional;
 import java.util.Random;
@@ -33,6 +34,25 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final CashService cashService;
+
+    @Transactional(readOnly = true)
+    public Member findByUsername(String username) {
+        return memberRepository.findByUsername(username).orElseThrow(
+                () -> new MemberNotFoundException("존재하지 않는 아이디입니다.")
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Member findById(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(
+                () -> new MemberNotFoundException("존재하지 않는 회원입니다."));
+    }
+
+    @Transactional(readOnly = true)
+    public Member findByEmail(String email) {
+        return memberRepository.findByEmail(email).orElseThrow(
+                () -> new MemberNotFoundException("존재하지 않는 이메일입니다."));
+    }
 
     public Member join(String username, String password, String email) {
 
@@ -49,40 +69,30 @@ public class MemberService {
                 .password(passwordEncoder.encode(password))
                 .email(email)
                 .build();
+
         memberRepository.save(member);
         mailService.sendJoinMail(email);
 
         return member;
     }
 
-    @Transactional(readOnly = true)
-    public Optional<Member> findByUsername(String username) {
-        return memberRepository.findByUsername(username);
-    }
+    public void modify(Long memberId, String email, String nickname) {
 
-    @Transactional(readOnly = true)
-    public Member findByEmail(String email) {
-        return memberRepository.findByEmail(email).orElseThrow(
-                () -> new MemberNotFoundException("존재하지 않는 이메일입니다."));
-    }
-
-    public void modify(String username, String email, String nickname) {
-        Member member = memberRepository.findByUsername(username).orElseThrow(
-                () -> new MemberNotFoundException("존재하지 않는 회원입니다."));
+        Member member = findById(memberId);
 
         if (StringUtils.hasText(nickname)) {
-            member.changeEmailAndNickname(email, nickname);
-        } else {
-            member.changeEmail(email);
+            member.changeNickname(nickname);
         }
+
+        member.changeEmail(email);
 
         memberRepository.save(member);
         forceAuthentication(member); // 세션 갱신
     }
 
-    public void modifyPassword(String username, String oldPassword, String newPassword) {
-        Member member = memberRepository.findByUsername(username).orElseThrow(
-                () -> new MemberNotFoundException("존재하지 않는 회원입니다."));
+    public void modifyPassword(Long memberId, String oldPassword, String newPassword) {
+
+        Member member = findById(memberId);
 
         if (!checkOldPassword(oldPassword, member.getPassword())) {
             throw new PasswordNotSameException("기존 비밀번호와 일치하지 않습니다.");
@@ -97,6 +107,7 @@ public class MemberService {
     }
 
     public void sendTempPasswordToEmail(String username, String email) {
+
         Member member = memberRepository.findByUsernameAndEmail(username, email).orElseThrow(
                 () -> new MemberNotFoundException("일치하는 회원이 존재하지 않습니다."));
 
@@ -109,24 +120,23 @@ public class MemberService {
         mailService.sendTempPasswordMail(member.getEmail(), tempPassword);
     }
 
-    public Member beAuthor(Member member, String nickname) {
+    public void beAuthor(Long memberId, String nickname) {
+
         Optional<Member> opMember = memberRepository.findByNickname(nickname);
 
         if (opMember.isPresent()) {
             throw new AlreadyExistsNicknameException("이미 존재하는 필명입니다.");
         }
 
-        Member foundMember = memberRepository.findById(member.getId())
-                .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 유저입니다."));
+        Member member = findById(memberId);
 
-        foundMember.changeNickname(nickname);
-        forceAuthentication(foundMember);
-
-        return member;
+        member.changeNickname(nickname);
+        forceAuthentication(member);  // 세션 갱신
     }
 
     // 세션 갱신
     private void forceAuthentication(Member member) {
+
         MemberContext memberContext = new MemberContext(member, member.genAuthorities());
 
         UsernamePasswordAuthenticationToken authentication =
@@ -135,12 +145,14 @@ public class MemberService {
                         member.getPassword(),
                         memberContext.getAuthorities()
                 );
+
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
     }
 
     public long addCash(Member member, long price, String eventType) {
+
         CashLog cashLog = cashService.addCash(member, price, eventType);
 
         long newRestCash = member.getRestCash() + cashLog.getPrice();
@@ -150,9 +162,8 @@ public class MemberService {
         return newRestCash;
     }
 
-    public long getRestCash(Member member) {
-        Member foundMember = findByUsername(member.getUsername()).orElseThrow(
-                () -> new MemberNotFoundException("존재하지 않는 유저입니다."));
-        return foundMember.getRestCash();
+    public Long getRestCash(String username) {
+        Member member = findByUsername(username);
+        return member.getRestCash();
     }
 }

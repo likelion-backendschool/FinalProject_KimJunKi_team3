@@ -12,7 +12,10 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findFirst100ByOrderByIdDesc();
 
-    Optional<List<Post>> findByAuthor(Member member);
+    List<Post> findByAuthor(Member member);
+
+    List<Post> findByAuthorId(Long memberId);
+
 
     List<Post> findAllByOrderByIdDesc();
 }

@@ -3,7 +3,7 @@ package com.ll.finalproject.app.member.controller;
 import com.ll.finalproject.app.base.rq.Rq;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.exception.*;
-import com.ll.finalproject.app.member.form.*;
+import com.ll.finalproject.app.member.dto.*;
 import com.ll.finalproject.app.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.security.Principal;
 
 @Controller
 @RequestMapping("/member")
@@ -34,7 +33,9 @@ public class MemberController {
     @PreAuthorize("isAnonymous()")
     @GetMapping("/login")
     public String showLogin(HttpServletRequest request) {
+
         String uri = request.getHeader("Referer");
+
         if (uri != null && !uri.contains("/member/login")) {
             request.getSession().setAttribute("prevPage", uri);
         }
@@ -83,21 +84,22 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify")
     public String showModify(Model model) {
-        Member member = rq.getMember();
 
-        model.addAttribute("memberModifyForm", new MemberModifyForm(member.getEmail(), member.getNickname()));
+        MemberDto memberDto = rq.getMemberDto();
+
+        model.addAttribute("memberModifyForm", memberDto);
         return "member/modify";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify")
-    public String modify(@Valid MemberModifyForm memberModifyForm, BindingResult bindingResult, Principal principal) {
+    public String modify(@Valid MemberModifyForm memberModifyForm, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             return "member/modify";
         }
 
-        memberService.modify(principal.getName(), memberModifyForm.getEmail(), memberModifyForm.getNickname());
+        memberService.modify(rq.getId(), memberModifyForm.getEmail(), memberModifyForm.getNickname());
         return "redirect:/member/profile";
     }
 
@@ -109,7 +111,7 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modifyPassword")
-    public String modifyPassword(@Valid MemberModifyPasswordForm memberModifyPasswordForm, BindingResult bindingResult, Principal principal) {
+    public String modifyPassword(@Valid MemberModifyPasswordForm memberModifyPasswordForm, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             return "member/modifyPassword";
@@ -119,8 +121,9 @@ public class MemberController {
             bindingResult.rejectValue("newPassword",null,"패스워드와 패스워드 확인이 불일치합니다.");
             return "member/modifyPassword";
         }
+
         try {
-            memberService.modifyPassword(principal.getName(), memberModifyPasswordForm.getOldPassword(), memberModifyPasswordForm.getNewPassword());
+            memberService.modifyPassword(rq.getId(), memberModifyPasswordForm.getOldPassword(), memberModifyPasswordForm.getNewPassword());
         } catch (PasswordNotSameException e) {
             bindingResult.rejectValue("oldPassword",null, e.getMessage());
             return "member/modifyPassword";
@@ -183,10 +186,8 @@ public class MemberController {
             return "member/beAuthor";
         }
 
-        Member member = rq.getMember();
-
         try {
-            memberService.beAuthor(member, memberBeAuthorForm.getNickname());
+            memberService.beAuthor(rq.getId(), memberBeAuthorForm.getNickname());
         } catch (AlreadyExistsNicknameException e) {
             bindingResult.rejectValue("nickname",null, e.getMessage());
             return "member/beAuthor";
@@ -194,4 +195,5 @@ public class MemberController {
 
         return "redirect:/member/profile";
     }
+
 }

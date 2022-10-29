@@ -32,11 +32,6 @@ public class Member extends BaseEntity {
     private int authLevel;
     private long restCash; // 남은 캐시
 
-    public void changeEmailAndNickname(String email, String nickname) {
-        this.email = email;
-        this.nickname = nickname;
-    }
-
     public void changeNickname(String nickname) {
         this.nickname = nickname;
     }
