@@ -64,47 +64,46 @@ public class ProductController {
     @GetMapping("/create")
     public String showCreate(Model model) {
 
-        List<Post> postList = postService.getPostByAuthorId(rq.getId());
-
-        Set<PostKeyword> postKeywordSet = new HashSet<>();
-        for (Post post : postList) {
-            for (PostHashTag postHashTag : post.getPostHashTagList()) {
-                postKeywordSet.add(postHashTag.getPostKeyword());
-            }
-        }
-
-        model.addAttribute("postKeywordSet", postKeywordSet);
-        model.addAttribute("productCreateForm", new ProductCreateForm());
+//        List<Post> postList = postService.getPostByAuthorId(rq.getId());
+//
+//        Set<PostKeyword> postKeywordSet = new HashSet<>();
+//        for (Post post : postList) {
+//            for (PostHashTag postHashTag : post.getPostHashTagList()) {
+//                postKeywordSet.add(postHashTag.getPostKeyword());
+//            }
+//        }
+//
+//        model.addAttribute("postKeywordSet", postKeywordSet);
+//        model.addAttribute("productCreateForm", new ProductCreateForm());
         return "product/create";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String create(@Valid ProductCreateForm postCreateForm, BindingResult bindingResult) {
-        log.info("rq.getId() = {}", rq.getId());
-        log.info("rq.getId() = {}", rq.getMemberDto());
+
         if (bindingResult.hasErrors()) {
             return "product/create";
         }
 
         PostKeyword postKeyword = postKeywordService.findById(postCreateForm.getPostKeywordId()).orElse(null);
 
-        if (postKeyword == null) {
-            bindingResult.rejectValue("postKeywordId",null ,"존재하지 않는 키워드입니다.");
-            return "product/create";
-        }
-        // content 생성
-        List<Post> postList = postService.getPostByAuthorId(rq.getId());
+//        if (postKeyword == null) {
+//            bindingResult.rejectValue("postKeywordId",null ,"존재하지 않는 키워드입니다.");
+//            return "product/create";
+//        }
+//        // content 생성
+//        List<Post> postList = postService.getPostByAuthorId(rq.getId());
         StringBuffer sb = new StringBuffer();
-        for (Post post : postList) {
-            for (PostHashTag postHashTag : post.getPostHashTagList()) {
-                if (postHashTag.getPostKeyword().getId().equals(postCreateForm.getPostKeywordId())) {
-                    sb.append(post.getContent() + "\n");
-                    break;
-                }
-            }
-        }
-
+//        for (Post post : postList) {
+//            for (PostHashTag postHashTag : post.getPostHashTagList()) {
+//                if (postHashTag.getPostKeyword().getId().equals(postCreateForm.getPostKeywordId())) {
+//                    sb.append(post.getContent() + "\n");
+//                    break;
+//                }
+//            }
+//        }
+//
         Product product = productService.create(rq.getId(), postKeyword, postCreateForm.getSubject(),
                 sb.toString(), postCreateForm.getDescription(), postCreateForm.getPrice());
 

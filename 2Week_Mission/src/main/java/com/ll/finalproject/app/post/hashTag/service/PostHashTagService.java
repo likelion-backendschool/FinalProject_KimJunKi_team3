@@ -5,8 +5,10 @@ import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
 import com.ll.finalproject.app.post.hashTag.repository.PostHashTagRepository;
 import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import com.ll.finalproject.app.post.keyword.service.PostKeywordService;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,8 +16,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostHashTagService {
     private final PostKeywordService postKeywordService;
     private final PostHashTagRepository postHashTagRepository;

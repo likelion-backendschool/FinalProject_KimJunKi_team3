@@ -4,11 +4,13 @@ import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import com.ll.finalproject.app.post.keyword.repository.PostKeywordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostKeywordService {
     private final PostKeywordRepository keywordRepository;
 

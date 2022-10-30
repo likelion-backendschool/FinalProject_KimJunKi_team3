@@ -53,5 +53,11 @@ public class Rq {
         }
         return 0;
     }
+    public String getUsername() {
+        if (this.memberDto != null) {
+            return memberDto.getUsername();
+        }
+        return null;
+    }
 }
 

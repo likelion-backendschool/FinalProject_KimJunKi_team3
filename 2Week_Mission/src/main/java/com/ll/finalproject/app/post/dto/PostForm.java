@@ -1,4 +1,4 @@
-package com.ll.finalproject.app.post.form;
+package com.ll.finalproject.app.post.dto;
 
 import lombok.Data;
 import javax.validation.constraints.NotBlank;

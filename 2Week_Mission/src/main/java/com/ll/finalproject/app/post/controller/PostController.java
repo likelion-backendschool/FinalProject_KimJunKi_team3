@@ -1,13 +1,11 @@
 package com.ll.finalproject.app.post.controller;
 
 import com.ll.finalproject.app.base.rq.Rq;
-import com.ll.finalproject.app.member.dto.MemberDto;
-import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
-import com.ll.finalproject.app.post.entity.Post;
+import com.ll.finalproject.app.post.entity.PostDto;
 import com.ll.finalproject.app.post.exception.NoAuthorizationException;
 import com.ll.finalproject.app.post.exception.PostNotFoundException;
-import com.ll.finalproject.app.post.form.PostForm;
+import com.ll.finalproject.app.post.dto.PostForm;
 import com.ll.finalproject.app.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.naming.Binding;
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.List;
 
 
@@ -30,15 +26,14 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-    private final MemberService memberService;
     private final Rq rq;
 
     @GetMapping("/list")
     public String list(Model model) {
 
-        List<Post> posts = postService.getPostList();
+        List<PostDto> postDtos = postService.getPostList();
 
-        model.addAttribute("posts", posts);
+        model.addAttribute("posts", postDtos);
         return "post/list";
     }
 
@@ -46,9 +41,9 @@ public class PostController {
     @GetMapping("/keyword/list")
     public String list(@RequestParam("kw") String kw, Model model) {
 
-        List<Post> posts = postService.getPostListByPostKeyword(rq.getId(), kw);
+        List<PostDto> postDtos = postService.getPostListByPostKeyword(rq.getId(), kw);
 
-        model.addAttribute("posts", posts);
+        model.addAttribute("posts", postDtos);
         return "post/keyword";
     }
 
@@ -56,8 +51,8 @@ public class PostController {
     public String detail(@PathVariable Long postId, Model model) {
 
         try {
-            Post post = postService.getPostById(postId);
-            model.addAttribute("post", post);
+            PostDto postDto = postService.getPostById(postId);
+            model.addAttribute("post", postDto);
         } catch (PostNotFoundException e) {
             return "post/list";
         }
@@ -80,9 +75,9 @@ public class PostController {
             return "post/write";
         }
 
-        Post post = postService.write(rq.getId(), postForm.getSubject(), postForm.getContent(), postForm.getHashTagContents());
+        PostDto postDto = postService.write(rq.getId(), postForm.getSubject(), postForm.getContent(), postForm.getHashTagContents());
 
-        return "redirect:/post/%d".formatted(post.getId());
+        return "redirect:/post/%d".formatted(postDto.getId());
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -90,13 +85,9 @@ public class PostController {
     public String showModify(@PathVariable Long postId, Model model) {
 
         try {
-            Post post = postService.getPostById(postId);
+            PostDto postDto = postService.getPostById(postId, rq.getId());
 
-            if (post.getAuthor().getId() != rq.getId()) {
-                return "redirect:/post/%d".formatted(post.getId());
-            }
-
-            model.addAttribute("post", post);
+            model.addAttribute("post", postDto);
         } catch (PostNotFoundException e) {
             return "post/list";
         }
@@ -126,15 +117,7 @@ public class PostController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{postId}/delete")
     public String delete(@PathVariable Long postId) {
-
-        Post post = postService.getPostById(postId);
-
-        if (post.getAuthor().getId() != rq.getId()) {
-            return "redirect:/post/%d".formatted(post.getId());
-        }
-
-        postService.delete(post);
-
+        postService.delete(postId, rq.getId());
         return "redirect:/post/list";
     }
 }

@@ -20,13 +20,15 @@
               <span th:text="${post.subject}"></span>
             </a>
             <a th:href="@{|/post/${post.id}|}">
-              <span th:text="${post.author.username}"></span>
+              <span th:text="${post.author}"></span>
             </a>
             <span th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
             <span th:text="${#temporals.format(post.modifyDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
           </div>
           <div>
-            <th:block th:utext="${post.extra_postHashTagLinks}"/>
+            <th:block th:each="postKeyWord : ${post.postHashTagList}">
+              <a th:href="${postKeyWord.listUrl}" class="btn btn-secondary btn-sm" th:text="'#'+${postKeyWord.content}"></a>
+            </th:block>
           </div>
         </li>
       </ul>
