@@ -61,7 +61,7 @@
                     </label>
                     <select th:field="*{postKeywordId}" class="input input-bordered">
                         <option value="">==키워드 선택==</option>
-                        <option th:each="postKeyword : ${postKeywordSet}" th:value="${postKeyword.id}"
+                        <option th:each="postKeyword : ${postKeywords}" th:value="${postKeyword.id}"
                                 th:text="${postKeyword.content}">Tag</option>
                     </select>
                     <div class="field-error" th:errors="*{postKeywordId}">키워드 오류</div>

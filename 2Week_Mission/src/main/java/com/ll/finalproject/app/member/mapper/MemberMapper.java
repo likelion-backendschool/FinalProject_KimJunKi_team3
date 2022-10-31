@@ -9,7 +9,6 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public interface MemberMapper {
     MemberMapper INSTANCE = Mappers.getMapper(MemberMapper.class);
-
     Member memberJoinFormToEntity(MemberJoinForm memberJoinForm);
     MemberJoinForm entityToMemberJoinForm(Member member);
 

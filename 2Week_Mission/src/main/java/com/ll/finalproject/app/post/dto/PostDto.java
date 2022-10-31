@@ -1,21 +1,11 @@
-package com.ll.finalproject.app.post.entity;
+package com.ll.finalproject.app.post.dto;
 
-import com.ll.finalproject.app.base.entity.BaseEntity;
-import com.ll.finalproject.app.member.entity.Member;
-import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
 import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import static javax.persistence.FetchType.LAZY;
 
 @Getter
 @Setter
@@ -39,4 +29,17 @@ public class PostDto {
     private LocalDateTime modifyDate;
 
     private List<PostKeyword> postHashTagList;
+
+    public String getExtra_inputValue_hashTagContents() {
+
+        if (postHashTagList == null || postHashTagList.size() == 0) {
+            return "";
+        }
+
+        return postHashTagList
+                .stream()
+                .map(postKeyword -> "#" + postKeyword.getContent())
+                .sorted()
+                .collect(Collectors.joining(" "));
+    }
 }

@@ -1,11 +1,10 @@
 package com.ll.finalproject.app.post.controller;
 
 import com.ll.finalproject.app.base.rq.Rq;
-import com.ll.finalproject.app.member.service.MemberService;
-import com.ll.finalproject.app.post.entity.PostDto;
+import com.ll.finalproject.app.post.dto.PostDto;
+import com.ll.finalproject.app.post.dto.PostForm;
 import com.ll.finalproject.app.post.exception.NoAuthorizationException;
 import com.ll.finalproject.app.post.exception.PostNotFoundException;
-import com.ll.finalproject.app.post.dto.PostForm;
 import com.ll.finalproject.app.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -104,7 +103,7 @@ public class PostController {
         }
 
         try {
-            postService.modify(rq.getId(), postId, postForm.getSubject(), postForm.getContent(), postForm.getHashTagContents());
+            postService.modify(postId, rq.getId(), postForm.getSubject(), postForm.getContent(), postForm.getHashTagContents());
         } catch (PostNotFoundException e) {
             return "post/list";
         } catch (NoAuthorizationException e) {

@@ -1,18 +1,15 @@
 package com.ll.finalproject.app.post.service;
 
-import com.ll.finalproject.app.member.dto.MemberDto;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.exception.MemberNotFoundException;
 import com.ll.finalproject.app.member.repository.MemberRepository;
-import com.ll.finalproject.app.member.service.MemberService;
+import com.ll.finalproject.app.post.dto.PostDto;
 import com.ll.finalproject.app.post.entity.Post;
-import com.ll.finalproject.app.post.entity.PostDto;
 import com.ll.finalproject.app.post.exception.NoAuthorizationException;
 import com.ll.finalproject.app.post.exception.PostNotFoundException;
 import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
 import com.ll.finalproject.app.post.hashTag.repository.PostHashTagRepository;
 import com.ll.finalproject.app.post.hashTag.service.PostHashTagService;
-
 import com.ll.finalproject.app.post.mapper.PostMapper;
 import com.ll.finalproject.app.post.repository.PostRepository;
 import com.ll.finalproject.app.post.util.CommonUtil;
@@ -23,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;

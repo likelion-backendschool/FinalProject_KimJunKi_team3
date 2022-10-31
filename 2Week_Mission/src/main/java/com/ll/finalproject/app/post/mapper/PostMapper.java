@@ -1,9 +1,8 @@
 package com.ll.finalproject.app.post.mapper;
 
 import com.ll.finalproject.app.post.entity.Post;
-import com.ll.finalproject.app.post.entity.PostDto;
-import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
-import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
+import com.ll.finalproject.app.post.dto.PostDto;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

@@ -11,13 +11,8 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -61,53 +56,53 @@ public class Post extends BaseEntity {
 
 
     // 해시태그 수정 input 형식에 맞게 가공 (아래 로직 안 쓰는 중
-    public String getExtra_inputValue_hashTagContents() {
-        Map<String, Object> extra = getExtra();
-
-        if (extra.containsKey("postHashTags") == false) {
-            return "";
-        }
-
-        List<PostHashTag> postHashTags = (List< PostHashTag>) extra.get("postHashTags");
-
-        if (postHashTags.isEmpty()) {
-            return "";
-        }
-
-        return postHashTags
-                .stream()
-                .map(postHashTag -> "#" + postHashTag.getPostKeyword().getContent())
-                .sorted()
-                .collect(Collectors.joining(" "));
-    }
-
-    public String getExtra_postHashTagLinks() {
-        Map<String, Object> extra = getExtra();
-
-        if (extra.containsKey("postHashTags") == false) {
-            return "";
-        }
-
-        List<PostHashTag> postHashTags = (List<PostHashTag>) extra.get("postHashTags");
-
-        if (postHashTags.isEmpty()) {
-            return "";
-        }
-
-        return postHashTags
-                .stream()
-                .map(postHashTag -> {
-                    String text = "#" + postHashTag.getPostKeyword().getContent();
-
-                    return """
-                            <a href="%s" >%s</a>
-                            """
-                            .stripIndent()
-                            .formatted(postHashTag.getPostKeyword().getListUrl(), text);
-                })
-                .sorted()
-                .collect(Collectors.joining(" "));
-    }
+//    public String getExtra_inputValue_hashTagContents() {
+//        Map<String, Object> extra = getExtra();
+//
+//        if (extra.containsKey("postHashTags") == false) {
+//            return "";
+//        }
+//
+//        List<PostHashTag> postHashTags = (List< PostHashTag>) extra.get("postHashTags");
+//
+//        if (postHashTags.isEmpty()) {
+//            return "";
+//        }
+//
+//        return postHashTags
+//                .stream()
+//                .map(postHashTag -> "#" + postHashTag.getPostKeyword().getContent())
+//                .sorted()
+//                .collect(Collectors.joining(" "));
+//    }
+//
+//    public String getExtra_postHashTagLinks() {
+//        Map<String, Object> extra = getExtra();
+//
+//        if (extra.containsKey("postHashTags") == false) {
+//            return "";
+//        }
+//
+//        List<PostHashTag> postHashTags = (List<PostHashTag>) extra.get("postHashTags");
+//
+//        if (postHashTags.isEmpty()) {
+//            return "";
+//        }
+//
+//        return postHashTags
+//                .stream()
+//                .map(postHashTag -> {
+//                    String text = "#" + postHashTag.getPostKeyword().getContent();
+//
+//                    return """
+//                            <a href="%s" >%s</a>
+//                            """
+//                            .stripIndent()
+//                            .formatted(postHashTag.getPostKeyword().getListUrl(), text);
+//                })
+//                .sorted()
+//                .collect(Collectors.joining(" "));
+//    }
 
 
 }

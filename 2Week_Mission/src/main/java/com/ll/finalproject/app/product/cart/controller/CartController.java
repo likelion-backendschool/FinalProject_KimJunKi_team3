@@ -63,7 +63,7 @@ public class CartController {
     @PreAuthorize("isAuthenticated()")
     public String addItem(@PathVariable Long productId) {
 
-        Product product = productService.getProductById(productId);
+        Product product = productService.getProduct(productId);
 
         try {
             cartService.addItem(rq.getId(), product);

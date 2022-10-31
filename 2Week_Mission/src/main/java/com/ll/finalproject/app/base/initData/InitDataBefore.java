@@ -74,10 +74,10 @@ public interface InitDataBefore {
         PostKeyword keyword3 = postKeywordService.findByContent("슬픔").get();
         PostKeyword keyword4 = postKeywordService.findByContent("역경").get();
 
-        Product product1 = productService.create(member1.getId(), keyword1, "그리움 도서","임시 책내용", "그리움 도서에 대한 설명", 12000);
-        Product product2 = productService.create(member1.getId(), keyword2, "행복 도서", "임시 책내용","행복 도서에 대한 설명", 22000);
-        Product product3 = productService.create(member1.getId(), keyword3, "슬픔 도서", "임시 책내용","슬픔 도서에 대한 설명", 1000);
-        Product product4 = productService.create(member1.getId(), keyword4, "역경 도서", "임시 책내용","역경 도서에 대한 설명", 30000);
+        Product product1 = productService.create(member1.getId(),"그리움 도서", "그리움 도서에 대한 설명",12000, keyword1.getId() );
+        Product product2 = productService.create(member1.getId(), "행복 도서","행복 도서에 대한 설명", 22000, keyword2.getId());
+        Product product3 = productService.create(member1.getId(),"슬픔 도서","슬픔 도서에 대한 설명", 1000, keyword3.getId());
+        Product product4 = productService.create(member1.getId(), "역경 도서","역경 도서에 대한 설명", 30000, keyword4.getId());
 
         memberService.addCash(member3, 10_000, "충전__무통장입금");
         memberService.addCash(member3, 20_000, "충전__무통장입금");
