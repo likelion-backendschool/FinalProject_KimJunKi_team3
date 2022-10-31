@@ -1,15 +1,13 @@
 package com.ll.finalproject.app.service;
 
-import com.ll.finalproject.app.product.cart.entity.CartItem;
-import com.ll.finalproject.app.product.cart.service.CartService;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.repository.MemberRepository;
 import com.ll.finalproject.app.order.entity.Order;
 import com.ll.finalproject.app.order.entity.OrderItem;
-import com.ll.finalproject.app.order.repository.OrderRepository;
 import com.ll.finalproject.app.order.service.OrderItemService;
 import com.ll.finalproject.app.order.service.OrderService;
-import com.ll.finalproject.app.product.service.ProductService;
+import com.ll.finalproject.app.product.cart.entity.CartItem;
+import com.ll.finalproject.app.product.cart.service.CartService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +25,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OrderServiceTests {
 
     @Autowired
-    private ProductService productService;
-
-    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired
     private OrderService orderService;
-    @Autowired
-    private OrderRepository orderRepository;
+
     @Autowired
     private CartService cartService;
     @Autowired

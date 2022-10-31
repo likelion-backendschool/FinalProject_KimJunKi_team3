@@ -1,14 +1,12 @@
 package com.ll.finalproject.app.product.contoller;
 
 import com.ll.finalproject.app.base.rq.Rq;
-import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import com.ll.finalproject.app.post.keyword.service.PostKeywordService;
-import com.ll.finalproject.app.post.service.PostService;
-import com.ll.finalproject.app.product.dto.ProductDto;
-import com.ll.finalproject.app.product.entity.Product;
 import com.ll.finalproject.app.product.dto.ProductCreateForm;
+import com.ll.finalproject.app.product.dto.ProductDto;
 import com.ll.finalproject.app.product.dto.ProductModifyForm;
+import com.ll.finalproject.app.product.entity.Product;
 import com.ll.finalproject.app.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +26,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final MemberService memberService;
     private final PostKeywordService postKeywordService;
-    private final PostService postService;
     private final Rq rq;
 
     @GetMapping("/list")

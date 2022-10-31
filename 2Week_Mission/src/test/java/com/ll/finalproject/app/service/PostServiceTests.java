@@ -1,26 +1,18 @@
 package com.ll.finalproject.app.service;
 
 import com.ll.finalproject.app.base.rq.Rq;
-
-import com.ll.finalproject.app.post.entity.Post;
 import com.ll.finalproject.app.post.dto.PostDto;
+import com.ll.finalproject.app.post.entity.Post;
 import com.ll.finalproject.app.post.exception.PostNotFoundException;
-import com.ll.finalproject.app.post.hashTag.entity.PostHashTag;
-import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import com.ll.finalproject.app.post.repository.PostRepository;
 import com.ll.finalproject.app.post.service.PostService;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
