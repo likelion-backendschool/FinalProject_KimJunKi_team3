@@ -1,0 +1,33 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+
+  <section class="section section-write container mx-auto">
+
+    <div class="px-2 pt-4">
+      <h1 class="font-bold text-lg">키워드 목록</h1>
+      <a class="btn btn-primary btn-sm" href="/post/write">글 작성</a>
+      <ul >
+        <li th:each="post : ${posts}" class="flex flex-col gap-3 my-5 p-2 border">
+          <div>
+            <a th:href="@{|/post/${post.id}|}">
+              <span th:text="${post.id}"></span>
+            </a>
+            <a th:href="@{|/post/${post.id}|}">
+              <span th:text="${post.subject}"></span>
+            </a>
+          </div>
+          <div>
+            <th:block th:each="postKeyWord : ${post.postHashTagList}">
+              <a th:href="${postKeyWord.listUrl}" class="btn btn-secondary btn-sm" th:text="'#'+${postKeyWord.content}"></a>
+            </th:block>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+</div>
+</html>

@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    active: dev, base
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+logging:
+  level:
+    root: info
+    com.ll.finalproject.app: debug
+    org.hibernate.type.descriptor.sql: trace

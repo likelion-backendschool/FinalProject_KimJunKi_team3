@@ -1,0 +1,74 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+    <script>
+      function ModifyForm__submit(form) {
+        form.subject.value = form.subject.value.trim();
+
+        if (form.subject.value.length == 0) {
+          alert("제목을 입력해주세요.");
+          form.subject.focus();
+          return;
+        }
+
+        const editor = $(form).find(".toast-ui-editor").data("data-toast-editor");
+        const markdown = editor.getMarkdown();
+        console.log(markdown);
+        form.content.value = markdown.trim();
+        if (form.content.value.length == 0) {
+          alert("내용을 입력해주세요");
+          editor.focus();
+          return;
+        }
+
+        form.submit();
+      }
+
+    </script>
+
+    <section class="section section-join flex-grow flex flex-col items-center justify-center">
+      <div class="max-w-md w-full px-2 pt-4">
+        <h1 class="font-bold text-lg">글 수정</h1>
+
+        <form th:action method="POST" th:object="${post}" class="flex flex-col gap-3" onsubmit="ModifyForm__submit(this); return false;">
+          <input type="hidden" name="content">
+          <input type="hidden" name="contentHtml">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">제목</span>
+            </label>
+            <input type="text" th:field="*{subject}" class="input input-bordered">
+            <div class="field-error" th:errors="*{subject}">제목 오류</div>
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">내용</span>
+            </label>
+            <div class="toast-ui-editor" toast-ui-editor--height="calc(100vh)">
+              <script type="text/x-template" th:utext="${post.content}"></script>
+            </div>
+            <div class="field-error" th:errors="*{content}">내용 오류</div>
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">해시태그</span>
+            </label>
+            <input type="text" name="hashTagContents" placeholder="#태그1 #태그2" class="input input-bordered"
+                   th:value="${post.extra_inputValue_hashTagContents}"/>
+
+          </div>
+
+          <input type="submit" value="수정" class="btn btn-primary">
+        </form>
+
+      </div>
+    </section>
+
+
+</div>
+</html>

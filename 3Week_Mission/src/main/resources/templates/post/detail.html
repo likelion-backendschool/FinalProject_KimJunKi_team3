@@ -1,0 +1,69 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+
+  <section class="section section-write container mx-auto">
+
+    <div class="px-2 pt-4">
+      <h1 class="font-bold text-lg">글</h1>
+
+      <div class="flex flex-col gap-3 mt-3">
+        <div>
+          <div class="badge badge-primary">
+            번호
+          </div>
+          <span th:text="${post.id}"></span>
+          <div class="badge badge-primary">
+            제목
+          </div>
+          <span th:text="${post.subject}"></span>
+        </div>
+        <div>
+          <div class="badge badge-primary">
+            작성자
+          </div>
+          <span th:text="${post.author}"></span>
+        </div>
+        <div>
+          <div class="badge badge-primary">
+            생성 날짜
+          </div>
+          <span th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+
+          <div class="badge badge-primary">
+            수정 날짜
+          </div>
+          <span th:text="${#temporals.format(post.modifyDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+        </div>
+        <div>
+          <div class="badge badge-primary">
+            내용
+          </div>
+          <span class="card-text" th:utext="${@commonUtil.markdown(post.content)}"></span>
+        </div>
+        <div>
+          <div class="badge badge-primary">
+            해시태그
+          </div>
+          <div>
+            <th:block th:each="postKeyWord : ${post.postHashTagList}">
+              <a th:href="${postKeyWord.listUrl}" class="text-secondary" th:text="'#'+${postKeyWord.content}"></a>
+            </th:block>
+          </div>
+        </div>
+
+        <div>
+          <a th:href="@{|/post/${post.id}/modify|}" sec:authorize="isAuthenticated()" class="btn btn-primary btn-sm"
+             th:if="${post.author == @rq.username}">수정</a>
+          <a onclick="return confirm('정말로 삭제하시겠습니까?')" th:href="@{|/post/${post.id}/delete|}" sec:authorize="isAuthenticated()" class="btn btn-primary btn-sm"
+             th:if="${post.author == @rq.username}">삭제</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</html>
