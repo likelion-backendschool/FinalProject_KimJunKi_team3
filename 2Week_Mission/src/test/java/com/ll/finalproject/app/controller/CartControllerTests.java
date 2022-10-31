@@ -1,12 +1,10 @@
 package com.ll.finalproject.app.controller;
 
-import com.ll.finalproject.app.cart.controller.CartController;
-import com.ll.finalproject.app.cart.entity.CartItem;
-import com.ll.finalproject.app.cart.service.CartService;
+import com.ll.finalproject.app.product.cart.controller.CartController;
+import com.ll.finalproject.app.product.cart.entity.CartItem;
+import com.ll.finalproject.app.product.cart.service.CartService;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
-import com.ll.finalproject.app.order.controller.OrderController;
-import com.ll.finalproject.app.product.entity.Product;
 import com.ll.finalproject.app.product.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,10 +18,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -50,8 +46,8 @@ public class CartControllerTests {
     @WithUserDetails("user4")
     void t2() throws Exception{
         // WHEN
-        Member user4 = memberService.findByUsername("user4").get();
-        List<CartItem> itemsByBuyer1 = cartService.getCartItemsByBuyer(user4);
+        Member user4 = memberService.findByUsername("user4");
+        List<CartItem> itemsByBuyer1 = cartService.getCartItemsByBuyer(user4.getId());
 
         ResultActions resultActions = mvc
                 .perform(post("/cart/add/1")
@@ -64,7 +60,7 @@ public class CartControllerTests {
                 .andExpect(handler().handlerType(CartController.class))
                 .andExpect(handler().methodName("addItem"));
 
-        List<CartItem> itemsByBuyer2 = cartService.getCartItemsByBuyer(user4);
+        List<CartItem> itemsByBuyer2 = cartService.getCartItemsByBuyer(user4.getId());
         assertThat(itemsByBuyer2.size()).isEqualTo( itemsByBuyer1.size() + 1);
     }
 
@@ -73,8 +69,8 @@ public class CartControllerTests {
     @WithUserDetails("user2")
     void t3() throws Exception{
         // WHEN
-        Member user4 = memberService.findByUsername("user2").get();
-        List<CartItem> itemsByBuyer1 = cartService.getCartItemsByBuyer(user4);
+        Member user4 = memberService.findByUsername("user2");
+        List<CartItem> itemsByBuyer1 = cartService.getCartItemsByBuyer(user4.getId());
 
         ResultActions resultActions = mvc
                 .perform(post("/cart/add/1")
@@ -87,7 +83,7 @@ public class CartControllerTests {
                 .andExpect(handler().handlerType(CartController.class))
                 .andExpect(handler().methodName("addItem"));
 
-        List<CartItem> itemsByBuyer2 = cartService.getCartItemsByBuyer(user4);
+        List<CartItem> itemsByBuyer2 = cartService.getCartItemsByBuyer(user4.getId());
         assertThat(itemsByBuyer2.size()).isEqualTo( itemsByBuyer1.size() );
     }
 }

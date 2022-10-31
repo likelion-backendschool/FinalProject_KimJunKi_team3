@@ -1,7 +1,7 @@
 package com.ll.finalproject.app.service;
 
-import com.ll.finalproject.app.cart.entity.CartItem;
-import com.ll.finalproject.app.cart.service.CartService;
+import com.ll.finalproject.app.product.cart.entity.CartItem;
+import com.ll.finalproject.app.product.cart.service.CartService;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.repository.MemberRepository;
 import com.ll.finalproject.app.product.entity.Product;
@@ -33,11 +33,11 @@ public class CartServiceTests {
 
         Member buyer = memberRepository.findByUsername("user3").get();
 
-        Product product1 = productService.findById(1).get();
-        Product product2 = productService.findById(2).get();
+        Product product1 = productService.getProduct(1L);
+        Product product2 = productService.getProduct(2L);
 
-        CartItem cartItem1 = cartService.addItem(buyer, product1);
-        CartItem cartItem2 = cartService.addItem(buyer, product2);
+        CartItem cartItem1 = cartService.addItem(buyer.getId(), product1);
+        CartItem cartItem2 = cartService.addItem(buyer.getId(), product2);
 
         assertThat(cartItem1).isNotNull();
         assertThat(cartItem2).isNotNull();
@@ -49,10 +49,10 @@ public class CartServiceTests {
         Member buyer1 = memberRepository.findByUsername("user3").get();
         Member buyer2 = memberRepository.findByUsername("user4").get();
 
-        Product product1 = productService.findById(1).get();
-        Product product2 = productService.findById(2).get();
-        Product product3 = productService.findById(3).get();
-        Product product4 = productService.findById(4).get();
+        Product product1 = productService.getProduct(1L);
+        Product product2 = productService.getProduct(2L);
+        Product product3 = productService.getProduct(3L);
+        Product product4 = productService.getProduct(4L);
 
         cartService.removeItem(buyer1, product1);
         cartService.removeItem(buyer1, product2);

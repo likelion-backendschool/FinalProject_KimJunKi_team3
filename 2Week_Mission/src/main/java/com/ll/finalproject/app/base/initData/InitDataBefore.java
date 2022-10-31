@@ -1,7 +1,6 @@
 package com.ll.finalproject.app.base.initData;
 
-import com.ll.finalproject.app.cart.entity.CartItem;
-import com.ll.finalproject.app.cart.service.CartService;
+import com.ll.finalproject.app.product.cart.service.CartService;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.order.entity.Order;
@@ -14,7 +13,6 @@ import com.ll.finalproject.app.product.service.ProductService;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public interface InitDataBefore {
     default void before(MemberService memberService,
@@ -42,10 +40,10 @@ public interface InitDataBefore {
                 for (int i = 0; i < products.size(); i++) {
                     Product product = products.get(i);
 
-                    cartService.addItem(member, product);
+                    cartService.addItem(member.getId(), product);
                 }
 
-                return orderService.createFromCart(member);
+                return orderService.createFromCart(member.getUsername());
             }
         }
 
@@ -57,24 +55,29 @@ public interface InitDataBefore {
         Member member3 = memberService.join("user3", "1234!","user3@test.com");
         Member member4 = memberService.join("user4", "1234!","user4@test.com");
 
+        // 작가용
+        Member member5 = memberService.join("user5", "1234!","user5@test.com");
+        memberService.beAuthor(member5.getId(), "유저5작가");
+        postService.write(member5.getId(), "제목 ", "내용 ","#작가테스트");
+
         for (int i = 0; i < 10; i++) {
-            postService.write(member1, "제목 " + i, "내용 " + i,"#그리움 #행복 #슬픔 #역경");
+            postService.write(member1.getId(), "제목 " + i, "내용 " + i,"#그리움 #행복 #슬픔 #역경");
 
         }
         for (int i = 0; i < 10; i++) {
-            postService.write(member1, "제목 " + i, "내용 " + i,null);
+            postService.write(member1.getId(), "제목 " + i, "내용 " + i,null);
         }
-        postService.write(member2, "제목 ", "내용 ", "#안녕");
+        postService.write(member2.getId(), "제목 ", "내용 ", "#안녕");
 
         PostKeyword keyword1 = postKeywordService.findByContent("그리움").get();
         PostKeyword keyword2 = postKeywordService.findByContent("행복").get();
         PostKeyword keyword3 = postKeywordService.findByContent("슬픔").get();
         PostKeyword keyword4 = postKeywordService.findByContent("역경").get();
 
-        Product product1 = productService.create(member1, keyword1, "그리움 도서","임시 책내용", "그리움 도서에 대한 설명", 12000);
-        Product product2 = productService.create(member1, keyword2, "행복 도서", "임시 책내용","행복 도서에 대한 설명", 22000);
-        Product product3 = productService.create(member1, keyword3, "슬픔 도서", "임시 책내용","슬픔 도서에 대한 설명", 1000);
-        Product product4 = productService.create(member1, keyword4, "역경 도서", "임시 책내용","역경 도서에 대한 설명", 30000);
+        Product product1 = productService.create(member1.getId(),"그리움 도서", "그리움 도서에 대한 설명",12000, keyword1.getId() );
+        Product product2 = productService.create(member1.getId(), "행복 도서","행복 도서에 대한 설명", 22000, keyword2.getId());
+        Product product3 = productService.create(member1.getId(),"슬픔 도서","슬픔 도서에 대한 설명", 1000, keyword3.getId());
+        Product product4 = productService.create(member1.getId(), "역경 도서","역경 도서에 대한 설명", 30000, keyword4.getId());
 
         memberService.addCash(member3, 10_000, "충전__무통장입금");
         memberService.addCash(member3, 20_000, "충전__무통장입금");
@@ -110,9 +113,9 @@ public interface InitDataBefore {
                 )
         );
 
-        cartService.addItem(member2, product1);
-        cartService.addItem(member2, product2);
-        cartService.addItem(member2, product3);
-        cartService.addItem(member2, product4);
+        cartService.addItem(member2.getId(), product1);
+        cartService.addItem(member2.getId(), product2);
+        cartService.addItem(member2.getId(), product3);
+        cartService.addItem(member2.getId(), product4);
     }
 }

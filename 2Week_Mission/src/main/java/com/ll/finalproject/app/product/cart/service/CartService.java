@@ -1,11 +1,10 @@
-package com.ll.finalproject.app.cart.service;
+package com.ll.finalproject.app.product.cart.service;
 
-import com.ll.finalproject.app.cart.entity.CartItem;
-import com.ll.finalproject.app.cart.exception.AlreadyExistsCartItemException;
-import com.ll.finalproject.app.cart.repository.CartItemRepository;
+import com.ll.finalproject.app.member.service.MemberService;
+import com.ll.finalproject.app.product.cart.entity.CartItem;
+import com.ll.finalproject.app.product.cart.exception.AlreadyExistsCartItemException;
+import com.ll.finalproject.app.product.cart.repository.CartItemRepository;
 import com.ll.finalproject.app.member.entity.Member;
-import com.ll.finalproject.app.order.entity.OrderItem;
-import com.ll.finalproject.app.order.repository.OrderItemRepository;
 import com.ll.finalproject.app.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +20,12 @@ import java.util.Optional;
 @Transactional
 public class CartService {
     private final CartItemRepository cartItemRepository;
+    private final MemberService memberService;
 
-    public CartItem addItem(Member buyer, Product product) {
+    public CartItem addItem(Long memberId, Product product) {
+
+        Member buyer = memberService.findById(memberId);
+
         boolean hasCartItem = cartItemRepository.existsByBuyerIdAndProductId(buyer.getId(), product.getId());
 
         if (hasCartItem) {
@@ -65,7 +68,8 @@ public class CartService {
         return cartItemRepository.existsByBuyerIdAndProductId(buyer.getId(), product.getId());
     }
 
-    public List<CartItem> getCartItemsByBuyer(Member buyer) {
+    public List<CartItem> getCartItemsByBuyer(Long memberId) {
+        Member buyer = memberService.findById(memberId);
         return cartItemRepository.findAllByBuyerId(buyer.getId());
     }
 
@@ -73,7 +77,8 @@ public class CartService {
         return cartItemRepository.findById(id);
     }
 
-    public boolean actorCanDelete(Member buyer, CartItem cartItem) {
+    public boolean actorCanDelete(Long memberId, CartItem cartItem) {
+        Member buyer = memberService.findById(memberId);
         return buyer.getId().equals(cartItem.getBuyer().getId());
     }
 }

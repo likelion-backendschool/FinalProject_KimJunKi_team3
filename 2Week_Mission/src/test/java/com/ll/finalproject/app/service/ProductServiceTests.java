@@ -13,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -34,7 +36,7 @@ public class ProductServiceTests {
         Member author = memberRepository.findByUsername("user2").get();
         PostKeyword postKeyword1 = postKeywordService.findByContent("안녕").get();
 
-        Product product3 = productService.create(author, postKeyword1, "안녕 책 제목입니다", "안녕 내용입니다", "이 책은 ...", 1999);
+        Product product3 = productService.create(author.getId(), "안녕 책 제목입니다", "이 책은 ...", 1999, postKeyword1.getId());
 
         assertThat(product3).isNotNull();
     }
@@ -42,11 +44,12 @@ public class ProductServiceTests {
     @Test
     @DisplayName("도서 수정")
     void t2() {
-        Product product = productService.findById(1).get();
+        Product product = productService.getProduct(1L);
 
-        productService.modify(product, "상품명2 NEW", 70_000, "책 설명");
+        productService.modify(product.getId(), product.getAuthor().getId(), "상품명2 NEW", 70_000, "책 설명");
 
         assertThat(product.getSubject()).isEqualTo("상품명2 NEW");
         assertThat(product.getPrice()).isEqualTo(70_000);
     }
+
 }

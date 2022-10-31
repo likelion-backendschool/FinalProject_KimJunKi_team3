@@ -25,7 +25,7 @@
           <div class="badge badge-primary">
             작성자
           </div>
-          <span th:text="${post.author.username}"></span>
+          <span th:text="${post.author}"></span>
         </div>
         <div>
           <div class="badge badge-primary">
@@ -47,15 +47,19 @@
         <div>
           <div class="badge badge-primary">
             해시태그
-            <th:block th:utext="${post.extra_postHashTagLinks}"/>
+          </div>
+          <div>
+            <th:block th:each="postKeyWord : ${post.postHashTagList}">
+              <a th:href="${postKeyWord.listUrl}" class="text-secondary" th:text="'#'+${postKeyWord.content}"></a>
+            </th:block>
           </div>
         </div>
 
         <div>
           <a th:href="@{|/post/${post.id}/modify|}" sec:authorize="isAuthenticated()" class="btn btn-primary btn-sm"
-             th:if="${post.author.username == #authentication.getPrincipal().getUsername()}">수정</a>
+             th:if="${post.author == @rq.username}">수정</a>
           <a onclick="return confirm('정말로 삭제하시겠습니까?')" th:href="@{|/post/${post.id}/delete|}" sec:authorize="isAuthenticated()" class="btn btn-primary btn-sm"
-             th:if="${post.author.username == #authentication.getPrincipal().getUsername()}">삭제</a>
+             th:if="${post.author == @rq.username}">삭제</a>
         </div>
       </div>
     </div>

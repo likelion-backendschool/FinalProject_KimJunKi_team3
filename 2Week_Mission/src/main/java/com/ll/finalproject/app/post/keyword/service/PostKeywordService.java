@@ -4,16 +4,19 @@ import com.ll.finalproject.app.post.keyword.entity.PostKeyword;
 import com.ll.finalproject.app.post.keyword.repository.PostKeywordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostKeywordService {
-    private final PostKeywordRepository keywordRepository;
+    private final PostKeywordRepository postKeywordRepository;
 
     public PostKeyword save(String keywordContent) {
-        Optional<PostKeyword> optKeyword = keywordRepository.findByContent(keywordContent);
+        Optional<PostKeyword> optKeyword = postKeywordRepository.findByContent(keywordContent);
 
         if ( optKeyword.isPresent() ) {
             return optKeyword.get();
@@ -24,15 +27,19 @@ public class PostKeywordService {
                 .content(keywordContent)
                 .build();
 
-        keywordRepository.save(postKeyword);
+        postKeywordRepository.save(postKeyword);
 
         return postKeyword;
     }
 
     public Optional<PostKeyword> findById(Long id) {
-        return keywordRepository.findById(id);
+        return postKeywordRepository.findById(id);
     }
     public Optional<PostKeyword> findByContent(String content) {
-        return keywordRepository.findByContent(content);
+        return postKeywordRepository.findByContent(content);
+    }
+
+    public List<PostKeyword> findByMemberId(long authorId) {
+        return postKeywordRepository.getQslAllByAuthorId(authorId);
     }
 }

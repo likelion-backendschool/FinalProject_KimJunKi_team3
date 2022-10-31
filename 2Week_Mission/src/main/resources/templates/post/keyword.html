@@ -21,13 +21,13 @@
             </a>
           </div>
           <div>
-            <th:block th:utext="${post.extra_postHashTagLinks}"/>
+            <th:block th:each="postKeyWord : ${post.postHashTagList}">
+              <a th:href="${postKeyWord.listUrl}" class="btn btn-secondary btn-sm" th:text="'#'+${postKeyWord.content}"></a>
+            </th:block>
           </div>
         </li>
       </ul>
     </div>
   </section>
-
-
 </div>
 </html>

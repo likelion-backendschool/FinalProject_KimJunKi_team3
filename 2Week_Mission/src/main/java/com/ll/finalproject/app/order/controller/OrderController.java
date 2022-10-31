@@ -13,18 +13,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.*;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.client.ResponseErrorHandler;
-import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.security.Principal;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,14 +37,13 @@ public class OrderController {
 
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String showDetail(@PathVariable long id, Model model) {
+    public String showDetail(@PathVariable long id, Model model, Principal principal) {
 
         try {
             Order order = orderService.findForPrintById(id);
-            Member actor = rq.getMember();
 
-            long restCash = memberService.getRestCash(actor);
-            orderService.actorCanSee(actor, order);
+            long restCash = memberService.getRestCash(principal.getName());
+            orderService.actorCanSee(principal.getName(), order);
             model.addAttribute("order", order);
             model.addAttribute("actorRestCash", restCash);
         } catch (OrderNotFoundException e){
@@ -69,7 +63,8 @@ public class OrderController {
             @RequestParam String paymentKey,
             @RequestParam String orderId,
             @RequestParam Long amount,
-            Model model
+            Model model,
+            Principal principal
     ) throws Exception {
 
         Order order = orderService.findForPrintById(id);
@@ -88,8 +83,7 @@ public class OrderController {
         payloadMap.put("orderId", orderId);
         payloadMap.put("amount", String.valueOf(amount));
 
-        Member actor = rq.getMember();
-        long restCash = memberService.getRestCash(actor);
+        long restCash = memberService.getRestCash(principal.getName());
         long payPriceRestCash = order.calculatePayPrice() - amount; // 예치금으로 결제할 금액
 
         if (payPriceRestCash > restCash) {
@@ -125,12 +119,11 @@ public class OrderController {
     }
     @PostMapping("/{id}/payByRestCashOnly")
     @PreAuthorize("isAuthenticated()")
-    public String payByRestCashOnly(@PathVariable long id) {
+    public String payByRestCashOnly(@PathVariable long id, Principal principal) {
         Order order = orderService.findForPrintById(id);
 
-        Member actor = rq.getMember();
 
-        if (orderService.actorCanPayment(actor, order) == false) {
+        if (orderService.actorCanPayment(principal.getName(), order) == false) {
             throw new ActorCanNotPayOrderException();
         }
 
@@ -140,9 +133,9 @@ public class OrderController {
 
     @PostMapping("/makeOrder")
     @PreAuthorize("isAuthenticated()")
-    public String makeOrder() {
-        Member member = rq.getMember();
-        Order order = orderService.createFromCart(member);
+    public String makeOrder(Principal principal) {
+
+        Order order = orderService.createFromCart(principal.getName());
         String redirect = "redirect:/order/%d".formatted(order.getId()) + "?msg=" + Ut.url.encode("%d번 주문이 생성되었습니다.".formatted(order.getId()));
 
         return redirect;
@@ -150,10 +143,9 @@ public class OrderController {
 
     @PostMapping("/{id}/cancel")
     @PreAuthorize("isAuthenticated()")
-    public String cancel(@PathVariable Long id) {
-        Member actor = rq.getMember();
+    public String cancel(@PathVariable Long id, Principal principal) {
 
-        orderService.cancelOrder(actor, id);
+        orderService.cancelOrder(principal.getName(), id);
 
         return "redirect:/cart/items/?msg=%s".formatted(Ut.url.encode("주문이 취소되었습니다."));
     }

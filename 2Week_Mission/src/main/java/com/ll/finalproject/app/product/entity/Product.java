@@ -60,4 +60,8 @@ public class Product extends BaseEntity {
     public String getJdenticon() {
         return "product__" + getId();
     }
+
+    public boolean isAuthor(Member author) {
+        return this.author.equals(author);
+    }
 }
