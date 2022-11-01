@@ -1,0 +1,98 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+
+  <section class="section section-join flex-grow flex flex-col items-center justify-center">
+    <div class="max-w-md w-full px-2 pt-4">
+      <h1 class="font-bold text-lg">출금 신청</h1>
+
+      <form th:action th:object="${withdrawForm}" class="flex flex-col gap-3" method="POST" >
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">은행 이름</span>
+          </label>
+          <input type="text" th:field="*{bankName}" class="input input-bordered">
+          <div class="field-error" th:errors="*{bankName}">은행 오류</div>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">계좌번호</span>
+          </label>
+          <input type="number" th:field="*{bankAccountNo}" class="input input-bordered">
+          <div class="field-error" th:errors="*{bankAccountNo}">계좌번호 오류</div>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">출금 금액</span>
+          </label>
+          <input type="number" id="PaymentForm__useRestCash" th:field="*{price}"
+                 th:placeholder="|0 ~ ${@rq.memberDto.restCash}|"
+                 class="input input-bordered min-w-[300px]" min="0" th:max="${@rq.memberDto.restCash}"
+                 onkeydown="PaymentForm__useRestCashFix();"
+                 onkeyup="PaymentForm__useRestCashFix();"
+          >
+          <div class="field-error" th:errors="*{price}">가격 오류</div>
+          <label class="inline-flex items-center ml-3">
+            <span>전액사용</span>
+            <input onchange="PaymentForm__useRestCashAllChanged();" id="PaymentForm__useRestCashAll"
+                   type="checkbox" class="ml-2 checkbox">
+          </label>
+        </div>
+
+        <input type="submit" value="출금 신청" class="btn btn-primary mt-5">
+
+      </form>
+
+    </div>
+  </section>
+  <script>
+    const $PaymentForm__useRestCash = $("#PaymentForm__useRestCash");
+    const $PaymentForm__useRestCashAll = $("#PaymentForm__useRestCashAll");
+
+    function PaymentForm__useRestCashFix() {
+      let useRestCash = parseInt($PaymentForm__useRestCash.val());
+
+      if (isNaN(useRestCash)) {
+        useRestCash = 0;
+      }
+
+      const maxUseRestCash = parseInt($PaymentForm__useRestCash.attr('max'));
+
+      if (useRestCash > maxUseRestCash) {
+        useRestCash = maxUseRestCash;
+        $PaymentForm__useRestCash.val(maxUseRestCash);
+      }
+
+      if ( useRestCash == maxUseRestCash ) {
+        $PaymentForm__useRestCashAll.prop('checked', true);
+      }
+      else {
+        $PaymentForm__useRestCashAll.prop('checked', false);
+      }
+
+    }
+
+    function PaymentForm__useRestCashAllChanged() {
+
+      if ( $PaymentForm__useRestCashAll.prop('checked') ) {
+
+        const maxUseRestCash = parseInt($PaymentForm__useRestCash.attr('max'));
+        $PaymentForm__useRestCash.val(maxUseRestCash);
+      }
+      else {
+        $PaymentForm__useRestCash.val(0);
+      }
+
+      PaymentForm__useRestCashFix();
+    }
+
+    PaymentForm__useRestCashFix();
+  </script>
+</div>
+</html>

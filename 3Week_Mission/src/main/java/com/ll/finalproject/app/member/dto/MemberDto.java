@@ -18,7 +18,16 @@ public class MemberDto {
 
     private String email;
 
+    private long restCash;
+
     private LocalDateTime createDate;
 
     private LocalDateTime modifyDate;
+
+    public boolean hasRestCash() {
+        if (restCash == 0) {
+            return false;
+        }
+        return true;
+    }
 }
