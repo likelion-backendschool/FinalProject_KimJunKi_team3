@@ -52,13 +52,13 @@
 
         <div>
           <a th:href="@{|/product/${product.id}/modify|}" sec:authorize="isAuthenticated()" class="btn btn-primary"
-             th:if="${product.author.username == #authentication.getPrincipal().getUsername()}">수정</a>
+             th:if="${product.author.username == @rq.username}">수정</a>
           <a onclick="return confirm('정말로 삭제하시겠습니까?')" th:href="@{|/product/${product.id}/delete|}" sec:authorize="isAuthenticated()" class="btn btn-primary"
-             th:if="${product.author.username == #authentication.getPrincipal().getUsername()}">삭제</a>
+             th:if="${product.author.username == @rq.username}">삭제</a>
         </div>
 
 
-        <a href="javascript:;" onClick="AddCartItemsForm__submit();" class="btn btn-primary btn-sm">장바구니 추가</a>
+        <a href="javascript:;" th:unless="${product.author.username == @rq.username}"onClick="AddCartItemsForm__submit();" class="btn btn-primary btn-sm">장바구니 추가</a>
         <form method="POST" name="addCartItemsForm" th:action="@{|/cart/add/${product.id}|}" hidden></form>
 
       </div>

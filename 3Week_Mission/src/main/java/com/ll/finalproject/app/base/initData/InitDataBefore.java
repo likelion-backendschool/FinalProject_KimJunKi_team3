@@ -1,6 +1,6 @@
 package com.ll.finalproject.app.base.initData;
 
-import com.ll.finalproject.app.product.cart.service.CartService;
+import com.ll.finalproject.app.cart.service.CartService;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.order.entity.Order;

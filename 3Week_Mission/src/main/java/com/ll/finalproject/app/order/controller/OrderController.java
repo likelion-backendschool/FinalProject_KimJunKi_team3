@@ -2,8 +2,8 @@ package com.ll.finalproject.app.order.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ll.finalproject.app.base.dto.RsData;
 import com.ll.finalproject.app.base.rq.Rq;
-import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.order.entity.Order;
 import com.ll.finalproject.app.order.exception.*;
@@ -11,17 +11,21 @@ import com.ll.finalproject.app.order.service.OrderService;
 import com.ll.finalproject.util.Ut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.security.Principal;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 @Slf4j
 @Controller
@@ -55,8 +59,21 @@ public class OrderController {
         return "order/detail";
     }
 
-    private final String SECRET_KEY = "test_sk_BE92LAa5PVbDMx4BAzP87YmpXyJj";
+    @Value("${custom.tossPayments.secretKey}")
+    private String SECRET_KEY;
+    @PostConstruct
+    private void init() {
+        restTemplate.setErrorHandler(new ResponseErrorHandler() {
+            @Override
+            public boolean hasError(ClientHttpResponse response) {
+                return false;
+            }
 
+            @Override
+            public void handleError(ClientHttpResponse response) {
+            }
+        });
+    }
     @RequestMapping("/{id}/success")
     public String confirmPayment(
             @PathVariable long id,
@@ -148,6 +165,27 @@ public class OrderController {
         orderService.cancelOrder(principal.getName(), id);
 
         return "redirect:/cart/items/?msg=%s".formatted(Ut.url.encode("주문이 취소되었습니다."));
+    }
+
+    @GetMapping("/list")
+    @PreAuthorize("isAuthenticated()")
+    public String showList(Model model) {
+        List<Order> orders = orderService.findAllByBuyerId(rq.getId());
+
+        model.addAttribute("orders", orders);
+        return "order/list";
+    }
+
+    @PostMapping("/{orderId}/refund")
+    @PreAuthorize("isAuthenticated()")
+    public String refund(@PathVariable Long orderId) {
+        RsData rsData = orderService.refund(orderId, rq.getId());
+
+        if (rsData.isFail()) {
+            return "redirect:/order/%d?msg=%s".formatted(orderId, Ut.url.encode("환불 실패."));
+        }
+
+        return "redirect:/order/%d?msg=%s".formatted(orderId, Ut.url.encode("환불 성공."));
     }
 
 }

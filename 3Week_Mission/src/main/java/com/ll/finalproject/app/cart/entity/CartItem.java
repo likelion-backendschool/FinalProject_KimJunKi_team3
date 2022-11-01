@@ -1,4 +1,4 @@
-package com.ll.finalproject.app.product.cart.entity;
+package com.ll.finalproject.app.cart.entity;
 
 import com.ll.finalproject.app.base.entity.BaseEntity;
 import com.ll.finalproject.app.member.entity.Member;
@@ -9,8 +9,8 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+
 import static javax.persistence.FetchType.LAZY;
 @Entity
 @Getter

@@ -1,6 +1,6 @@
-package com.ll.finalproject.app.product.cart.repository;
+package com.ll.finalproject.app.cart.repository;
 
-import com.ll.finalproject.app.product.cart.entity.CartItem;
+import com.ll.finalproject.app.cart.entity.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,0 +1,57 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+  <section class="section section-order-list container mx-auto">
+
+    <div class="px-2 pt-4">
+      <h1 class="font-bold text-lg">
+        <i class="fa-solid fa-basket-shopping"></i>
+        주문 목록
+      </h1>
+
+      <div class="mt-2">
+        <ul class="grid grid-cols-1 gap-10">
+          <li th:each="order : ${orders}">
+            <a th:href="@{|/order/${order.id}|}" class="card bg-base-100 shadow-xl">
+              <div class="card-body">
+                <div class="badge badge-outline" th:text="|주문번호 : ${order.id}번|"></div>
+                <h2 class="card-title flex flex-wrap mt-1">
+                  <i class="fa-solid fa-book-open"></i>
+                  <span th:text="${order.name}"></span>
+                </h2>
+                <div th:text="|￦ ${order.calculatePayPrice}|"></div>
+                <div class="flex justify-end gap-1">
+                  <div class="badge badge-outline" th:if="${order.cancelDate != null}">
+                    <span>취소 :</span>
+                    <span class="ml-1"
+                          th:text="${#temporals.format(order.cancelDate, 'yy-MM-dd')}"></span>
+                  </div>
+                  <div class="badge badge-outline" th:if="${order.refundDate != null}">
+                    <span>환불 :</span>
+                    <span class="ml-1"
+                          th:text="${#temporals.format(order.refundDate, 'yy-MM-dd')}"></span>
+                  </div>
+                  <div class="badge badge-outline" th:if="${order.payDate != null}">
+                    <span>결제 :</span>
+                    <span class="ml-1"
+                          th:text="${#temporals.format(order.payDate, 'yy-MM-dd')}"></span>
+                  </div>
+                  <div class="badge badge-outline" th:if="${order.createDate != null}">
+                    <span>주문 :</span>
+                    <span class="ml-1"
+                          th:text="${#temporals.format(order.createDate, 'yy-MM-dd')}"></span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+</html>

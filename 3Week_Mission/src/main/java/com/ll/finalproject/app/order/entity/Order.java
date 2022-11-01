@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,9 @@ public class Order extends BaseEntity {
     private boolean isPaid; // 결제여부
     private boolean isCanceled; // 취소여부
     private boolean isRefunded; // 환불여부
+    private LocalDateTime refundDate;
+    private LocalDateTime payDate;
+    private LocalDateTime cancelDate;
     public void addOrderItem(OrderItem orderItem) {
         orderItem.changeOrder(this);
 
@@ -50,6 +54,9 @@ public class Order extends BaseEntity {
     }
 
     public void setPaymentDone() {
+
+        payDate = LocalDateTime.now();
+
         for (OrderItem orderItem : orderItems) {
             orderItem.setPaymentDone();
         }
@@ -57,6 +64,9 @@ public class Order extends BaseEntity {
     }
 
     public void setRefundDone() {
+
+        refundDate = LocalDateTime.now();
+
         for (OrderItem orderItem : orderItems) {
             orderItem.setRefundDone();
         }
@@ -87,4 +97,9 @@ public class Order extends BaseEntity {
         return true;
     }
 
+    public void setCancelDone() {
+        cancelDate = LocalDateTime.now();
+
+        isCanceled = true;
+    }
 }

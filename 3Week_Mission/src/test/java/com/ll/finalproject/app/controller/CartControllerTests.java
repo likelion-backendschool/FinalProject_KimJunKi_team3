@@ -1,8 +1,8 @@
 package com.ll.finalproject.app.controller;
 
-import com.ll.finalproject.app.product.cart.controller.CartController;
-import com.ll.finalproject.app.product.cart.entity.CartItem;
-import com.ll.finalproject.app.product.cart.service.CartService;
+import com.ll.finalproject.app.cart.controller.CartController;
+import com.ll.finalproject.app.cart.entity.CartItem;
+import com.ll.finalproject.app.cart.service.CartService;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.service.MemberService;
 import com.ll.finalproject.app.product.service.ProductService;

@@ -1,7 +1,6 @@
 package com.ll.finalproject.app.base.rq;
 
 import com.ll.finalproject.app.member.dto.MemberDto;
-import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.security.dto.MemberContext;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +11,6 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 
 @Component
 @Slf4j
@@ -59,5 +57,6 @@ public class Rq {
         }
         return null;
     }
+
 }
 

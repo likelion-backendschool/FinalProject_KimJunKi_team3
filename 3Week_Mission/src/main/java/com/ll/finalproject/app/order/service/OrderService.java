@@ -1,10 +1,14 @@
 package com.ll.finalproject.app.order.service;
 
-import com.ll.finalproject.app.product.cart.entity.CartItem;
-import com.ll.finalproject.app.product.cart.repository.CartItemRepository;
-import com.ll.finalproject.app.product.cart.service.CartService;
+import com.ll.finalproject.app.base.dto.RsData;
+import com.ll.finalproject.app.cart.entity.CartItem;
+import com.ll.finalproject.app.cart.repository.CartItemRepository;
+import com.ll.finalproject.app.cart.service.CartService;
 import com.ll.finalproject.app.member.entity.Member;
+import com.ll.finalproject.app.member.exception.MemberNotFoundException;
+import com.ll.finalproject.app.member.repository.MemberRepository;
 import com.ll.finalproject.app.member.service.MemberService;
+import com.ll.finalproject.app.myBook.service.MyBookService;
 import com.ll.finalproject.app.order.entity.Order;
 import com.ll.finalproject.app.order.entity.OrderItem;
 import com.ll.finalproject.app.order.exception.ActorCanNotSeeOrderException;
@@ -16,9 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -26,10 +31,12 @@ import java.util.Optional;
 @Transactional
 public class OrderService {
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
     private final CartService cartService;
     private final CartItemRepository cartItemRepository;
     private final OrderRepository orderRepository;
     private final OrderItemService orderItemService;
+    private final MyBookService myBookService;
 
     public Order createFromCart(String username) {
         // 입력된 회원의 장바구니 아이템들을 전부 가져온다.
@@ -87,8 +94,7 @@ public class OrderService {
 
         memberService.addCash(buyer, payPrice * -1, "주문__%d__사용__예치금".formatted(order.getId()));
 
-        order.setPaymentDone();
-        orderRepository.save(order);
+        payDone(order);
     }
 
 
@@ -123,34 +129,40 @@ public class OrderService {
     public void payByTossPayments(Order order, long useRestCash) {
 
         Member buyer = order.getBuyer();
+        long restCash = buyer.getRestCash();
         int payPrice = order.calculatePayPrice();
 
         long pgPayPrice = payPrice - useRestCash;
         memberService.addCash(buyer, pgPayPrice, "주문__%d__충전__토스페이먼츠".formatted(order.getId()));
         memberService.addCash(buyer, pgPayPrice * -1, "주문__%d__사용__토스페이먼츠".formatted(order.getId()));
 
-        if ( useRestCash > 0 ) {
+        if (useRestCash > 0) {
+            if ( useRestCash > restCash ) {
+                throw new RuntimeException("예치금이 부족합니다.");
+            }
+
             memberService.addCash(buyer, useRestCash * -1, "주문__%d__사용__예치금".formatted(order.getId()));
         }
 
+        payDone(order);
+    }
+    private void payDone(Order order) {
         order.setPaymentDone();
+        myBookService.add(order);
         orderRepository.save(order);
     }
-
     public boolean actorCanPayment(String username, Order order) {
         return actorCanSee(username, order);
     }
 
-    public void cancelOrder(String username, Long id) {
+    public void cancelOrder(String username, Long orderId) {
 
         // 주문 아이템을 다시 카트로 넘겨줌
         // 주문 아이템 삭제, 주문 삭제
 
         Member actor = memberService.findByUsername(username);
 
-        Order order = findOrderById(id).orElseThrow(
-                () -> new OrderNotFoundException("존재하지 않습니다.")
-        );
+        Order order = getOrder(orderId);
 
         actorCanSee(actor.getUsername(), order);
 
@@ -166,8 +178,74 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
+    public RsData refund(Order order, Member actor) {
+        RsData actorCanRefundRsData = actorCanRefund(actor.getId(), order);
+
+        if (actorCanRefundRsData.isFail()) {
+            return actorCanRefundRsData;
+        }
+
+        order.setCancelDone();
+
+        int payPrice = order.getPayPrice();
+        memberService.addCash(order.getBuyer(), payPrice, "주문__%d__환불__예치금".formatted(order.getId()));
+
+        order.setRefundDone();
+        orderRepository.save(order);
+
+        myBookService.remove(order);
+
+        return RsData.of("S-1", "환불되었습니다.");
+    }
+
+    public RsData refund(Long orderId, Long memberId) {
+        Order order = getOrder(orderId);
+        Member member = getMember(memberId);
+
+        if (order == null) {
+            return RsData.of("F-2", "결제 상품을 찾을 수 없습니다.");
+        }
+        return refund(order, member);
+    }
+
+    public RsData actorCanRefund(Long memberId, Order order) {
+
+        if (order.isCanceled()) {
+            return RsData.of("F-1", "이미 취소되었습니다.");
+        }
+
+        if ( order.isRefunded() ) {
+            return RsData.of("F-4", "이미 환불되었습니다.");
+        }
+
+        if ( order.isPaid() == false ) {
+            return RsData.of("F-5", "결제가 되어야 환불이 가능합니다.");
+        }
+
+        if (memberId.equals(order.getBuyer().getId()) == false) {
+            return RsData.of("F-2", "권한이 없습니다.");
+        }
+
+        long between = ChronoUnit.MINUTES.between(order.getPayDate(), LocalDateTime.now());
+
+        if (between > 10) {
+            return RsData.of("F-3", "결제 된지 10분이 지났으므로, 환불 할 수 없습니다.");
+        }
+
+        return RsData.of("S-1", "환불할 수 있습니다.");
+    }
     @Transactional(readOnly = true)
-    public Optional<Order> findOrderById(long id) {
-        return orderRepository.findById(id);
+    public Order getOrder(Long orderId) {
+        return orderRepository.findById(orderId).orElseThrow(
+                () -> new OrderNotFoundException(""));
+    }
+    @Transactional(readOnly = true)
+    public Member getMember(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(
+                () -> new MemberNotFoundException(""));
+    }
+
+    public List<Order> findAllByBuyerId(Long buyerId) {
+        return orderRepository.findAllByBuyerIdOrderByIdDesc(buyerId);
     }
 }

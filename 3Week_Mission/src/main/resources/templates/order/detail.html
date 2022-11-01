@@ -11,8 +11,8 @@
         const buyerName = /*[[ ${order.buyer.username} ]]*/ null;
         const orderName = /*[[ ${order.name} ]]*/ null;
         const orderPayPrice = /*[[ ${order.calculatePayPrice} ]]*/ null;
+        const toss_clientKey = /*[[ ${@environment.getProperty('custom.tossPayments.clientKey')} ]]*/ null;
     </script>
-
 
     <form hidden name="payByRestCashOnlyForm" method="POST" th:action="@{|/order/${order.id}/payByRestCashOnly|}">
     </form>
@@ -74,6 +74,28 @@
                     </div>
                     <span th:if="${order.isPaid}">결제완료</span>
 
+                    <a th:if="${@orderService.actorCanRefund(@rq.id, order).isSuccess()}" href="javascript:;"
+                       onclick="$(this).next().submit();" class="btn btn-sm btn-outline">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span class="ml-2">환불</span>
+                    </a>
+                    <form th:action="@{|/order/${order.id}/refund|}" method="POST" hidden></form>
+
+                    <a th:if="${@orderService.actorCanRefund(@rq.id, order).getResultCode().equals('F-3')}"
+                       class="btn btn-sm btn-outline btn-primary btn-disabled">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span class="ml-2">환불가능시간이 지났습니다</span>
+                    </a>
+
+                    <a th:if="${order.isCanceled()}"
+                       class="btn btn-sm btn-outline btn-primary btn-disabled">
+                        <span class="ml-2">취소된 주문 입니다.</span>
+                    </a>
+
+                    <a th:if="${order.isRefunded()}"
+                       class="btn btn-sm btn-outline btn-primary btn-disabled">
+                        <span class="ml-2">환불된 주문입니다.</span>
+                    </a>
 
                     <div>
                         <div>
@@ -95,10 +117,14 @@
         const $PaymentForm__useRestCashAll = $("#PaymentForm__useRestCashAll");
         const $PaymentForm__pgPayPriceDisplay = $("#PaymentForm__pgPayPriceDisplay");
 
-        const tossPayments = TossPayments("test_ck_7DLJOpm5Qrl2NoRba0L3PNdxbWnY");
+        const tossPayments = TossPayments(toss_clientKey);
 
         function payment() {
             let useRestCash = parseInt($PaymentForm__useRestCash.val());
+
+            if (isNaN(useRestCash)) {
+                useRestCash = 0;
+            }
 
             if (orderPayPrice == useRestCash) {
                 document.payByRestCashOnlyForm.submit();

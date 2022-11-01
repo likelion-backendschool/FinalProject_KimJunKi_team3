@@ -6,8 +6,8 @@ import com.ll.finalproject.app.order.entity.Order;
 import com.ll.finalproject.app.order.entity.OrderItem;
 import com.ll.finalproject.app.order.service.OrderItemService;
 import com.ll.finalproject.app.order.service.OrderService;
-import com.ll.finalproject.app.product.cart.entity.CartItem;
-import com.ll.finalproject.app.product.cart.service.CartService;
+import com.ll.finalproject.app.cart.entity.CartItem;
+import com.ll.finalproject.app.cart.service.CartService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class OrderServiceTests {
 
         Member buyer = memberRepository.findByUsername("user4").get();
 
-        Order order1 = orderService.findOrderById(3).get();
+        Order order1 = orderService.getOrder(3L);
         List<CartItem> cartItemsByBuyer1 = cartService.getCartItemsByBuyer(buyer.getId());
         List<OrderItem> orderItemsByOrder1 = orderItemService.getOrderItemsByOrder(order1);
 
@@ -51,7 +51,7 @@ public class OrderServiceTests {
 
         orderService.cancelOrder(buyer.getUsername(), order1.getId());
 
-        Order order2 = orderService.findOrderById(3).orElse(null);
+        Order order2 = orderService.getOrder(3L);
         List<CartItem> cartItemsByBuyer2 = cartService.getCartItemsByBuyer(buyer.getId());
         List<OrderItem> orderItemsByOrder2 = orderItemService.getOrderItemsByOrder(order1);
 
