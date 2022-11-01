@@ -13,6 +13,7 @@ import com.ll.finalproject.app.order.entity.Order;
 import com.ll.finalproject.app.order.entity.OrderItem;
 import com.ll.finalproject.app.order.exception.ActorCanNotSeeOrderException;
 import com.ll.finalproject.app.order.exception.OrderNotFoundException;
+import com.ll.finalproject.app.order.repository.OrderItemRepository;
 import com.ll.finalproject.app.order.repository.OrderRepository;
 import com.ll.finalproject.app.product.entity.Product;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemService orderItemService;
     private final MyBookService myBookService;
+    private final OrderItemRepository orderItemRepository;
 
     public Order createFromCart(String username) {
         // 입력된 회원의 장바구니 아이템들을 전부 가져온다.
@@ -247,5 +249,10 @@ public class OrderService {
 
     public List<Order> findAllByBuyerId(Long buyerId) {
         return orderRepository.findAllByBuyerIdOrderByIdDesc(buyerId);
+    }
+
+
+    public List<OrderItem> findAllByPayDateBetween(LocalDateTime fromDate, LocalDateTime toDate) {
+        return orderItemRepository.findAllByPayDateBetween(fromDate, toDate);
     }
 }
