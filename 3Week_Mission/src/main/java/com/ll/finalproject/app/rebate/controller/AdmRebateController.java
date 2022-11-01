@@ -8,9 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,12 +23,21 @@ public class AdmRebateController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @ResponseBody
     @PostMapping("/makeData")
     public String makeData(String yearMonth) {
         rebateService.makeDate(yearMonth);
 
-        return "성공";
+        return "redirect:/adm/rebate/rebateOrderItemList?yearMonth=" + yearMonth + "&msg=" + Ut.url.encode("정산데이터가 성공적으로 생성되었습니다.");
+    }
+
+    @GetMapping("/rebateOrderItemList")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public String showRebateOrderItemList(String yearMonth) {
+        if (yearMonth == null) {
+            yearMonth = "2022-10";
+        }
+
+        return "adm/rebate/rebateOrderItemList";
     }
 }
 
