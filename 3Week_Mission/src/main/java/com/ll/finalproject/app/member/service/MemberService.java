@@ -1,15 +1,15 @@
 package com.ll.finalproject.app.member.service;
 
+import com.ll.finalproject.app.base.dto.RsData;
 import com.ll.finalproject.app.cash.entity.CashLog;
 import com.ll.finalproject.app.cash.sevice.CashService;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.exception.*;
 import com.ll.finalproject.app.member.repository.MemberRepository;
 import com.ll.finalproject.app.security.dto.MemberContext;
-
+import com.ll.finalproject.util.Ut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import net.bytebuddy.utility.RandomString;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -149,15 +150,21 @@ public class MemberService {
         SecurityContextHolder.setContext(context);
     }
 
-    public long addCash(Member member, long price, String eventType) {
-
+    public RsData<Map<String, Object>> addCash(Member member, long price, String eventType) {
         CashLog cashLog = cashService.addCash(member, price, eventType);
 
         long newRestCash = member.getRestCash() + cashLog.getPrice();
-        member.changeRestCash(newRestCash);
+        member.setRestCash(newRestCash);
         memberRepository.save(member);
 
-        return newRestCash;
+        return RsData.of(
+                "S-1",
+                "성공",
+                Ut.mapOf(
+                        "cashLog", cashLog,
+                        "newRestCash", newRestCash
+                )
+        );
     }
 
     public Long getRestCash(String username) {

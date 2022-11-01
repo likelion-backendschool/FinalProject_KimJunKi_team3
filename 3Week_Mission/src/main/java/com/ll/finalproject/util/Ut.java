@@ -5,8 +5,27 @@ import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Ut {
+    public static <K, V> Map<K, V> mapOf(Object... args) {
+        Map<K, V> map = new LinkedHashMap<>();
+
+        int size = args.length / 2;
+
+        for (int i = 0; i < size; i++) {
+            int keyIndex = i * 2;
+            int valueIndex = keyIndex + 1;
+
+            K key = (K) args[keyIndex];
+            V value = (V) args[valueIndex];
+
+            map.put(key, value);
+        }
+
+        return map;
+    }
     public static class date {
         public static int getEndDayOf(int year, int month) {
             String yearMonth = year + "-" + "%02d".formatted(month);

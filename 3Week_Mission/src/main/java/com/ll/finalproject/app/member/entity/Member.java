@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ll.finalproject.app.base.entity.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,6 +31,7 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String nickname;
     private int authLevel;
+    @Setter
     private long restCash; // 남은 캐시
 
     public void changeNickname(String nickname) {
