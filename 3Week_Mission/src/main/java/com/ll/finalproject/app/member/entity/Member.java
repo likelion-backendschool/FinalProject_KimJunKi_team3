@@ -50,11 +50,12 @@ public class Member extends BaseEntity {
     }
     public List<GrantedAuthority> genAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_MEMBER"));
 
         // 임시 관리자 회원 생성
         if (username.equals("user1")) {
             authorities.add(new SimpleGrantedAuthority("ADMIN"));
+        } else {
+            authorities.add(new SimpleGrantedAuthority("ROLE_MEMBER"));
         }
 
         // 닉네임을 가지고 있다면 작가의 권한을 가진다.
