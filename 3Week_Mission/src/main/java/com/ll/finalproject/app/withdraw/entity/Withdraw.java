@@ -45,6 +45,7 @@ public class Withdraw extends BaseEntity {
 
     public void setWithdrawDone(long cashLogId) {
         withdrawDate = LocalDateTime.now();
+        isWithdraw = true;
         this.withdrawCashLog = new CashLog(cashLogId);
     }
 }

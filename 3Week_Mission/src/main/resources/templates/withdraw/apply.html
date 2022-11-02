@@ -32,8 +32,8 @@
             <span class="label-text">출금 금액</span>
           </label>
           <input type="number" id="PaymentForm__useRestCash" th:field="*{price}"
-                 th:placeholder="|0 ~ ${@rq.memberDto.restCash}|"
-                 class="input input-bordered min-w-[300px]" min="0" th:max="${@rq.memberDto.restCash}"
+                 th:placeholder="|0 ~ ${restCash}|"
+                 class="input input-bordered min-w-[300px]" min="0" th:max="${restCash}"
                  onkeydown="PaymentForm__useRestCashFix();"
                  onkeyup="PaymentForm__useRestCashFix();"
           >
@@ -45,7 +45,8 @@
           </label>
         </div>
 
-        <input type="submit" value="출금 신청" class="btn btn-primary mt-5">
+        <input th:if="${restCash!=0}" type="submit" value="출금 신청" class="btn btn-primary mt-5">
+        <input th:if="${restCash==0}" type="submit" value="예치금이 0원 입니다." class="btn btn-primary mt-5 btn-disabled">
 
       </form>
 

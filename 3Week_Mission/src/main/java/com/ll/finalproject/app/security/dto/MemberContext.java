@@ -17,7 +17,6 @@ public class MemberContext extends User {
     private final String email;
     private final String nickname;
 
-    private final long restCash;
 
 
     public MemberContext(Member member, List<GrantedAuthority> authorities) {
@@ -28,7 +27,6 @@ public class MemberContext extends User {
         this.username = member.getUsername();
         this.email = member.getEmail();
         this.nickname = member.getNickname();
-        this.restCash = member.getRestCash();
     }
 
     public MemberDto getMemberDto() {
@@ -40,7 +38,6 @@ public class MemberContext extends User {
                 .username(username)
                 .email(email)
                 .nickname(nickname)
-                .restCash(restCash)
                 .build();
     }
 

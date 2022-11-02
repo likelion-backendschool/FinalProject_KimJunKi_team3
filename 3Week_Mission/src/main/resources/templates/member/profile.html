@@ -26,11 +26,9 @@
         <div>
           <div class="badge badge-primary">예치금</div>
 
-          <span th:text="${@rq.memberDto.restCash}"></span>
-          <span th:if="${@rq.memberDto.hasRestCash}">
-            <a href="/withdraw/apply" class="btn btn-primary btn-sm inline-flex">
-              출금 신청
-            </a>
+          <a href="/withdraw/apply" class="btn btn-primary btn-sm inline-flex">
+            출금 신청
+          </a>
           </span>
         </div>
 

@@ -46,7 +46,7 @@
                         <td>
                             <a th:unless="${item.isWithdraw}" href="javascript:;" onclick="$(this).next().submit();"
                                class="btn btn-primary btn-xs">건별정산</a>
-                            <form method="POST" th:action="@{|/adm/rebate/rebateOne/${item.id}|}"
+                            <form method="POST" th:action="@{|/adm/withdraw/${item.id}|}"
                                   hidden></form>
                         </td>
                     </tr>
@@ -54,7 +54,7 @@
                 </table>
 
                 <a href="javascript:;" onclick="RebateForm__submit();" class="btn btn-primary btn-sm">선택정산</a>
-                <form method="POST" name="rebateForm" th:action="@{|/adm/rebate/rebate|}" hidden>
+                <form method="POST" name="rebateForm" th:action="@{|/adm/withdraw/rebate|}" hidden>
                     <input type="hidden" name="ids">
                 </form>
 

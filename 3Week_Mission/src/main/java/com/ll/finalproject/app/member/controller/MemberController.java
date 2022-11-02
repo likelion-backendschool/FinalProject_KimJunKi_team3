@@ -85,7 +85,7 @@ public class MemberController {
     @GetMapping("/modify")
     public String showModify(Model model) {
 
-        MemberDto memberDto = rq.getMemberDto();
+        MemberDto memberDto = memberService.getMemberDto(rq.getId());
 
         model.addAttribute("memberModifyForm", memberDto);
         return "member/modify";

@@ -24,10 +24,4 @@ public class MemberDto {
 
     private LocalDateTime modifyDate;
 
-    public boolean hasRestCash() {
-        if (restCash == 0) {
-            return false;
-        }
-        return true;
-    }
 }

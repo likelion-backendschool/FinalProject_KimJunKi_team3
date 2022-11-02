@@ -61,8 +61,26 @@ public class WithdrawService {
         return memberRepository.findById(memberId).orElseThrow(
                 () -> new MemberNotFoundException("존재하지 않는 회원입니다."));
     }
+    @Transactional(readOnly = true)
+    public Withdraw getWithdraw(Long withdrawId) {
+        return withdrawRepository.findById(withdrawId).orElseThrow(
+                () -> new RuntimeException(""));
+    }
 
     public List<Withdraw> getWithDraw() {
         return withdrawRepository.findAllByOrderByIdDesc();
+    }
+
+    public void process(long withdrawId) {
+        Withdraw withdraw = getWithdraw(withdrawId);
+
+        CashLog cashLog = memberService.addCash(withdraw.getMember(), 0, "출금완료__예치금").getData().getCashLog();
+
+        /**
+         * 출금 로직
+         */
+
+        withdraw.setWithdrawDone(cashLog.getId());
+
     }
 }

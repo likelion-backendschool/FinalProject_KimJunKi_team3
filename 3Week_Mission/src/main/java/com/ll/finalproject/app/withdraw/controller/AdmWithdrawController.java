@@ -9,9 +9,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -33,7 +36,23 @@ public class AdmWithdrawController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{withdrawApplyId}")
-    public String withdrawApply() {
-        return "";
+    public String withdrawProcess(@PathVariable long withdrawApplyId) {
+        withdrawService.process(withdrawApplyId);
+        return "redirect:/adm/withdraw/applyList";
+    }
+
+    @PostMapping("/rebate")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public String rebate(String ids, HttpServletRequest req) {
+
+        String[] idsArr = ids.split(",");
+
+        Arrays.stream(idsArr)
+                .mapToLong(Long::parseLong)
+                .forEach(id -> {
+                    withdrawService.process(id);
+                });
+
+        return "redirect:/adm/withdraw/applyList";
     }
 }

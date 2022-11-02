@@ -3,8 +3,10 @@ package com.ll.finalproject.app.member.service;
 import com.ll.finalproject.app.base.dto.RsData;
 import com.ll.finalproject.app.cash.entity.CashLog;
 import com.ll.finalproject.app.cash.sevice.CashService;
+import com.ll.finalproject.app.member.dto.MemberDto;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.exception.*;
+import com.ll.finalproject.app.member.mapper.MemberMapper;
 import com.ll.finalproject.app.member.repository.MemberRepository;
 import com.ll.finalproject.app.security.dto.MemberContext;
 import lombok.AllArgsConstructor;
@@ -47,6 +49,10 @@ public class MemberService {
                 () -> new MemberNotFoundException("존재하지 않는 회원입니다."));
     }
 
+    public MemberDto getMemberDto(Long memberId) {
+        Member member = findById(memberId);
+        return MemberMapper.INSTANCE.entityToMemberDto(member);
+    }
     @Transactional(readOnly = true)
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email).orElseThrow(
@@ -86,7 +92,7 @@ public class MemberService {
         member.changeEmail(email);
 
         memberRepository.save(member);
-        forceAuthentication(member); // 세션 갱신
+        forceAuthentication(member.getId()); // 세션 갱신
     }
 
     public void modifyPassword(Long memberId, String oldPassword, String newPassword) {
@@ -130,11 +136,12 @@ public class MemberService {
         Member member = findById(memberId);
 
         member.changeNickname(nickname);
-        forceAuthentication(member);  // 세션 갱신
+        forceAuthentication(member.getId());  // 세션 갱신
     }
 
     // 세션 갱신
-    private void forceAuthentication(Member member) {
+    private void forceAuthentication(Long memberId) {
+        Member member = findById(memberId);
 
         MemberContext memberContext = new MemberContext(member, member.genAuthorities());
 
@@ -156,8 +163,6 @@ public class MemberService {
         long newRestCash = member.getRestCash() + cashLog.getPrice();
         member.setRestCash(newRestCash);
         memberRepository.save(member);
-
-        forceAuthentication(member);
 
         return RsData.of(
                 "S-1",
