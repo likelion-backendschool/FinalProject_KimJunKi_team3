@@ -1,0 +1,103 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{adm/layout/layout}">
+
+<div layout:fragment="content">
+    <div class="container mx-auto">
+        <div>
+            <h1>출금신청 목록</h1>
+
+            <div class="overflow-x-auto">
+                <table class="table table-compact w-full">
+                    <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" class="orderItemCheckboxAll checkbox">
+                        </th>
+                        <th>번호</th>
+                        <th>신청날짜</th>
+                        <th>은행명</th>
+                        <th>계좌명</th>
+                        <th>신청 금액</th>
+                        <th>신청자</th>
+                        <th>결과</th>
+                        <th>정산날짜</th>
+                        <th>정산내역번호</th>
+                        <th>비고</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="item : ${items}">
+                        <td>
+                            <input onchange="OrderItemCheckbox__changed();" th:unless="${item.isWithdraw}"
+                                   type="checkbox" class="orderItemCheckbox checkbox" th:value="${item.id}">
+                        </td>
+                        <td th:text="${item.id}"></td>
+                        <td th:text="${item.createDate}"></td>
+                        <td th:text="${item.bankName}"></td>
+                        <td th:text="${item.bankAccountNo}"></td>
+                        <td th:text="${item.price}"></td>
+                        <td th:text="${item.member?.username}"></td>
+                        <td th:text="${item.isWithdraw}?'정산 완료':'대기중'"></td>
+                        <td th:text="${item.withdrawDate}"></td>
+                        <td th:text="${item.withdrawCashLog?.id}"></td>
+                        <td>
+                            <a th:unless="${item.isWithdraw}" href="javascript:;" onclick="$(this).next().submit();"
+                               class="btn btn-primary btn-xs">건별정산</a>
+                            <form method="POST" th:action="@{|/adm/rebate/rebateOne/${item.id}|}"
+                                  hidden></form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <a href="javascript:;" onclick="RebateForm__submit();" class="btn btn-primary btn-sm">선택정산</a>
+                <form method="POST" name="rebateForm" th:action="@{|/adm/rebate/rebate|}" hidden>
+                    <input type="hidden" name="ids">
+                </form>
+
+                <script>
+                    // 전체선택 체크박스
+                    const $orderItemCheckboxAll = $('.orderItemCheckboxAll');
+                    // 아이템 체크박스
+                    const $orderItemCheckbox = $('.orderItemCheckbox');
+
+                    $orderItemCheckboxAll.change(function () {
+                        const allChecked = $(this).prop('checked');
+                        $orderItemCheckbox.prop('checked', allChecked); // 아이템 체크박스들에게 체크상태 동기화
+                    });
+
+                    function OrderItemCheckbox__changed() {
+                        const allChecked = $orderItemCheckbox.length == $('.orderItemCheckbox:checked').length;
+
+                        $orderItemCheckboxAll.prop('checked', allChecked);
+                    }
+
+                    let RebateForm__submitDone = false;
+
+                    function RebateForm__submit() {
+                        if (RebateForm__submitDone) return;
+
+                        const form = document.rebateForm;
+
+                        const $checked = $('.orderItemCheckbox:checked');
+
+                        if ($checked.length == 0) {
+                            alert('정산할 주문품목을 선택해주세요.');
+                            return;
+                        }
+
+                        const ids = $checked.map((index, el) => $(el).val()).get();
+                        form.ids.value = ids;
+                        form.submit();
+                        RebateForm__submitDone = true;
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

@@ -1,6 +1,7 @@
 package com.ll.finalproject.app.withdraw.service;
 
 import com.ll.finalproject.app.base.rq.Rq;
+import com.ll.finalproject.app.cash.entity.CashLog;
 import com.ll.finalproject.app.member.entity.Member;
 import com.ll.finalproject.app.member.exception.MemberNotFoundException;
 import com.ll.finalproject.app.member.repository.MemberRepository;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,6 +28,7 @@ public class WithdrawService {
     private final Rq rq;
 
     /**
+     * 출금 신청
      *  1. 해당 유저가 맞는지 체크
      *  2. 출금 금액 유효성 체크
      *  3. 예치금 갱신
@@ -38,13 +42,15 @@ public class WithdrawService {
             throw new RuntimeException("출금 금액 초과");
         }
 
-        memberService.addCash(member, price * -1,"출금신청__예치금");
+        CashLog cashLog = memberService.addCash(member, price * -1, "출금신청__예치금").getData().getCashLog();
 
         Withdraw withdraw = Withdraw
                 .builder()
+                .member(member)
                 .bankName(bankName)
                 .bankAccountNo(bankAccountNo)
                 .price(price)
+                .withdrawCashLog(cashLog)
                 .build();
 
         withdrawRepository.save(withdraw);
@@ -54,5 +60,9 @@ public class WithdrawService {
     public Member getMember(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(
                 () -> new MemberNotFoundException("존재하지 않는 회원입니다."));
+    }
+
+    public List<Withdraw> getWithDraw() {
+        return withdrawRepository.findAllByOrderByIdDesc();
     }
 }
