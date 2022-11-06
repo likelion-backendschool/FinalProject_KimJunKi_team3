@@ -106,4 +106,29 @@ public class ApiAuthTests {
                 .andExpect(jsonPath(expression, "F-MethodArgumentNotValidException").exists());
 
     }
+
+    @Test
+    @DisplayName("POST /api/v1/member/login LoginRequest 객체 형식과 다른 값이 들어올 경우 resultCode=F-HttpMessageNotReadableException")
+    void t4() throws Exception {
+        // When
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/member/login")
+                                .content("""
+                                        {
+                                            "nickname": "안녕",
+                                            "password": "1234"
+                                        }
+                                        """.stripIndent())
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                )
+                .andDo(print());
+
+        // Then
+        String expression = "$.[?(@.resultCode == '%s')]";
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath(expression, "F-HttpMessageNotReadableException").exists());
+
+    }
 }
