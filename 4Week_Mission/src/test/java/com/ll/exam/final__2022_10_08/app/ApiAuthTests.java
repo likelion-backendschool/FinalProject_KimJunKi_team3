@@ -16,9 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -57,7 +58,7 @@ public class ApiAuthTests {
         // When
         ResultActions resultActions = mvc
                 .perform(
-                        post("/member/login")
+                        post("/api/v1/member/login")
                                 .content("""
                                         {
                                             "username": "user1",
@@ -79,5 +80,30 @@ public class ApiAuthTests {
         String authentication = response.getHeader("Authentication");
 
         assertThat(authentication).isNotEmpty();
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/member/login  username가 NotBlank일 경우 테스트 resultCode=F-MethodArgumentNotValidException 이다")
+    void t3() throws Exception {
+        // When
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/member/login")
+                                .content("""
+                                        {
+                                            "username": "",
+                                            "password": "1234"
+                                        }
+                                        """.stripIndent())
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                )
+                .andDo(print());
+
+        // Then
+        String expression = "$.[?(@.resultCode == '%s')]";
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath(expression, "F-MethodArgumentNotValidException").exists());
+
     }
 }
