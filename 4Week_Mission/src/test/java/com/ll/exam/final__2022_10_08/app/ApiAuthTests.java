@@ -27,7 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class ApiAuthTests {
 
-    private final String EXPRESSION = "$.[?(@.resultCode == '%s')]";
+    private final String EXPRESSION_RESULTCODE = "$.[?(@.resultCode == '%s')]";
+    private final String EXPRESSION_ACCESSTOKEN = "$..data[?(@.accessToken)]";
     @Autowired
     private MockMvc mvc;
 
@@ -103,7 +104,7 @@ public class ApiAuthTests {
         // Then
         resultActions
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath(EXPRESSION, "F-MethodArgumentNotValidException").exists());
+                .andExpect(jsonPath(EXPRESSION_RESULTCODE, "F-MethodArgumentNotValidException").exists());
     }
 
     @Test
@@ -149,7 +150,7 @@ public class ApiAuthTests {
         // Then
         resultActions
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath(EXPRESSION, "101").exists());
+                .andExpect(jsonPath(EXPRESSION_RESULTCODE, "101").exists());
     }
     @Test
     @DisplayName("POST /api/v1/member/login  password가 틀릴 경우 400 resultCode=102 ")
@@ -171,6 +172,29 @@ public class ApiAuthTests {
         // Then
         resultActions
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath(EXPRESSION, "102").exists());
+                .andExpect(jsonPath(EXPRESSION_RESULTCODE, "102").exists());
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/member/login 정상 로그인시에 토큰이 발급된다..")
+    void t7() throws Exception {
+        // When
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/member/login")
+                                .content("""
+                                        {
+                                            "username": "user1",
+                                            "password": "1234"
+                                        }
+                                        """.stripIndent())
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                )
+                .andDo(print());
+
+        // Then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath(EXPRESSION_ACCESSTOKEN).exists());
     }
 }

@@ -2,6 +2,7 @@ package com.ll.exam.final__2022_10_08.app.member.service;
 
 import com.ll.exam.final__2022_10_08.api.common.exception.ExceptionType;
 import com.ll.exam.final__2022_10_08.api.common.exception.MemberInvalidException;
+import com.ll.exam.final__2022_10_08.api.security.jwt.JwtProvider;
 import com.ll.exam.final__2022_10_08.app.AppConfig;
 import com.ll.exam.final__2022_10_08.app.base.dto.RsData;
 import com.ll.exam.final__2022_10_08.app.base.exception.NotFoundException;
@@ -40,6 +41,8 @@ public class MemberService {
     private final EmailVerificationService emailVerificationService;
     private final EmailService emailService;
     private final CashService cashService;
+
+    private final JwtProvider jwtProvider;
 
     @Transactional
     public Member join(String username, String password, String email, String nickname) {
@@ -148,7 +151,7 @@ public class MemberService {
     }
 
     private void forceAuthentication(Member member) {
-        MemberContext memberContext = new MemberContext(member, member.genAuthorities());
+        MemberContext memberContext = new MemberContext(member, member.getAuthorities());
 
         UsernamePasswordAuthenticationToken authentication =
                 UsernamePasswordAuthenticationToken.authenticated(
@@ -180,15 +183,20 @@ public class MemberService {
         return memberRepository.findById(id);
     }
 
-    public void validateLogin(String username, String password) {
+    public String login(String username, String password) {
+
         Member member = findByUsername(username).orElseThrow(
                 () -> new MemberInvalidException(ExceptionType.MEMBER_USERNAME_NOT_FOUND));
 
         if (passwordEncoder.matches(password, member.getPassword()) == false) {
             throw new MemberInvalidException(ExceptionType.MEMBER_PASSWORD_MISMATCH);
         }
-    }
 
+        return getAccessToken(member);
+    }
+    public String getAccessToken(Member member) {
+        return jwtProvider.generateAccessToken(member.getAccessTokenClaims(), 60 * 60 * 24 * 30);
+    }
 
     @Data
     @AllArgsConstructor
@@ -200,4 +208,5 @@ public class MemberService {
     public long getRestCash(Member member) {
         return memberRepository.findById(member.getId()).get().getRestCash();
     }
+
 }

@@ -27,9 +27,7 @@ public class ApiMemberController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid LoginRequest loginRequest) {
 
-        memberService.validateLogin(loginRequest.getUsername(), loginRequest.getPassword());
-
-        String accessToken = "JWT_Access_Token";
+        String accessToken = memberService.login(loginRequest.getUsername(), loginRequest.getPassword());
 
         return ResponseEntity
                 .ok()

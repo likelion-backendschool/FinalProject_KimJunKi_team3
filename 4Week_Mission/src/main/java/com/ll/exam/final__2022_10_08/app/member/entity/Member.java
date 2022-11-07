@@ -4,6 +4,7 @@ package com.ll.exam.final__2022_10_08.app.member.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ll.exam.final__2022_10_08.app.base.entity.BaseEntity;
 import com.ll.exam.final__2022_10_08.app.member.entity.emum.AuthLevel;
+import com.ll.exam.final__2022_10_08.util.Ut;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,6 +16,7 @@ import javax.persistence.Convert;
 import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Setter
@@ -52,7 +54,7 @@ public class Member extends BaseEntity {
         return "member__" + getId();
     }
 
-    public List<GrantedAuthority> genAuthorities() {
+    public List<GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("MEMBER"));
 
@@ -66,5 +68,16 @@ public class Member extends BaseEntity {
         }
 
         return authorities;
+    }
+
+    public Map<String, Object> getAccessTokenClaims() {
+        return Ut.mapOf(
+                "id", getId(),
+                "createDate", getCreateDate(),
+                "modifyDate", getModifyDate(),
+                "username", getUsername(),
+                "email", getEmail(),
+                "authorities", getAuthorities()
+        );
     }
 }
