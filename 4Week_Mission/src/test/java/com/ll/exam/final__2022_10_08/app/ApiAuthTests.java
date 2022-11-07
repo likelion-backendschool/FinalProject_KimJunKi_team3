@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class ApiAuthTests {
 
+    private final String EXPRESSION = "$.[?(@.resultCode == '%s')]";
     @Autowired
     private MockMvc mvc;
 
@@ -100,11 +101,9 @@ public class ApiAuthTests {
                 .andDo(print());
 
         // Then
-        String expression = "$.[?(@.resultCode == '%s')]";
         resultActions
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath(expression, "F-MethodArgumentNotValidException").exists());
-
+                .andExpect(jsonPath(EXPRESSION, "F-MethodArgumentNotValidException").exists());
     }
 
     @Test
@@ -129,6 +128,49 @@ public class ApiAuthTests {
         resultActions
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath(expression, "F-HttpMessageNotReadableException").exists());
+    }
+    @Test
+    @DisplayName("POST /api/v1/member/login  username 이 틀릴 경우 404 resultCode=101 ")
+    void t5() throws Exception {
+        // When
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/member/login")
+                                .content("""
+                                        {
+                                            "username": "usrse",
+                                            "password": "1234"
+                                        }
+                                        """.stripIndent())
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                )
+                .andDo(print());
 
+        // Then
+        resultActions
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath(EXPRESSION, "101").exists());
+    }
+    @Test
+    @DisplayName("POST /api/v1/member/login  password가 틀릴 경우 400 resultCode=102 ")
+    void t6() throws Exception {
+        // When
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/member/login")
+                                .content("""
+                                        {
+                                            "username": "user1",
+                                            "password": "123456"
+                                        }
+                                        """.stripIndent())
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                )
+                .andDo(print());
+
+        // Then
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath(EXPRESSION, "102").exists());
     }
 }

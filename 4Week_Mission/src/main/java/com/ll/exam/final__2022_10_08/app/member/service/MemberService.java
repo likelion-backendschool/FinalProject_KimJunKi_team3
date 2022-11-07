@@ -1,5 +1,7 @@
 package com.ll.exam.final__2022_10_08.app.member.service;
 
+import com.ll.exam.final__2022_10_08.api.common.exception.ExceptionType;
+import com.ll.exam.final__2022_10_08.api.common.exception.MemberInvalidException;
 import com.ll.exam.final__2022_10_08.app.AppConfig;
 import com.ll.exam.final__2022_10_08.app.base.dto.RsData;
 import com.ll.exam.final__2022_10_08.app.base.exception.NotFoundException;
@@ -176,6 +178,15 @@ public class MemberService {
 
     public Optional<Member> findById(long id) {
         return memberRepository.findById(id);
+    }
+
+    public void validateLogin(String username, String password) {
+        Member member = findByUsername(username).orElseThrow(
+                () -> new MemberInvalidException(ExceptionType.MEMBER_USERNAME_NOT_FOUND));
+
+        if (passwordEncoder.matches(password, member.getPassword()) == false) {
+            throw new MemberInvalidException(ExceptionType.MEMBER_PASSWORD_MISMATCH);
+        }
     }
 
 
