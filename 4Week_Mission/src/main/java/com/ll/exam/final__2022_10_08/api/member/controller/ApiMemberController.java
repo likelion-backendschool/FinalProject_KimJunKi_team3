@@ -28,8 +28,7 @@ public class ApiMemberController {
 
         String accessToken = memberService.login(loginRequest.getUsername(), loginRequest.getPassword());
 
-        return ResponseEntity
-                .ok()
+        return ResponseEntity.ok()
                 .headers(Ut.spring.httpHeadersOf("Authentication", accessToken))
                 .body(RsData.of(
                         "S-1",

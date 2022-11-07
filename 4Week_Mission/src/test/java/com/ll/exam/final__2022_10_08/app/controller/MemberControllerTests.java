@@ -1,4 +1,4 @@
-package com.ll.exam.final__2022_10_08.controller;
+package com.ll.exam.final__2022_10_08.app.controller;
 
 import com.ll.exam.final__2022_10_08.app.member.controller.MemberController;
 import com.ll.exam.final__2022_10_08.app.member.service.MemberService;

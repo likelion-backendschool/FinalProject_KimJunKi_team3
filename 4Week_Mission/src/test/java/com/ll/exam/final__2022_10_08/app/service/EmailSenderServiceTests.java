@@ -1,4 +1,4 @@
-package com.ll.exam.final__2022_10_08.service;
+package com.ll.exam.final__2022_10_08.app.service;
 
 import com.ll.exam.final__2022_10_08.app.emailSender.service.EmailSenderService;
 import org.junit.jupiter.api.DisplayName;

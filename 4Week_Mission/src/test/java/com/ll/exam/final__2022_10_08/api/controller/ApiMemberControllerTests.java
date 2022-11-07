@@ -1,4 +1,4 @@
-package com.ll.exam.final__2022_10_08.app;
+package com.ll.exam.final__2022_10_08.api.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("test")
-public class ApiAuthTests {
+public class ApiMemberControllerTests {
 
     private final String EXPRESSION_RESULTCODE = "$.[?(@.resultCode == '%s')]";
     private final String EXPRESSION_ACCESSTOKEN = "$..data[?(@.accessToken)]";

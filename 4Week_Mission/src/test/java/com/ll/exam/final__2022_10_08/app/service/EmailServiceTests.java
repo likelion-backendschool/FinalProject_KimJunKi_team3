@@ -1,4 +1,4 @@
-package com.ll.exam.final__2022_10_08.service;
+package com.ll.exam.final__2022_10_08.app.service;
 
 import com.ll.exam.final__2022_10_08.app.base.dto.RsData;
 import com.ll.exam.final__2022_10_08.app.email.service.EmailService;
