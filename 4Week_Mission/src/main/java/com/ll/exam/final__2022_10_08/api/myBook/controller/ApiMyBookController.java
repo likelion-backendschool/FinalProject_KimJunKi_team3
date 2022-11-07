@@ -1,5 +1,6 @@
 package com.ll.exam.final__2022_10_08.api.myBook.controller;
 
+import com.ll.exam.final__2022_10_08.api.myBook.dto.MyBookResponse;
 import com.ll.exam.final__2022_10_08.api.myBook.dto.MyBooksResponse;
 import com.ll.exam.final__2022_10_08.app.base.dto.RsData;
 import com.ll.exam.final__2022_10_08.app.myBook.entity.MyBook;
@@ -27,7 +28,7 @@ public class ApiMyBookController {
     private final MyBookService myBookService;
     @GetMapping("/")
     public ResponseEntity<RsData> showMyBooks(@AuthenticationPrincipal MemberContext memberContext) {
-        List<MyBooksResponse> myBooks = myBookService.getMyBooks(memberContext.getId());
+        MyBooksResponse myBooks = myBookService.getMyBooks(memberContext.getId());
 
         return ResponseEntity
                 .ok()

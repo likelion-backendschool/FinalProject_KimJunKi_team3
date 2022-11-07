@@ -151,7 +151,7 @@ public class ApiMemberControllerTests {
         // Then
         resultActions
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath(EXPRESSION_RESULTCODE, "101").exists());
+                .andExpect(jsonPath(EXPRESSION_RESULTCODE, "1001").exists());
     }
     @Test
     @DisplayName("POST /api/v1/member/login  password가 틀릴 경우 400 resultCode=102 ")
@@ -173,7 +173,7 @@ public class ApiMemberControllerTests {
         // Then
         resultActions
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath(EXPRESSION_RESULTCODE, "102").exists());
+                .andExpect(jsonPath(EXPRESSION_RESULTCODE, "1002").exists());
     }
 
     @Test

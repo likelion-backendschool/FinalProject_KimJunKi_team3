@@ -2,6 +2,7 @@ package com.ll.exam.final__2022_10_08.app.myBook.service;
 
 import com.ll.exam.final__2022_10_08.api.common.exception.ExceptionType;
 import com.ll.exam.final__2022_10_08.api.common.exception.MyBookInvalidException;
+import com.ll.exam.final__2022_10_08.api.myBook.dto.MyBookResponse;
 import com.ll.exam.final__2022_10_08.api.myBook.dto.MyBooksResponse;
 import com.ll.exam.final__2022_10_08.app.base.dto.RsData;
 import com.ll.exam.final__2022_10_08.app.myBook.entity.MyBook;
@@ -44,11 +45,14 @@ public class MyBookService {
         return RsData.of("S-1", "나의 책장에서 제거되었습니다.");
     }
 
-    public List<MyBooksResponse> getMyBooks(Long id) {
-        return myBookRepository.findAllByOwnerId(id)
-                .stream()
-                .map(MyBooksResponse::of)
-                .collect(toList());
+    public MyBooksResponse getMyBooks(Long id) {
+        return MyBooksResponse.of
+                (
+                        myBookRepository.findAllByOwnerId(id)
+                        .stream()
+                        .map(MyBookResponse::of)
+                        .collect(toList())
+                );
     }
 
     public void getMyBook(Long myBookId, Long memberId) {

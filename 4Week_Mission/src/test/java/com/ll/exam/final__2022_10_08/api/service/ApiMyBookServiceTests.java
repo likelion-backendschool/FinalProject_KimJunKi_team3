@@ -2,6 +2,7 @@ package com.ll.exam.final__2022_10_08.api.service;
 
 import com.ll.exam.final__2022_10_08.api.common.exception.ExceptionType;
 import com.ll.exam.final__2022_10_08.api.common.exception.MyBookInvalidException;
+import com.ll.exam.final__2022_10_08.api.myBook.dto.MyBookResponse;
 import com.ll.exam.final__2022_10_08.api.myBook.dto.MyBooksResponse;
 import com.ll.exam.final__2022_10_08.app.member.entity.Member;
 import com.ll.exam.final__2022_10_08.app.member.service.MemberService;
@@ -39,7 +40,7 @@ public class ApiMyBookServiceTests {
     void t1() {
         // When
         Member member = memberService.findByUsername("user1").get();
-        List<MyBooksResponse> myBooks = myBookService.getMyBooks(member.getId());
+        MyBooksResponse myBooks = myBookService.getMyBooks(member.getId());
 
         // Then
         System.out.println("myBooks = " + myBooks);
@@ -55,7 +56,7 @@ public class ApiMyBookServiceTests {
         assertThatThrownBy(
                 () -> myBookService.getMyBook(1000L, member.getId())
         ).isInstanceOf(MyBookInvalidException.class)
-                .hasMessageContaining(ExceptionType.MEMBER_USERNAME_NOT_FOUND.getMessage());
+                .hasMessageContaining(ExceptionType.MYBOOK_NOT_FOUND.getMessage());
     }
 
     @Test

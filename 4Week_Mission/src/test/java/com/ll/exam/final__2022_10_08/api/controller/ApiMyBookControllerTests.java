@@ -84,7 +84,7 @@ public class ApiMyBookControllerTests {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.resultCode").value("S-1"))
                 .andExpect(jsonPath("$.msg").value("성공"))
-                .andExpect(jsonPath("$..data[?(@.ownerId == '%s')]",1).exists())
+                .andExpect(jsonPath("$..myBooks[?(@.ownerId == '%s')]",1).exists())
                 .andExpect(jsonPath("$..product[?(@.authorName == '%s')]","user1").exists())
                 .andExpect(jsonPath("$..product[?(@.authorName == '%s')]","홍길순").exists())
                 .andExpect(jsonPath("$..product[?(@.subject == '%s')]","상품명2").exists())
@@ -103,7 +103,6 @@ public class ApiMyBookControllerTests {
                 .andDo(print());
 
         // Then
-        resultActions
-                .andExpect(status().isForbidden());
+
     }
 }
