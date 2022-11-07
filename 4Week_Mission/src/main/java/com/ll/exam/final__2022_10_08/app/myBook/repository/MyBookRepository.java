@@ -9,4 +9,6 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
     void deleteByProductIdAndOwnerId(long productId, long ownerId);
 
     List<MyBook> findAllByOwnerId(long ownerId);
+
+    boolean existsByIdAndOwnerId(Long myBookId, Long memberId);
 }

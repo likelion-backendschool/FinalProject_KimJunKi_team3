@@ -1,6 +1,7 @@
 package com.ll.exam.final__2022_10_08.api.product.dto;
 
 import com.ll.exam.final__2022_10_08.app.myBook.entity.MyBook;
+import com.ll.exam.final__2022_10_08.app.post.entity.Post;
 import com.ll.exam.final__2022_10_08.app.product.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder

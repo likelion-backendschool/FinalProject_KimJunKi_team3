@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -36,7 +37,7 @@ public class ApiMyBookControllerTests {
         // When
         ResultActions resultActions = mvc
                 .perform(
-                        get("/api/v1/myBooks"))
+                        get("/api/v1/myBooks/"))
                 .andDo(print());
 
         // Then
@@ -89,5 +90,20 @@ public class ApiMyBookControllerTests {
                 .andExpect(jsonPath("$..product[?(@.subject == '%s')]","상품명2").exists())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.fail").value(false));
+    }
+
+    @Test
+    @DisplayName("GET/api/v1/myBooks{myBookId} 요청 보낼 경우, 도서 데이터 반환 ")
+    @WithUserDetails("user1")
+    void t3() throws Exception {
+        // When
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/v1/myBooks/"))
+                .andDo(print());
+
+        // Then
+        resultActions
+                .andExpect(status().isForbidden());
     }
 }

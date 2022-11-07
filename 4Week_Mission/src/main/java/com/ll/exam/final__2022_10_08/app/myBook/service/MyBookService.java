@@ -1,5 +1,7 @@
 package com.ll.exam.final__2022_10_08.app.myBook.service;
 
+import com.ll.exam.final__2022_10_08.api.common.exception.ExceptionType;
+import com.ll.exam.final__2022_10_08.api.common.exception.MyBookInvalidException;
 import com.ll.exam.final__2022_10_08.api.myBook.dto.MyBooksResponse;
 import com.ll.exam.final__2022_10_08.app.base.dto.RsData;
 import com.ll.exam.final__2022_10_08.app.myBook.entity.MyBook;
@@ -47,5 +49,16 @@ public class MyBookService {
                 .stream()
                 .map(MyBooksResponse::of)
                 .collect(toList());
+    }
+
+    public void getMyBook(Long myBookId, Long memberId) {
+        MyBook myBook = myBookRepository.findById(myBookId).orElseThrow(
+                () -> new MyBookInvalidException(ExceptionType.MYBOOK_NOT_FOUND, myBookId)
+        );
+
+        if (!myBookRepository.existsByIdAndOwnerId(myBookId, memberId)) {
+            throw new MyBookInvalidException(ExceptionType.INVALID_MYBOOK_OWNER);
+        }
+
     }
 }
