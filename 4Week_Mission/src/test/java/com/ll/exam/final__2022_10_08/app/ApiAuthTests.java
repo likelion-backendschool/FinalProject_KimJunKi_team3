@@ -234,26 +234,16 @@ public class ApiAuthTests {
 
         // Then
         resultActions
-                .andExpect(status().is2xxSuccessful());
-
-        // MemberController me 메서드에서는 @AuthenticationPrincipal MemberContext memberContext 를 사용해서 현재 로그인 한 회원의 정보를 얻어야 한다.
-
-        // 추가
-        // /member/me 에 응답 본문
-        /*
-          {
-            "resultCode": "S-1",
-            "msg": "성공",
-            "data": {
-              "id": 1,
-              "createData": "날짜",
-              "modifyData": "날짜",
-              "username": "user1",
-              "email": "user1@test.com"
-            }
-            "success": true,
-            "fail": false
-          }
-       */
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.resultCode").value("S-1"))
+                .andExpect(jsonPath("$.msg").value("로그인 성공, Access Token을 발급합니다."))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.createDate").isNotEmpty())
+                .andExpect(jsonPath("$.data.modifyDate").isNotEmpty())
+                .andExpect(jsonPath("$.data.username").value("user1"))
+                .andExpect(jsonPath("$.data.email").value("user1@test.com"))
+                .andExpect(jsonPath("$.data.emailVerified").value(false))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.fail").value(false));
     }
 }
