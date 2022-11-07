@@ -1,6 +1,7 @@
 package com.ll.exam.final__2022_10_08.api.security;
 
 
+import com.ll.exam.final__2022_10_08.api.security.filter.JwtAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,7 +17,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class ApiSecurityConfig {
-//    private final JwtAuthorizationFilter jwtAuthorizationFilter;
+    private final JwtAuthorizationFilter jwtAuthorizationFilter;
 //    private final ApiAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
@@ -33,7 +34,8 @@ public class ApiSecurityConfig {
                 )
                 .authorizeRequests(
                         authorizeRequests -> authorizeRequests
-                                .antMatchers("/api/*/member/login").permitAll()
+                                .antMatchers("/api/*/member/login")
+                                .permitAll()
                                 .anyRequest()
                                 .authenticated() // 최소자격 : 로그인
                 )
@@ -41,10 +43,10 @@ public class ApiSecurityConfig {
                         .sessionCreationPolicy(STATELESS)
                 )
                 .formLogin().disable()
-//                .addFilterBefore(
-//                        jwtAuthorizationFilter,
-//                        UsernamePasswordAuthenticationFilter.class
-//                )
+                .addFilterBefore( // filter 순서 지정 UsernamePasswordAuthenticationFilter 전에 실행하겠다.
+                        jwtAuthorizationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
                 .logout().disable();
 
         return http.build();

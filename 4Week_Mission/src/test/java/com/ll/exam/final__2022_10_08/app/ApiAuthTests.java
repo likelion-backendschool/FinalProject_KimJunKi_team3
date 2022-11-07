@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -196,5 +197,63 @@ public class ApiAuthTests {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath(EXPRESSION_ACCESSTOKEN).exists());
+    }
+    @Test
+    @DisplayName("로그인 후 얻은 JWT 토큰으로 현재 로그인 한 회원의 정보를 얻을 수 있다.")
+    void t8() throws Exception {
+        // When
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/member/login")
+                                .content("""
+                                        {
+                                            "username": "user1",
+                                            "password": "1234"
+                                        }
+                                        """.stripIndent())
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                )
+                .andDo(print());
+
+        // Then
+        resultActions
+                .andExpect(status().is2xxSuccessful());
+
+        MvcResult mvcResult = resultActions.andReturn();
+
+        MockHttpServletResponse response = mvcResult.getResponse();
+
+        String accessToken = response.getHeader("Authentication");
+
+        resultActions = mvc
+                .perform(
+                        get("/api/v1/member/me")
+                                .header("Authorization", "Bearer " + accessToken)
+                )
+                .andDo(print());
+
+        // Then
+        resultActions
+                .andExpect(status().is2xxSuccessful());
+
+        // MemberController me 메서드에서는 @AuthenticationPrincipal MemberContext memberContext 를 사용해서 현재 로그인 한 회원의 정보를 얻어야 한다.
+
+        // 추가
+        // /member/me 에 응답 본문
+        /*
+          {
+            "resultCode": "S-1",
+            "msg": "성공",
+            "data": {
+              "id": 1,
+              "createData": "날짜",
+              "modifyData": "날짜",
+              "username": "user1",
+              "email": "user1@test.com"
+            }
+            "success": true,
+            "fail": false
+          }
+       */
     }
 }
