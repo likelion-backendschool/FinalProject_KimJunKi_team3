@@ -2,6 +2,7 @@ package com.ll.exam.final__2022_10_08.app.member.service;
 
 import com.ll.exam.final__2022_10_08.app.AppConfig;
 import com.ll.exam.final__2022_10_08.app.base.dto.RsData;
+import com.ll.exam.final__2022_10_08.app.base.exception.NotFoundException;
 import com.ll.exam.final__2022_10_08.app.cash.entity.CashLog;
 import com.ll.exam.final__2022_10_08.app.cash.service.CashService;
 import com.ll.exam.final__2022_10_08.app.email.service.EmailService;
@@ -9,6 +10,7 @@ import com.ll.exam.final__2022_10_08.app.emailVerification.service.EmailVerifica
 import com.ll.exam.final__2022_10_08.app.member.entity.Member;
 import com.ll.exam.final__2022_10_08.app.member.entity.emum.AuthLevel;
 import com.ll.exam.final__2022_10_08.app.member.exception.AlreadyJoinException;
+
 import com.ll.exam.final__2022_10_08.app.member.repository.MemberRepository;
 import com.ll.exam.final__2022_10_08.app.security.dto.MemberContext;
 import com.ll.exam.final__2022_10_08.util.Ut;
@@ -175,6 +177,7 @@ public class MemberService {
     public Optional<Member> findById(long id) {
         return memberRepository.findById(id);
     }
+
 
     @Data
     @AllArgsConstructor

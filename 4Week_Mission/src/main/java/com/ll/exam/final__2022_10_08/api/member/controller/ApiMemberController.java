@@ -2,6 +2,7 @@ package com.ll.exam.final__2022_10_08.api.member.controller;
 
 import com.ll.exam.final__2022_10_08.api.member.dto.LoginRequest;
 import com.ll.exam.final__2022_10_08.app.base.dto.RsData;
+import com.ll.exam.final__2022_10_08.app.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -22,8 +23,12 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1/member")
 public class ApiMemberController {
 
+    private final MemberService memberService;
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid LoginRequest loginRequest) {
+
+        memberService.validateLogin(loginRequest.getUsername(), loginRequest.getPassword());
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authentication", "JWT키");
 
