@@ -26,7 +26,7 @@ public class ApiMemberController {
     private final MemberService memberService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<RsData> login(@RequestBody @Valid LoginRequest loginRequest) {
 
         String accessToken = memberService.login(loginRequest.getUsername(), loginRequest.getPassword());
 
@@ -40,9 +40,9 @@ public class ApiMemberController {
                         )
                 ));
     }
-
+    @Operation(summary =  "로그인된 회원이 보유한 도서 목록", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/me")
-    public ResponseEntity me(@AuthenticationPrincipal MemberContext memberContext) {
+    public ResponseEntity<RsData> me(@AuthenticationPrincipal MemberContext memberContext) {
 
         return ResponseEntity
                 .ok()

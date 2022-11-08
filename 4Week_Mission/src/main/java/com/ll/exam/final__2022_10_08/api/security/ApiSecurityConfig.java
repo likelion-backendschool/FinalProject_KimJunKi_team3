@@ -34,6 +34,7 @@ public class ApiSecurityConfig {
                 )
                 .authorizeRequests(
                         authorizeRequests -> authorizeRequests
+                                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 .antMatchers("/api/*/member/login")
                                 .permitAll()
                                 .anyRequest()
