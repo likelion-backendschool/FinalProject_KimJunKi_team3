@@ -39,26 +39,28 @@ public class Member extends BaseEntity {
     @Convert(converter = AuthLevel.Converter.class)
     private AuthLevel authLevel;
 
-    public static Member fromJwtClaims(Map<String, Object> jwtClaims) {
-        long id = (long)(int)jwtClaims.get("id");
-        LocalDateTime createDate = Ut.date.bitsToLocalDateTime((List<Integer>)jwtClaims.get("createDate"));
-        LocalDateTime modifyDate = Ut.date.bitsToLocalDateTime((List<Integer>)jwtClaims.get("modifyDate"));
-        String username = (String)jwtClaims.get("username");
-        String email = (String)jwtClaims.get("email");
-        String nickname = (String)jwtClaims.get("nickname");
-        AuthLevel authLevel = AuthLevel.valueOf((String) jwtClaims.get("authLevel"));
-
-        return Member
-                .builder()
-                .id(id)
-                .createDate(createDate)
-                .modifyDate(modifyDate)
-                .username(username)
-                .email(email)
-                .nickname(nickname)
-                .authLevel(authLevel)
-                .build();
-    }
+    @Column(columnDefinition = "TEXT")
+    private String accessToken;
+//    public static Member fromJwtClaims(Map<String, Object> jwtClaims) {
+//        long id = (long)(int)jwtClaims.get("id");
+//        LocalDateTime createDate = Ut.date.bitsToLocalDateTime((List<Integer>)jwtClaims.get("createDate"));
+//        LocalDateTime modifyDate = Ut.date.bitsToLocalDateTime((List<Integer>)jwtClaims.get("modifyDate"));
+//        String username = (String)jwtClaims.get("username");
+//        String email = (String)jwtClaims.get("email");
+//        String nickname = (String)jwtClaims.get("nickname");
+//        AuthLevel authLevel = AuthLevel.valueOf((String) jwtClaims.get("authLevel"));
+//
+//        return Member
+//                .builder()
+//                .id(id)
+//                .createDate(createDate)
+//                .modifyDate(modifyDate)
+//                .username(username)
+//                .email(email)
+//                .nickname(nickname)
+//                .authLevel(authLevel)
+//                .build();
+//    }
 
     public String getName() {
         if (nickname != null) {

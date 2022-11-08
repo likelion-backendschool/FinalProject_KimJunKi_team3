@@ -44,12 +44,7 @@ public class ApiMemberController {
     @GetMapping("/me")
     public ResponseEntity<RsData> me(@AuthenticationPrincipal MemberContext memberContext) {
 
-        return ResponseEntity
-                .ok()
-                .body(RsData.of(
-                        "S-1",
-                        "로그인 성공, Access Token을 발급합니다.",
-                        memberContext
-                ));
+        return ResponseEntity.ok()
+                .body(RsData.successOf(memberContext));
     }
 }
