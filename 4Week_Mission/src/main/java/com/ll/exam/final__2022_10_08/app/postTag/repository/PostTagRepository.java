@@ -1,5 +1,6 @@
 package com.ll.exam.final__2022_10_08.app.postTag.repository;
 
+import com.ll.exam.final__2022_10_08.app.postKeyword.entity.PostKeyword;
 import com.ll.exam.final__2022_10_08.app.postTag.entity.PostTag;
 import com.ll.exam.final__2022_10_08.app.productTag.entity.ProductTag;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,6 @@ public interface PostTagRepository extends JpaRepository<PostTag, Long> {
     List<PostTag> findAllByMemberIdAndPostKeywordIdOrderByPost_idDesc(long memberId, long postKeywordId);
 
     List<ProductTag> findAllByPostKeyword_contentOrderByPost_idDesc(String productKeywordContent);
+
+    List<PostTag> findAllByPostKeyword(PostKeyword postKeyword);
 }

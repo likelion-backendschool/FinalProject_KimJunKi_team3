@@ -6,6 +6,7 @@ import com.ll.exam.final__2022_10_08.app.base.dto.RsData;
 import com.ll.exam.final__2022_10_08.app.myBook.entity.MyBook;
 import com.ll.exam.final__2022_10_08.app.myBook.service.MyBookService;
 import com.ll.exam.final__2022_10_08.app.security.dto.MemberContext;
+import com.ll.exam.final__2022_10_08.util.Ut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,28 +29,20 @@ public class ApiMyBookController {
     private final MyBookService myBookService;
     @GetMapping("/")
     public ResponseEntity<RsData> showMyBooks(@AuthenticationPrincipal MemberContext memberContext) {
-        MyBooksResponse myBooks = myBookService.getMyBooks(memberContext.getId());
 
-        return ResponseEntity
-                .ok()
-                .body(RsData.of(
-                        "S-1",
-                        "성공",
-                        myBooks
-                ));
+        MyBooksResponse myBooks = myBookService.getMyBooksResponse(memberContext.getId());
+
+        return ResponseEntity.ok()
+                .body(RsData.successOf(myBooks));
     }
 
     @GetMapping("/{myBookId}")
     public ResponseEntity<RsData> showMyBooks(@AuthenticationPrincipal MemberContext memberContext,
                                               @PathVariable Long myBookId) {
 
-        myBookService.getMyBook(myBookId, memberContext.getId());
+        MyBookResponse myBook = myBookService.getMyBookResponse(myBookId, memberContext.getId());
 
-        return ResponseEntity
-                .ok()
-                .body(RsData.of(
-                        "S-1",
-                        "성공"
-                ));
+        return ResponseEntity.ok()
+                .body(RsData.successOf(Ut.mapOf("myBook", myBook)));
     }
 }

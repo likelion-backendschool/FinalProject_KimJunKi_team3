@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class GlobalControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<RsData> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<RsData> MethodArgumentNotValidExceptions(MethodArgumentNotValidException ex) {
         log.error("[MethodArgumentNotValidException] ex", ex);
         String msg = ex
                 .getBindingResult()
@@ -40,7 +40,7 @@ public class GlobalControllerAdvice {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<RsData> handleValidationExceptions(HttpMessageNotReadableException ex) {
+    public ResponseEntity<RsData> HttpMessageNotReadableExceptions(HttpMessageNotReadableException ex) {
         log.error("[HttpMessageNotReadableException] ex", ex);
 
         return ResponseEntity.badRequest().body(

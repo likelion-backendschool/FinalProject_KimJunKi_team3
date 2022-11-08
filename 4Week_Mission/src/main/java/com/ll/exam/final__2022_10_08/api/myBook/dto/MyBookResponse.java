@@ -33,4 +33,15 @@ public class MyBookResponse {
                 .product(productResponse)
                 .build();
     }
+
+    public static MyBookResponse of(MyBook myBook, ProductResponse productResponse) {
+
+        return MyBookResponse.builder()
+                .id(myBook.getId())
+                .createDate(myBook.getCreateDate())
+                .modifyDate(myBook.getModifyDate())
+                .ownerId(myBook.getOwner().getId())
+                .product(productResponse)
+                .build();
+    }
 }
