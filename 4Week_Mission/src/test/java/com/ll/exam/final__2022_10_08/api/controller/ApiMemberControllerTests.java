@@ -246,4 +246,51 @@ public class ApiMemberControllerTests {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.fail").value(false));
     }
+
+    @Test
+    @DisplayName("POST /api/v1/member/login 로그인을 여러번 해도 같은 토큰 값을 받는다...")
+    void t9() throws Exception {
+        // When
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/member/login")
+                                .content("""
+                                        {
+                                            "username": "user1",
+                                            "password": "1234"
+                                        }
+                                        """.stripIndent())
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                )
+                .andDo(print());
+
+        // Then
+        resultActions
+                .andExpect(status().is2xxSuccessful());
+
+        String accessToken = resultActions.andReturn().getResponse().getHeader("Authentication");
+
+        // When
+        ResultActions resultActions2 = mvc
+                .perform(
+                        post("/api/v1/member/login")
+                                .content("""
+                                        {
+                                            "username": "user1",
+                                            "password": "1234"
+                                        }
+                                        """.stripIndent())
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                )
+                .andDo(print());
+
+        // Then
+        resultActions2
+                .andExpect(status().is2xxSuccessful());
+
+        String accessToken2 = resultActions2.andReturn().getResponse().getHeader("Authentication");
+
+        assertThat(accessToken2).isEqualTo(accessToken2);
+
+    }
 }

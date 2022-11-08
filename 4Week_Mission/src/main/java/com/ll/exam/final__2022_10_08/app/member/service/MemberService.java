@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -211,6 +213,13 @@ public class MemberService {
 
     public boolean verifyWithWhiteList(Member member, String token) {
         return member.getAccessToken().equals(token);
+    }
+
+    @Cacheable("member")
+    public Member getByUsername__cached(String username) {
+        return findByUsername(username).orElseThrow(
+                () -> new MemberInvalidException(ExceptionType.MEMBER_NOT_FOUND)
+        );
     }
 
     @Data
