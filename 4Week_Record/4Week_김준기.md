@@ -112,25 +112,25 @@
         ```java
         public MyBookResponse getMyBookResponse(Long myBookId, Long memberId) {
         
-        				/* 예외 처리 부분 생략*/
-        
-                /**
-                 *  도서(myBook)의 post 리스트를 가져와야 된다.
-                 *  1. 도서가 가진 Product의 PostKeyword를 가진 PostTag 리스트를 가져온다.
-                 *  2. PostTag 리스트에서 Post 리스트를 추출한 다음 응답 형태로 가공해준다.
-                 */
-                List<PostResponse> bookChapters = getBookChapter(myBook); // api 명세서의 bookChapters
-                ProductResponse productResponse = ProductResponse.of(myBook.getProduct(), bookChapters);
-        
-                return MyBookResponse.of(myBook, productResponse);
-            }
-        
-            public List<PostResponse> getBookChapter(MyBook myBook) {
-                List<PostTag> postTags = postTagRepository.findAllByPostKeyword(myBook.getProduct().getPostKeyword());
-                return postTags.stream()
-                        .map((postTag) -> PostResponse.of(postTag.getPost()))
-                        .collect(toList());
-            }
+                    /* 예외 처리 부분 생략*/
+
+            /**
+             *  도서(myBook)의 post 리스트를 가져와야 된다.
+             *  1. 도서가 가진 Product의 PostKeyword를 가진 PostTag 리스트를 가져온다.
+             *  2. PostTag 리스트에서 Post 리스트를 추출한 다음 응답 형태로 가공해준다.
+             */
+            List<PostResponse> bookChapters = getBookChapter(myBook); // api 명세서의 bookChapters
+            ProductResponse productResponse = ProductResponse.of(myBook.getProduct(), bookChapters);
+
+            return MyBookResponse.of(myBook, productResponse);
+        }
+
+        public List<PostResponse> getBookChapter(MyBook myBook) {
+            List<PostTag> postTags = postTagRepository.findAllByPostKeyword(myBook.getProduct().getPostKeyword());
+            return postTags.stream()
+                    .map((postTag) -> PostResponse.of(postTag.getPost()))
+                    .collect(toList());
+        }
         ```
         
     - **ResponseDto**
