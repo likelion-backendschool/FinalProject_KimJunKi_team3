@@ -1,5 +1,7 @@
 package com.ll.exam.final__2022_10_08.api.controller;
 
+import com.ll.exam.final__2022_10_08.app.member.service.MemberService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,12 @@ public class ApiMemberControllerTests {
     private final String EXPRESSION_ACCESSTOKEN = "$..data[?(@.accessToken)]";
     @Autowired
     private MockMvc mvc;
-
+    @Autowired
+    private MemberService memberService;
+    @BeforeEach
+    void beforeEach() {
+        memberService.deleteCacheKeyMember();
+    }
     @Test
     @DisplayName("POST /api/v1/member/login 은 로그인 처리 URL 이다.")
     void t1() throws Exception {
@@ -201,6 +208,7 @@ public class ApiMemberControllerTests {
     @Test
     @DisplayName("로그인 후 얻은 JWT 토큰으로 현재 로그인 한 회원의 정보를 얻을 수 있다.")
     void t8() throws Exception {
+
         // When
         ResultActions resultActions = mvc
                 .perform(
@@ -236,13 +244,13 @@ public class ApiMemberControllerTests {
         resultActions
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.resultCode").value("S-1"))
-                .andExpect(jsonPath("$.msg").value("로그인 성공, Access Token을 발급합니다."))
-                .andExpect(jsonPath("$.data.id").value(1))
-                .andExpect(jsonPath("$.data.createDate").isNotEmpty())
-                .andExpect(jsonPath("$.data.modifyDate").isNotEmpty())
-                .andExpect(jsonPath("$.data.username").value("user1"))
-                .andExpect(jsonPath("$.data.email").value("user1@test.com"))
-                .andExpect(jsonPath("$.data.emailVerified").value(false))
+                .andExpect(jsonPath("$.msg").value("성공"))
+                .andExpect(jsonPath("$..member.id").value(1))
+                .andExpect(jsonPath("$..member.createDate").isNotEmpty())
+                .andExpect(jsonPath("$..member.modifyDate").isNotEmpty())
+                .andExpect(jsonPath("$..member.username").value("user1"))
+                .andExpect(jsonPath("$..member.email").value("user1@test.com"))
+                .andExpect(jsonPath("$..member.emailVerified").value(false))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.fail").value(false));
     }

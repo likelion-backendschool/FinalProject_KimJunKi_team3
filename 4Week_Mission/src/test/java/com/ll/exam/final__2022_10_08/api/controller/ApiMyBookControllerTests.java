@@ -1,5 +1,7 @@
 package com.ll.exam.final__2022_10_08.api.controller;
 
+import com.ll.exam.final__2022_10_08.app.member.service.MemberService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,15 @@ public class ApiMyBookControllerTests {
 
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private MemberService memberService;
+
+    @BeforeEach
+    void beforeEach() {
+        memberService.deleteCacheKeyMember();
+    }
+
 
     @Test
     @DisplayName("로그인 없이 GET/api/v1/myBooks 요청 보낼 경우, 403 ")
@@ -99,10 +110,20 @@ public class ApiMyBookControllerTests {
         // When
         ResultActions resultActions = mvc
                 .perform(
-                        get("/api/v1/myBooks/"))
+                        get("/api/v1/myBooks/1"))
                 .andDo(print());
 
         // Then
-
+        resultActions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.resultCode").value("S-1"))
+                .andExpect(jsonPath("$.msg").value("성공"))
+                .andExpect(jsonPath("$..myBook[?(@.ownerId == '%s')]",1).exists())
+                .andExpect(jsonPath("$..product[?(@.authorName == '%s')]","user1").exists())
+                .andExpect(jsonPath("$..bookChapter[?(@.id == '%s')]",1).exists())
+                .andExpect(jsonPath("$..bookChapter[?(@.subject == '%s')]","자바를 우아하게 사용하는 방법").exists())
+                .andExpect(jsonPath("$..bookChapter[?(@.content == '%s')]","# 내용 1").exists())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.fail").value(false));
     }
 }

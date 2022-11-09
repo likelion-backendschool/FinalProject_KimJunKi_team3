@@ -45,6 +45,6 @@ public class ApiMemberController {
     public ResponseEntity<RsData> me(@AuthenticationPrincipal MemberContext memberContext) {
 
         return ResponseEntity.ok()
-                .body(RsData.successOf(memberContext));
+                .body(RsData.successOf(Ut.mapOf("member", memberContext)));
     }
 }

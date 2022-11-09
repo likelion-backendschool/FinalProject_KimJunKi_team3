@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -215,11 +217,23 @@ public class MemberService {
         return member.getAccessToken().equals(token);
     }
 
+
     @Cacheable("member")
-    public Member getByUsername__cached(String username) {
-        return findByUsername(username).orElseThrow(
+    public Map<String, Object> getMemberMapByUsername__cached(String username) {
+        Member member = findByUsername(username).orElseThrow(
                 () -> new MemberInvalidException(ExceptionType.MEMBER_NOT_FOUND)
         );
+
+        return member.toMap();
+    }
+    @CacheEvict(value="member",allEntries = true)
+    public void deleteCacheKeyMember() {}
+
+    public Member getByUsername__cached(String username) {
+        MemberService thisObj = (MemberService)AppConfig.getContext().getBean("memberService");
+        Map<String, Object> memberMap = thisObj.getMemberMapByUsername__cached(username);
+
+        return Member.fromMap(memberMap);
     }
 
     @Data
