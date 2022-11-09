@@ -1,5 +1,6 @@
 package com.ll.exam.final__2022_10_08.app.security.dto;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.ll.exam.final__2022_10_08.app.member.entity.Member;
 import com.ll.exam.final__2022_10_08.app.member.entity.emum.AuthLevel;
 import lombok.Getter;
@@ -11,22 +12,25 @@ import java.util.List;
 
 
 @Getter
+@JsonIncludeProperties({"id", "createDate", "modifyDate", "username", "email", "emailVerified", "nickname"})
 public class MemberContext extends User {
     private final Long id;
     private final LocalDateTime createDate;
     private final LocalDateTime modifyDate;
     private final String username;
     private final String email;
+    private final Boolean emailVerified;
     private final String nickname;
     private final AuthLevel authLevel;
 
     public MemberContext(Member member, List<GrantedAuthority> authorities) {
-        super(member.getUsername(), member.getPassword(), authorities);
+        super(member.getUsername(), "", authorities);
         this.id = member.getId();
         this.createDate = member.getCreateDate();
         this.modifyDate = member.getModifyDate();
         this.username = member.getUsername();
         this.email = member.getEmail();
+        this.emailVerified = member.isEmailVerified();
         this.nickname = member.getNickname();
         this.authLevel = member.getAuthLevel();
     }
@@ -39,6 +43,7 @@ public class MemberContext extends User {
                 .modifyDate(modifyDate)
                 .username(username)
                 .email(email)
+                .emailVerified(emailVerified)
                 .nickname(nickname)
                 .authLevel(authLevel)
                 .build();

@@ -43,7 +43,7 @@ public class NotProdInitData {
             }
 
             initDataDone = true;
-
+            memberService.deleteCacheKeyMember();
             Member member1 = memberService.join("user1", "1234", "user1@test.com", null);
 
             member1.setAuthLevel(AuthLevel.ADMIN);
