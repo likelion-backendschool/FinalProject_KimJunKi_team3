@@ -42,17 +42,19 @@
 1. **시큐리티 새로 추가.** (강의 영상 참고)
 2. **예외처리 로직 분리**
     - 예외 핸들러 로직을 `@RestControllerAdvice` 를 사용하여 분리시켜주었습니다.
-    - `GlobalControllerAdvice` 클래스
+    - **`GlobalControllerAdvice` 클래스**
         - 스프링이 직접 발생시키는 예외를 처리합니다.
             - ex) 로그인 데이터 유효성 체크 실패 → `MethodArgumentNotValidException`
             - ex) 로그인 데이터 형식이 다를 경우 → `HttpMessageNotReadableException`
+            
+        
         
         ```java
         @Slf4j
         @RestControllerAdvice
         public class GlobalControllerAdvice {
         		
-        		@ExceptionHandler(MethodArgumentNotValidException.class)
+            @ExceptionHandler(MethodArgumentNotValidException.class)
             public ResponseEntity<RsData> MethodArgumentNotValidExceptions(MethodArgumentNotValidException ex) {
         				/* 생략 */
             }
@@ -67,10 +69,11 @@
         ```
         
     
-    - `ApiMemberControllerAdvice`클래스
+    - **`ApiMemberControllerAdvice`클래스**
         - Member 관련 예외를 처리합니다.
             - ex) 아이디가 틀린 경우 `MemberInvalidException(ExceptionType.*MEMBER_USERNAME_NOT_FOUND*)`
             - ex) 비밀번호가 틀린 경우`MemberInvalidException(ExceptionType.*MEMBER_PASSWORD_MISMATCH*)`
+        
         
         ```java
         @Slf4j
@@ -89,7 +92,8 @@
         ```
         
         <aside>
-        💡 각각의 예외 상황마다 클래스를 생성해 줄 경우 파일이 양이 커지는 단점이 있다.  따라서 각 domain마다 하나의 예외 클래스만 만들어 준 다음 매개변수의 예외타입을 통해 구별할 수 있게 해주었다.
+        💡 각각의 예외 상황마다 클래스를 생성해 줄 경우 파일이 양이 커지는 단점이 있다.  
+            따라서 각 domain마다 하나의 예외 클래스만 만들어 준 다음 매개변수의 예외타입을 통해 구별할 수 있게 해주었다.
         **참고 자료**
         [https://github.com/woowacourse-teams/2022-ternoko/blob/develop/backend/src/main/java/com/woowacourse/ternoko/common/exception/ExceptionType.java](https://github.com/woowacourse-teams/2022-ternoko/blob/develop/backend/src/main/java/com/woowacourse/ternoko/common/exception/ExceptionType.java)
         
@@ -139,7 +143,7 @@
             private Long ownerId;
             private ProductResponse product;
         
-        		public static MyBookResponse of(MyBook myBook) {/*생략*/}
+            public static MyBookResponse of(MyBook myBook) {/*생략*/}
         }
         
         public class ProductResponse {
@@ -152,7 +156,7 @@
             @JsonInclude(JsonInclude.Include.NON_NULL) // null 일 경우 데이터 안 넘김
             private List<PostResponse> bookChapters;
         
-        		public static ProductResponse of(Product product) {/*생략*/}
+            public static ProductResponse of(Product product) {/*생략*/}
         }
         
         public class PostResponse {
@@ -161,7 +165,7 @@
             private String content;
             private String contentHtml;
         
-        		public static PostResponse of(Post post) {/*생략*/}
+            public static PostResponse of(Post post) {/*생략*/}
         }
         ```
         
@@ -183,6 +187,8 @@
     - Redis를 적용하면서 생각보다 많은 에러가 발생하였습니다. 잘 모르는 상태로 건들이다 보니 제대로 활용하지 못한 거 같습니다.
     - cache나 JWT 에 대한 테스트 케이스를 구현해주지 못한 점이 아쉽습니다.
     - TDD 방식으로 구현하고 싶었지만, 기능을 먼저 구현하고 Test case를 만들어 준 점이 아쉽습니다.
+- 궁금한 점
+    - Redis에 사용자 정의 객체를 저장할 경우, 강의 영상에서는 직접 Map으로 변환해주었지만 redis의 설정을 통해 해결이 되는지 궁금합니다.
 - 리펙토링
     - 테스트 케이스를 더 만들어 줄 예정입니다.
     - redis에 사용자 정의 객체를 저장하는 방식을 개선할 예정입니다.
