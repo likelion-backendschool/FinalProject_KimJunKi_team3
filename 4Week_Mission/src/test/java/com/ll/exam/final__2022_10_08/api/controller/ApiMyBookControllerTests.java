@@ -48,7 +48,7 @@ public class ApiMyBookControllerTests {
         // When
         ResultActions resultActions = mvc
                 .perform(
-                        get("/api/v1/myBooks/"))
+                        get("/api/v1/myBooks"))
                 .andDo(print());
 
         // Then
@@ -86,7 +86,7 @@ public class ApiMyBookControllerTests {
         // When
         resultActions = mvc
                 .perform(
-                        get("/api/v1/myBooks/")
+                        get("/api/v1/myBooks")
                                 .header("Authorization", "Bearer " + accessToken))
                 .andDo(print());
 

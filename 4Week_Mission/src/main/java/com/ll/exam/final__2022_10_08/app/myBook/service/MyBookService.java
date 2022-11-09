@@ -74,9 +74,9 @@ public class MyBookService {
          *  1. 도서가 가진 Product의 PostKeyword를 가진 PostTag 리스트를 가져온다.
          *  2. PostTag 리스트에서 Post 리스트를 추출한 다음 응답 형태로 가공해준다.
          */
-        List<PostResponse> bookChapter = getBookChapter(myBook);
+        List<PostResponse> bookChapters = getBookChapter(myBook);
 
-        ProductResponse productResponse = ProductResponse.of(myBook.getProduct(), bookChapter);
+        ProductResponse productResponse = ProductResponse.of(myBook.getProduct(), bookChapters);
 
         return MyBookResponse.of(myBook, productResponse);
 
@@ -86,10 +86,8 @@ public class MyBookService {
 
         List<PostTag> postTags = postTagRepository.findAllByPostKeyword(myBook.getProduct().getPostKeyword());
 
-        List<PostResponse> bookChapter = postTags.stream()
+        return postTags.stream()
                 .map((postTag) -> PostResponse.of(postTag.getPost()))
                 .collect(toList());
-
-        return bookChapter;
     }
 }

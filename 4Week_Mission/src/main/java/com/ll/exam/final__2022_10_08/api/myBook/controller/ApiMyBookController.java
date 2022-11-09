@@ -27,7 +27,7 @@ import java.util.Map;
 public class ApiMyBookController {
 
     private final MyBookService myBookService;
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<RsData> showMyBooks(@AuthenticationPrincipal MemberContext memberContext) {
 
         MyBooksResponse myBooks = myBookService.getMyBooksResponse(memberContext.getId());

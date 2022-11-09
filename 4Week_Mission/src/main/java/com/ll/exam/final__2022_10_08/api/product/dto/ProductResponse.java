@@ -28,7 +28,7 @@ public class ProductResponse {
     private String authorName;
     private String subject;
     @JsonInclude(JsonInclude.Include.NON_NULL) // null 일 데이터 안 넘김
-    private List<PostResponse> bookChapter;
+    private List<PostResponse> bookChapters;
 
     public static ProductResponse of(Product product) {
 
@@ -41,7 +41,7 @@ public class ProductResponse {
                 .subject(product.getSubject())
                 .build();
     }
-    public static ProductResponse of(Product product, List<PostResponse> bookChapter) {
+    public static ProductResponse of(Product product, List<PostResponse> bookChapters) {
 
         return ProductResponse.builder()
                 .id(product.getId())
@@ -50,7 +50,7 @@ public class ProductResponse {
                 .authorId(product.getAuthor().getId())
                 .authorName(product.getAuthor().getName())
                 .subject(product.getSubject())
-                .bookChapter(bookChapter)
+                .bookChapters(bookChapters)
                 .build();
     }
 }
