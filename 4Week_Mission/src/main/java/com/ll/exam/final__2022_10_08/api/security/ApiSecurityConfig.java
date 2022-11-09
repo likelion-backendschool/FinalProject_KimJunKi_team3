@@ -24,9 +24,6 @@ public class ApiSecurityConfig {
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
                 .antMatcher("/api/**")
-//                .exceptionHandling(exceptionHandling -> exceptionHandling
-//                        .authenticationEntryPoint(authenticationEntryPoint)
-//                )
                 .httpBasic().disable()
                 .csrf().disable()
                 .cors(cors -> cors
